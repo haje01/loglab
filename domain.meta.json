@@ -1,0 +1,66 @@
+{
+    "domain": {
+        "name": "애크미 게임즈",
+        "desc": "게임의 산실 애크미. 홈페이지는 http://acme.games"
+    },
+    "bases": {
+        "BeforeLogin": {
+            "desc": "로그인 전 공통",
+            "parent": "loglab.event.Common"
+        },
+        "AfterLogin": {
+            "desc": "계정 로그인 후 공통",
+            "parent": "BeforeLoginCommon"
+        },
+        "AfterCharacter": {
+            "desc": "캐릭터 선택 후 공통",
+            "parent": "AfterLoginCommon"
+        },
+        "Field": {
+            "desc": "필드 공통",
+            "parent": "AfterCharacterCommon"
+        },
+        "Dungeon": {
+            "desc": "던전 공통",
+            "parent": "AfterCharacterCommon"
+        },
+        "AuctionStart": {
+            "desc": "경매 시작 공통",
+            "parent": "AfterCharacterCommon",
+            "props": [
+                ["AuctionID", "string"]
+            ],
+            "post_event": [
+                ["AuctionEndCommon", "AuctionID"]
+            ]
+        },
+        "AuctionEnd": {
+            "desc": "경매 종료 공통",
+            "parent": "AfterCharacterCommon",
+            "props": [
+                ["AuctionID", "string"]
+            ],
+            "pre_event": [
+                ["AuctionStartCommon", "AuctionID"]
+            ]
+        }
+    },
+    "events": {
+        "Login": {
+            "desc": "기본 로그인",
+            "parent": "BeforeLoginCommon",
+            "props": [
+                ["AccountID", "string"]
+            ],
+            "post_event": ["LogoutCommon", "AccountID"]
+        },
+        "Logout": {
+            "desc": "기본 로그아웃",
+            "parent": "FieldCommon",
+            "props": [
+                ["AccountID", "string"]
+            ],
+            "pre_event": ["LoginCommon", "AccountID"]
+        }
+    }
+}
