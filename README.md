@@ -90,13 +90,13 @@ $ loglab sample simple.meta.json --format csv
         "Login": {
             "desc": "로그인",
             "props": [
-                [ServerNo, "number"]
+                ["ServerNo", "number"]
             ]
         },
         "Logout": {
             "desc": "로그 아웃",
             "props": [
-                [ServerNo, "number"]
+                ["ServerNo", "number"]
             ]
         }
     }
