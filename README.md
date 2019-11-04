@@ -176,7 +176,7 @@ $ loglab sample simple.meta.json
 }
 ```
 
-좀 더 복잡해졌지만, 이렇게 하면 서버 번호 속성을 1 이상 10 이하로 제한할 수 있습니다. 다시 샘플을 출력해보면:
+좀 더 복잡해졌지만, 이렇게 하면 서버 번호 속성을 1 이상, 10 이하로 제한할 수 있습니다. 다시 샘플을 출력해보면:
 
 ```bash
 $ loglab sample simple.meta.json
@@ -207,6 +207,49 @@ $ loglab sample simple.meta.json
 }
 ```
 범위가 잘 적용되었습니다.
+
+### 중복되는 선언 공유하기
+
+예제에서 `Login`과 `Logout` 는 이벤트 이름이 다를 뿐, 같은 `ServerNo` 속성을 공유하고 있습니다. 이것을 공유(리팩토링)하면 깔끔하고 유지보수에도 용이할 것입니다. 다음과 같이 할 수 있습니다:
+
+```json
+{
+    "project": {
+        "name": "단순 로그 예제",
+        "desc": "단순한 로그 사용예를 보여줍니다."
+    },
+    "bases": {
+        "Common": {
+            "props": {
+                "ServerNo": {
+                    "type": "number",
+                    "minimum": 1,
+                    "exclusiveMaximum": 10
+                }
+            }
+        }
+    },
+    "events": {
+        "Login": {
+            "desc": "로그인",
+            "mixins": ["bases.Common"]
+        },
+        "Logout": {
+            "desc": "로그 아웃",
+            "mixins": ["bases.Common"]
+        }
+    }
+}
+```
+훨씬 깔끔해진 것 같습니다. 이벤트는 아니지만, 다른 이벤트에 공유될 수 있는 객체를 **베이스**라고 합니다. `/bases` 아래에 선언합니다. 베이스와 이벤트의 차이점은 나중에 자세히 다루겠습니다.
+
+- `/bases/Common` Common 객체를 선언합니다.
+- `/bases/Common/props` Common 객체를 통해 다른 이벤트나 베이스에 공유될 속성을을 선언합니다.
+
+`mixin`을 통해 하나 이상의 베이스나 다른 이벤트를 침조해 공유할 수 있습니다.
+
+- `/events/Login/mixins` 공유할 베이스나 이벤트를 리스트로 기술합니다.
+- 참조할 객체는 `bases.Common`식으로 기입합니다.
 
 ## 로그 도메인 만들기
 
