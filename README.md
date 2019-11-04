@@ -90,13 +90,13 @@ $ loglab sample simple.meta.json --format csv
         "Login": {
             "desc": "로그인",
             "props": [
-                ["ServerNo", "number"]
+                ["ServerNo", "number", "서버 번호"]
             ]
         },
         "Logout": {
             "desc": "로그 아웃",
             "props": [
-                ["ServerNo", "number"]
+                ["ServerNo", "number", "서버 번호"]
             ]
         }
     }
@@ -106,7 +106,7 @@ $ loglab sample simple.meta.json --format csv
 
 - 가능한 속성의 타입은 `string`, `number`, `boolean`, `array`의 네 가지입니다.
 - `/events/Login/props` 이 아래 로그인 이벤트의 속성을 기술합니다.
-- 각 속성은 `[속성_이름, 속성_타입]` 형태의 리스트로 선언합니다.
+- 각 속성은 `[속성_이름, 속성_타입, 속성_설명]` 형태의 리스트로 선언합니다.
 - 샘플 로그에서 출력된 이벤트 일시와 이름도 사실 속성이며, 이것은 LogLab에 의해 기본으로 추가되었습니다.
 
 샘플 로그를 출력해보면:
@@ -154,23 +154,27 @@ $ loglab sample simple.meta.json
     "events": {
         "Login": {
             "desc": "로그인",
-            "props": {
-                "ServerNo": {
+            "props": [
+                {
+                    "name": "ServerNo",
+                    "desc": "서버 번호",
                     "type": "number",
                     "minimum": 1,
                     "exclusiveMaximum": 10
                 }
-            }
+            ]
         },
         "Logout": {
             "desc": "로그 아웃",
-            "props": {
-                "ServerNo": {
+            "props": [
+                {
+                    "name": "ServerNo",
+                    "desc": "서버 번호",
                     "type": "number",
                     "minimum": 1,
                     "exclusiveMaximum": 10
                 }
-            }
+            ]
         }
     }
 }
@@ -220,13 +224,15 @@ $ loglab sample simple.meta.json
     },
     "bases": {
         "Common": {
-            "props": {
-                "ServerNo": {
+            "props": [
+                {
+                    "name": "ServerNo",
+                    "desc": "서버 번호",
                     "type": "number",
                     "minimum": 1,
                     "exclusiveMaximum": 10
                 }
-            }
+            ]
         }
     },
     "events": {
@@ -241,15 +247,54 @@ $ loglab sample simple.meta.json
     }
 }
 ```
-훨씬 깔끔해진 것 같습니다. 이벤트는 아니지만, 다른 이벤트에 공유될 수 있는 객체를 **베이스**라고 합니다. `/bases` 아래에 선언합니다. 베이스와 이벤트의 차이점은 나중에 자세히 다루겠습니다.
+훨씬 깔끔해진 것 같습니다. 이벤트는 아니지만, 다른 이벤트에 공유될 수 있는 객체를 **베이스**라고 하며, `/bases` 아래에 선언합니다. 베이스와 이벤트의 차이점은 나중에 자세히 다루겠습니다.
 
 - `/bases/Common` Common 객체를 선언합니다.
-- `/bases/Common/props` Common 객체를 통해 다른 이벤트나 베이스에 공유될 속성을을 선언합니다.
+- `/bases/Common/props` Common 객체를 통해 다른 이벤트나 베이스에 공유될 속성을 선언합니다.
 
-`mixin`을 통해 하나 이상의 베이스나 다른 이벤트를 침조해 공유할 수 있습니다.
+이것을 `mixin`을 통해 하나 이상의 베이스나 다른 이벤트에서 공유할 수 있습니다.
 
 - `/events/Login/mixins` 공유할 베이스나 이벤트를 리스트로 기술합니다.
 - 참조할 객체는 `bases.Common`식으로 기입합니다.
+
+공통 속성을 공유한 후, 이벤트별 속성은 따로 추가할 수 있습니다.
+```json
+{
+    "project": {
+        "name": "단순 로그 예제",
+        "desc": "단순한 로그 사용예를 보여줍니다."
+    },
+    "bases": {
+        "Common": {
+            "props": [
+                {
+                    "name": "ServerNo",
+                    "type": "number",
+                    "minimum": 1,
+                    "exclusiveMaximum": 10
+                }
+            ]
+        }
+    },
+    "events": {
+        "Login": {
+            "desc": "로그인",
+            "mixins": ["bases.Common"],
+            "props": [
+                ["Platform", "string", "플랫폼 구분"]
+            ]
+        },
+        "Logout": {
+            "desc": "로그 아웃",
+            "mixins": ["bases.Common"],
+            "props": [
+                ["PlayMinutes", "number", "플레이 시간"]
+            ]
+        }
+    }
+}
+```
+플랫폼 정보와 플레이 시간은, 각각 로그인과 로그아웃에만 필요한 속성입니다.
 
 ## 로그 도메인 만들기
 
