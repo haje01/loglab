@@ -1,17 +1,19 @@
 {
     "project": {
-        "name": "슈퍼 히어로즈",
-        "desc": "애크미 게임즈의 최신작. 슈퍼 히어로즈-"
+        "name": "foo",
+        "desc": "애크미 게임즈의 최신작. Foo!"
     },
-    "meta": "http://acme.games/loglab/domain.meta",
+    "metas": [
+        ["http://acme.games/loglab/company.meta", "company"]
+    ],
     "events": {
         "GameServerState": {
             "desc": "게임 서버 상태",
-            "parent": "bases.BeforeLogin"
+            "mixins": "company.bases.BeforeLogin"
         },
         "Login": {
             "desc": "계정 로그인",
-            "parent": "events.Login"
+            "mixins": "company.events.Login"
         }
     }
 }
