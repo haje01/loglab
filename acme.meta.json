@@ -5,62 +5,82 @@
     },
     "bases": {
         "BeforeLogin": {
-            "desc": "로그인 전 공통",
-            "parent": "loglab.event.Common"
+            "desc": "로그인 전 공통"
         },
         "AfterLogin": {
             "desc": "계정 로그인 후 공통",
-            "parent": "BeforeLoginCommon"
+            "mixins": "BeforeLogin",
+            "props": [
+                ["acntID", "string", "계정 ID"]
+            ]
         },
         "AfterCharacter": {
             "desc": "캐릭터 선택 후 공통",
-            "parent": "AfterLoginCommon"
+            "mixins": "AfterLogin",
+            "props": [
+                ["charName", "string", "캐릭터 이름"]
+            ]
+        },
+        "Position": {
+            "desc": "현재 지도에서 이벤트 발생 좌표",
+            "props": [
+                ["posX", "number", "X 좌표"],
+                ["posY", "number", "Y 좌표"],
+                ["posZ", "number", "Z 좌표"]
+            ]
         },
         "Field": {
             "desc": "필드 공통",
-            "parent": "AfterCharacterCommon"
+            "mixins": "AfterCharacter",
+            "props": [
+                ["mapID", "string", "맵 ID"],
+                {"ref": "bases.Position"}
+            ]
         },
         "Dungeon": {
             "desc": "던전 공통",
-            "parent": "AfterCharacterCommon"
+            "mixins": "AfterCharacter",
+            "props": [
+                {"ref": "bases.Position"}
+            ]
         },
         "AuctionStart": {
             "desc": "경매 시작 공통",
-            "parent": "AfterCharacterCommon",
+            "mixins": "AfterCharacter",
             "props": [
-                ["AuctionID", "string"]
+                ["auctID", "string"]
             ],
             "post_event": [
-                ["AuctionEndCommon", "AuctionID"]
+                ["bases.AuctionEnd", "auctID"]
             ]
         },
         "AuctionEnd": {
             "desc": "경매 종료 공통",
-            "parent": "AfterCharacterCommon",
+            "mixins": "AfterCharacter",
             "props": [
-                ["AuctionID", "string"]
+                ["auctID", "string"]
             ],
             "pre_event": [
-                ["AuctionStartCommon", "AuctionID"]
+                ["bases.AuctionStart", "auctID"]
             ]
         }
     },
     "events": {
         "Login": {
             "desc": "기본 로그인",
-            "parent": "BeforeLoginCommon",
+            "mixins": "BeforeLogin",
             "props": [
-                ["AccountID", "string"]
+                ["acntID", "string"]
             ],
-            "post_event": ["LogoutCommon", "AccountID"]
+            "post_event": ["Logout", "acntID"]
         },
         "Logout": {
             "desc": "기본 로그아웃",
-            "parent": "FieldCommon",
+            "mixins": "Field",
             "props": [
-                ["AccountID", "string"]
+                ["acntID", "string"]
             ],
-            "pre_event": ["LoginCommon", "AccountID"]
+            "pre_event": ["Login", "acntID"]
         }
     }
 }

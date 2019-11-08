@@ -7,7 +7,7 @@ from tabulate import tabulate
 
 def get_props_from_ebody(ebody):
     """메타파일의 이벤트 바디에서 속성들 정보 얻기."""
-    return [('datetime', 'datetime'), ('event', 'string')]
+    return [('Datetime', 'datetime', "이벤트 일시"), ('Event', 'string', "이벤트 타입")]
 
 
 def text_from_meta(meta_path):
@@ -17,7 +17,7 @@ def text_from_meta(meta_path):
     data = json.loads(body)
 
     out = StringIO()
-    headers = ['Property', 'Type']
+    headers = ['Property', 'Type', 'Description']
     for ename, ebody in data['events'].items():
         out.write('\n')
         out.write("Event : {}\n".format(ename))

@@ -4,16 +4,16 @@
         "desc": "애크미 게임즈의 최신작. Foo!"
     },
     "metas": [
-        ["http://acme.games/loglab/company.meta", "company"]
+        ["acme.meta.json", "acme"]
     ],
     "events": {
         "GameServerState": {
             "desc": "게임 서버 상태",
-            "mixins": "company.bases.BeforeLogin"
+            "mixins": "acme.bases.BeforeLogin"
         },
         "Login": {
-            "desc": "계정 로그인",
-            "mixins": "company.events.Login"
+            "desc": "회사 로그인 이벤트를 확장",
+            "mixins": "acme.events.Login"
         }
     }
 }
