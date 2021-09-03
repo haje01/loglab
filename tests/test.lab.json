@@ -10,13 +10,19 @@
             "fields": [
                 ["ServerNo", "integer", "서버 번호"]
             ]
+        },
+        "TimedCommon": {
+            "mixins": ["bases.Common"],
+            "fields": [
+                ["Time", "datetime"]
+            ]
         }
     },
     "events": {
         "Login": {
             "mixins": ["bases.Common"],
             "fields": [
-                    ["UserID", "string"]
+                ["UserID", "string"]
             ]
         }
     }
