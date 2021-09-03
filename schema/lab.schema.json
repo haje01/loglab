@@ -1,0 +1,111 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://github.com/haje01/loglab/lab.schema.json",
+    "title": "Lab",
+    "description": "Loglab lab file",
+    "type": "object",
+    "definitions": {
+        "field-body": {
+            "type": "array",
+            "items": {
+                "type": "array",
+                "prefixItems": [
+                    {"type": "number"},
+                    {
+                        "enum": ["string", "number"]
+                    },
+                    {"type": "string"}
+                ],
+                "minItems": 2,
+                "maxItems": 3
+            }
+        }
+    },
+    "properties": {
+        "domain": {
+            "description": "스키마 도메인 정보",
+            "type": "object",
+            "properties": {
+                "name": {
+                    "description": "도메인 이름",
+                    "type": "string"
+                },
+                "desc": {
+                    "description": "도메인 설명",
+                    "type": "string"
+                }
+            },
+            "required": ["name"]
+        },
+        "bases": {
+            "description": "기본 엔터티",
+            "type": "object",
+            "patternProperties": {
+                "[a-z]+": {
+                    "type": "object",
+                    "properties": {
+                        "desc": {
+                            "description": "엔터티 설명",
+                            "type": "string"
+                        },
+                        "fields": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "prefixItems": [
+                                    {"type": "string"},
+                                    {
+                                        "enum": ["string", "integer", "number", "boolean"]
+                                    },
+                                    {"type": "string"}
+                                ],
+                                "minItems": 2,
+                                "maxItems": 3
+                            }
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": ["fields"]
+                }
+            }
+        },
+        "events": {
+            "description": "기본 엔터티",
+            "type": "object",
+            "patternProperties": {
+                "[a-z]+": {
+                    "type": "object",
+                    "properties": {
+                        "desc": {
+                            "description": "엔터티 설명",
+                            "type": "string"
+                        },
+                        "mixins": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "fields": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "prefixItems": [
+                                    {"type": "string"},
+                                    {
+                                        "enum": ["string", "integer", "number", "boolean"]
+                                    },
+                                    {"type": "string"}
+                                ],
+                                "minItems": 2,
+                                "maxItems": 3
+                            }
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": ["fields"]
+                }
+            }
+        }
+    }
+  }

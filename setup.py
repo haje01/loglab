@@ -26,6 +26,7 @@ setup(
     license=['MIT License'],
     install_requires=[
         'click',
+        "jsonschema",
         'pyyaml',
         'tabulate',
     ],

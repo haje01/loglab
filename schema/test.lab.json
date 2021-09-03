@@ -1,0 +1,23 @@
+{
+    "$schema": "file:///home/ubuntu/works/loglab/schema/lab.schema.json",
+    "domain": {
+        "name": "테스트",
+        "desc": "설명"
+    },
+    "bases": {
+        "Common": {
+            "desc": "공통 요소",
+            "fields": [
+                ["ServerNo", "integer", "서버 번호"]
+            ]
+        }
+    },
+    "events": {
+        "Login": {
+            "mixins": ["bases.Common"],
+            "fields": [
+                    ["UserID", "string"]
+            ]
+        }
+    }
+}
