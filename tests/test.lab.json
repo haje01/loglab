@@ -5,25 +5,58 @@
         "desc": "설명"
     },
     "bases": {
-        "Common": {
-            "desc": "공통 요소",
+        "TimeEvent": {
+            "desc": "시간 이벤트",
             "fields": [
-                ["ServerNo", "integer", "서버 번호"]
+                ["Time", "datetime", "이벤트 시간"]
             ]
         },
-        "TimedCommon": {
-            "mixins": ["bases.Common"],
+        "AcntEvent": {
+            "desc": "계정 이벤트",
+            "mixins": ["bases.TimeEvent"],
             "fields": [
-                ["Time", "datetime"]
+                ["AcntId", "string", "계정 ID"]
+            ]
+        },
+        "CharEvent": {
+            "desc": "캐릭터 이벤트",
+            "mixins": ["bases.AcntEvent"],
+            "fields": [
+                ["CharId", "string", "캐릭터 ID"]
+            ]
+        },
+        "GeoEvent": {
+            "desc": "위치 이벤트",
+            "fields": [
+                ["PosX", "number", "캐릭터 X 위치"],
+                ["PosY", "number", "캐릭터 Y 위치"],
+                ["PosZ", "number", "캐릭터 Z 위치"]
+            ]
+        },
+        "CharGeoEvent": {
+            "desc": "캐릭터 위치 이벤트",
+            "mixins": ["bases.CharEvent", "bases.GeoEvent"]
+        },
+        "ItemEvent": {
+            "desc": "아이템 이벤트",
+            "fields": [
+                ["ItemTypeId", "integer", "아이템 타입 ID"],
+                ["ItemInstId", "integer", "아이템 인스턴스 ID"]
             ]
         }
     },
     "events": {
         "Login": {
-            "mixins": ["bases.Common"],
-            "fields": [
-                ["UserID", "string"]
-            ]
+            "desc": "로그인",
+            "mixins": ["bases.AcntEvent"]
+        },
+        "ItemGet": {
+            "desc": "아이템 습득",
+            "mixins": ["bases.CharGeoEvent", "bases.ItemEvent"]
+        },
+        "Logout": {
+            "desc": "로그아웃",
+            "mixins": ["bases.AcntEvent"]
         }
     }
 }

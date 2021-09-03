@@ -17,15 +17,19 @@ def verify_labfile(lab_path, scm_path=None):
         lab_path (str): 랩파일 URI
         scm_path (str): 스키마 파일 URI
 
+    Returns:
+        str: 읽어들인 랩파일 JSON 을 재활용할 수 있게 반환
+
     """
     if scm_path is None:
         scm_path = os.path.join(LOGLAB_HOME, 'schema/lab.schema.json')
     schema = load_file_from(scm_path)
     schema = json.loads(schema)
-    lab = load_file_from(lab_path)
-    lab = json.loads(lab)
+    body = load_file_from(lab_path)
+    labjs = json.loads(body)
 
-    validate(lab, schema=schema)
+    validate(labjs, schema=schema)
+    return labjs
 
 
 def load_file_from(path):

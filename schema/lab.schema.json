@@ -16,7 +16,7 @@
                     },
                     {"type": "string"}
                 ],
-                "minItems": 2,
+                "minItems": 3,
                 "maxItems": 3
             }
         },
@@ -41,7 +41,7 @@
                         }
                     },
                     "additionalProperties": false,
-                    "required": ["fields"]
+                    "required": ["desc"]
                 }
             },
             "additionalProperties": false

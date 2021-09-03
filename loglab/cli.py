@@ -6,7 +6,7 @@ from glob import glob
 import click
 
 from loglab.doc import text_from_labfile
-from loglab.util imoprt verify_labfile
+from loglab.util import verify_labfile
 
 
 _global_options = [
@@ -54,7 +54,8 @@ def verify(labfile):
 def doc(labfile):
     """로그 문서 표시."""
     labfile = check_labfile(labfile)
-    print(text_from_labfile(labfile))
+    labjs = verify_labfile(labfile)
+    print(text_from_labfile(labjs))
 
 
 @cli.command()
