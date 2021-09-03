@@ -19,7 +19,7 @@ setup(
     author="JeongJu Kim",
     author_email='haje01@gmail.com',
     url="https://github.com/haje01/loglab",
-    description="Log format design and validate tool",
+    description="Tools that help you design and utilize log formats",
     platforms=["any"],
     packages=['loglab'],
     scripts=SCRIPTS,
