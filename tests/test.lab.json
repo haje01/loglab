@@ -5,15 +5,8 @@
         "desc": "설명"
     },
     "bases": {
-        "TimeEvent": {
-            "desc": "시간 이벤트",
-            "fields": [
-                ["Time", "datetime", "이벤트 시간"]
-            ]
-        },
         "AcntEvent": {
             "desc": "계정 이벤트",
-            "mixins": ["bases.TimeEvent"],
             "fields": [
                 ["AcntId", "string", "계정 ID"]
             ]
@@ -25,7 +18,7 @@
                 ["CharId", "string", "캐릭터 ID"]
             ]
         },
-        "GeoEvent": {
+        "PosEvent": {
             "desc": "위치 이벤트",
             "fields": [
                 ["PosX", "number", "캐릭터 X 위치"],
@@ -33,9 +26,9 @@
                 ["PosZ", "number", "캐릭터 Z 위치"]
             ]
         },
-        "CharGeoEvent": {
+        "CharPosEvent": {
             "desc": "캐릭터 위치 이벤트",
-            "mixins": ["bases.CharEvent", "bases.GeoEvent"]
+            "mixins": ["bases.CharEvent", "bases.PosEvent"]
         },
         "ItemEvent": {
             "desc": "아이템 이벤트",
@@ -50,13 +43,27 @@
             "desc": "로그인",
             "mixins": ["bases.AcntEvent"]
         },
-        "ItemGet": {
-            "desc": "아이템 습득",
-            "mixins": ["bases.CharGeoEvent", "bases.ItemEvent"]
-        },
         "Logout": {
             "desc": "로그아웃",
-            "mixins": ["bases.AcntEvent"]
+            "mixins": ["bases.AcntEvent"],
+            "fields": [
+                ["PlayTime", "integer", "플레이 시간(초)", true]
+            ]
+        },
+        "CharLogin": {
+            "desc": "캐릭터 로그인",
+            "mixins": ["bases.CharPosEvent"]
+        },
+        "CharLogout": {
+            "desc": "캐릭터 로그아웃",
+            "mixins": ["bases.CharPosEvent"],
+            "fields": [
+                ["PlayTime", "integer", "플레이 시간(초)", true]
+            ]
+        },
+        "ItemGet": {
+            "desc": "아이템 습득",
+            "mixins": ["bases.CharPosEvent", "bases.ItemEvent"]
         }
     }
 }

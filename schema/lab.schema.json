@@ -14,10 +14,11 @@
                     {
                         "enum": ["string", "integer", "number", "boolean", "datetime"]
                     },
-                    {"type": "string"}
+                    {"type": "string"},
+                    {"type": "boolean"}
                 ],
                 "minItems": 3,
-                "maxItems": 3
+                "maxItems": 5
             }
         },
         "entity-body": {

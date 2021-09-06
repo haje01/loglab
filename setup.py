@@ -28,6 +28,7 @@ setup(
         'click',
         "jsonschema",
         'pyyaml',
+        'jinja2',
         'tabulate',
     ],
     extras_require={

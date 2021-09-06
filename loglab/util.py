@@ -3,33 +3,27 @@ import os
 from pathlib import Path
 from urllib.request import urlopen
 from urllib.parse import urlparse
-import json
+from collections import OrderedDict
 
-from jsonschema import validate
 
 LOGLAB_HOME = Path(os.path.dirname(os.path.abspath(__file__))).parent.absolute()
 
+class AttrDict(dict):
+    """dict 키를 속성처럼 접근하는 헬퍼."""
+    def __init__(self, *args, **kwargs):
+        def from_nested_dict(data):
+            """ Construct nested AttrDicts from nested dictionaries. """
+            if not isinstance(data, dict):
+                return data
+            else:
+                return AttrDict({key: from_nested_dict(data[key])
+                                    for key in data})
 
-def verify_labfile(lab_path, scm_path=None):
-    """랩파일을 검증.
+        super(AttrDict, self).__init__(*args, **kwargs)
+        self.__dict__ = self
 
-    Args:
-        lab_path (str): 랩파일 URI
-        scm_path (str): 스키마 파일 URI
-
-    Returns:
-        str: 읽어들인 랩파일 JSON 을 재활용할 수 있게 반환
-
-    """
-    if scm_path is None:
-        scm_path = os.path.join(LOGLAB_HOME, 'schema/lab.schema.json')
-    schema = load_file_from(scm_path)
-    schema = json.loads(schema)
-    body = load_file_from(lab_path)
-    labjs = json.loads(body)
-
-    validate(labjs, schema=schema)
-    return labjs
+        for key in self.keys():
+            self[key] = from_nested_dict(self[key])
 
 
 def load_file_from(path):
@@ -50,3 +44,52 @@ def load_file_from(path):
         # 로컬 파일
         with open(path, 'rt') as f:
             return f.read()
+
+
+def _init_fields():
+    fields = OrderedDict()
+    fields["DateTime"] = ["datetime", "이벤트 일시"]
+    return fields
+
+
+def _fields_from_mixins(root, mixins):
+    """mixins 엔터티에서 필드 정보 얻기.
+
+    재귀적으로 올라가며 처리.
+
+    Args:
+        root (dict): 랩파일 데이터
+        mixins (list): 믹스인 엔터티 이름 리스트
+
+    Returns:
+        dict: 필드 정보
+    """
+    fields = _init_fields()
+    for mi in mixins:
+        parent, entity = mi.split('.')
+        _fields = fields_from_entity(root, root[parent][entity])
+        fields.update(_fields)
+    return fields
+
+
+def fields_from_entity(root, entity, field_cb=None):
+    """랩파일의 엔터티에서 필드 정보 얻기.
+
+    Args:
+        root (dict): 랩파일 데이터
+        entity (dict): 엔터티 데이터
+        field_cb (function): 필드값 변환 함수
+
+    """
+    fields = _init_fields()
+    # mixin 이 있으면 그것의 필드를 가져옴
+    if 'mixins' in entity:
+        _fields = _fields_from_mixins(root, entity['mixins'])
+        fields.update(_fields)
+    if 'fields' in entity:
+        for f in entity['fields']:
+            if field_cb is not None:
+                fields[f[0]] = field_cb(f[1:])
+            else:
+                fields[f[0]] = f[1:]
+    return fields
