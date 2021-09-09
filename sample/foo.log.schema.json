@@ -1,0 +1,325 @@
+
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "foo",
+    "description": "위대한 모바일 게임",
+    "type": "array",
+    "$defs": {
+        "Login" : {
+      
+            "type": "object",
+            "properties": {
+                "Event": {"const": "Login"},
+                "DateTime": {
+                    "type": "string",
+                    "description": "이벤트 일시",
+                    "format": "date-time"
+                },
+                "AcntId": {
+                    "type": "string",
+                    "description": "계정 ID"
+                }
+            },
+            "required": ["DateTime", "AcntId"],
+            "additionalProperties": false
+        
+        },
+        "Logout" : {
+      
+            "type": "object",
+            "properties": {
+                "Event": {"const": "Logout"},
+                "DateTime": {
+                    "type": "string",
+                    "description": "이벤트 일시",
+                    "format": "date-time"
+                },
+                "AcntId": {
+                    "type": "string",
+                    "description": "계정 ID"
+                },
+                "PlayTime": {
+                    "type": "integer",
+                    "description": "플레이 시간(초)"
+                }
+            },
+            "required": ["DateTime", "AcntId"],
+            "additionalProperties": false
+        
+        },
+        "CharLogin" : {
+      
+            "type": "object",
+            "properties": {
+                "Event": {"const": "CharLogin"},
+                "DateTime": {
+                    "type": "string",
+                    "description": "이벤트 일시",
+                    "format": "date-time"
+                },
+                "AcntId": {
+                    "type": "string",
+                    "description": "계정 ID"
+                },
+                "CharId": {
+                    "type": "string",
+                    "description": "캐릭터 ID"
+                },
+                "PosX": {
+                    "type": "number",
+                    "description": "캐릭터 X 위치"
+                },
+                "PosY": {
+                    "type": "number",
+                    "description": "캐릭터 Y 위치"
+                },
+                "PosZ": {
+                    "type": "number",
+                    "description": "캐릭터 Z 위치"
+                }
+            },
+            "required": ["DateTime", "AcntId", "CharId", "PosX", "PosY", "PosZ"],
+            "additionalProperties": false
+        
+        },
+        "CharLogout" : {
+      
+            "type": "object",
+            "properties": {
+                "Event": {"const": "CharLogout"},
+                "DateTime": {
+                    "type": "string",
+                    "description": "이벤트 일시",
+                    "format": "date-time"
+                },
+                "AcntId": {
+                    "type": "string",
+                    "description": "계정 ID"
+                },
+                "CharId": {
+                    "type": "string",
+                    "description": "캐릭터 ID"
+                },
+                "PosX": {
+                    "type": "number",
+                    "description": "캐릭터 X 위치"
+                },
+                "PosY": {
+                    "type": "number",
+                    "description": "캐릭터 Y 위치"
+                },
+                "PosZ": {
+                    "type": "number",
+                    "description": "캐릭터 Z 위치"
+                },
+                "PlayTime": {
+                    "type": "integer",
+                    "description": "플레이 시간(초)"
+                }
+            },
+            "required": ["DateTime", "AcntId", "CharId", "PosX", "PosY", "PosZ"],
+            "additionalProperties": false
+        
+        },
+        "KillMonster" : {
+      
+            "type": "object",
+            "properties": {
+                "Event": {"const": "KillMonster"},
+                "DateTime": {
+                    "type": "string",
+                    "description": "이벤트 일시",
+                    "format": "date-time"
+                },
+                "AcntId": {
+                    "type": "string",
+                    "description": "계정 ID"
+                },
+                "CharId": {
+                    "type": "string",
+                    "description": "캐릭터 ID"
+                },
+                "PosX": {
+                    "type": "number",
+                    "description": "캐릭터 X 위치"
+                },
+                "PosY": {
+                    "type": "number",
+                    "description": "캐릭터 Y 위치"
+                },
+                "PosZ": {
+                    "type": "number",
+                    "description": "캐릭터 Z 위치"
+                },
+                "MonsterTypeId": {
+                    "type": "integer",
+                    "description": "몬스터 타입 ID"
+                },
+                "MonsterInstId": {
+                    "type": "integer",
+                    "description": "몬스터 인스턴스 ID"
+                }
+            },
+            "required": ["DateTime", "AcntId", "CharId", "PosX", "PosY", "PosZ", "MonsterTypeId", "MonsterInstId"],
+            "additionalProperties": false
+        
+        },
+        "MonsterDropItem" : {
+      
+            "type": "object",
+            "properties": {
+                "Event": {"const": "MonsterDropItem"},
+                "DateTime": {
+                    "type": "string",
+                    "description": "이벤트 일시",
+                    "format": "date-time"
+                },
+                "MonsterTypeId": {
+                    "type": "integer",
+                    "description": "몬스터 타입 ID"
+                },
+                "MonsterInstId": {
+                    "type": "integer",
+                    "description": "몬스터 인스턴스 ID"
+                },
+                "ItemTypeId": {
+                    "type": "integer",
+                    "description": "아이템 타입 ID"
+                },
+                "ItemInstId": {
+                    "type": "integer",
+                    "description": "아이템 인스턴스 ID"
+                }
+            },
+            "required": ["DateTime", "MonsterTypeId", "MonsterInstId", "ItemTypeId", "ItemInstId"],
+            "additionalProperties": false
+        
+        },
+        "ItemGet" : {
+      
+            "type": "object",
+            "properties": {
+                "Event": {"const": "ItemGet"},
+                "DateTime": {
+                    "type": "string",
+                    "description": "이벤트 일시",
+                    "format": "date-time"
+                },
+                "AcntId": {
+                    "type": "string",
+                    "description": "계정 ID"
+                },
+                "CharId": {
+                    "type": "string",
+                    "description": "캐릭터 ID"
+                },
+                "PosX": {
+                    "type": "number",
+                    "description": "캐릭터 X 위치"
+                },
+                "PosY": {
+                    "type": "number",
+                    "description": "캐릭터 Y 위치"
+                },
+                "PosZ": {
+                    "type": "number",
+                    "description": "캐릭터 Z 위치"
+                },
+                "ItemTypeId": {
+                    "type": "integer",
+                    "description": "아이템 타입 ID"
+                },
+                "ItemInstId": {
+                    "type": "integer",
+                    "description": "아이템 인스턴스 ID"
+                }
+            },
+            "required": ["DateTime", "AcntId", "CharId", "PosX", "PosY", "PosZ", "ItemTypeId", "ItemInstId"],
+            "additionalProperties": false
+        
+        },
+        "LeaveMap" : {
+      
+            "type": "object",
+            "properties": {
+                "Event": {"const": "LeaveMap"},
+                "DateTime": {
+                    "type": "string",
+                    "description": "이벤트 일시",
+                    "format": "date-time"
+                },
+                "AcntId": {
+                    "type": "string",
+                    "description": "계정 ID"
+                },
+                "CharId": {
+                    "type": "string",
+                    "description": "캐릭터 ID"
+                },
+                "PosX": {
+                    "type": "number",
+                    "description": "캐릭터 X 위치"
+                },
+                "PosY": {
+                    "type": "number",
+                    "description": "캐릭터 Y 위치"
+                },
+                "PosZ": {
+                    "type": "number",
+                    "description": "캐릭터 Z 위치"
+                }
+            },
+            "required": ["DateTime", "AcntId", "CharId", "PosX", "PosY", "PosZ"],
+            "additionalProperties": false
+        
+        },
+        "EnterMap" : {
+      
+            "type": "object",
+            "properties": {
+                "Event": {"const": "EnterMap"},
+                "DateTime": {
+                    "type": "string",
+                    "description": "이벤트 일시",
+                    "format": "date-time"
+                },
+                "AcntId": {
+                    "type": "string",
+                    "description": "계정 ID"
+                },
+                "CharId": {
+                    "type": "string",
+                    "description": "캐릭터 ID"
+                },
+                "PosX": {
+                    "type": "number",
+                    "description": "캐릭터 X 위치"
+                },
+                "PosY": {
+                    "type": "number",
+                    "description": "캐릭터 Y 위치"
+                },
+                "PosZ": {
+                    "type": "number",
+                    "description": "캐릭터 Z 위치"
+                }
+            },
+            "required": ["DateTime", "AcntId", "CharId", "PosX", "PosY", "PosZ"],
+            "additionalProperties": false
+        }
+    },
+    "items": {
+        "oneOf": [
+            {"$ref": "#/$defs/Login"},
+            {"$ref": "#/$defs/Logout"},
+            {"$ref": "#/$defs/CharLogin"},
+            {"$ref": "#/$defs/CharLogout"},
+            {"$ref": "#/$defs/KillMonster"},
+            {"$ref": "#/$defs/MonsterDropItem"},
+            {"$ref": "#/$defs/ItemGet"},
+            {"$ref": "#/$defs/LeaveMap"},
+            {"$ref": "#/$defs/EnterMap"}
+        ]
+    }
+}
+    

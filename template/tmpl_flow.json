@@ -1,0 +1,95 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://github.com/haje01/loglab/flow.schema.json",
+    "title": "Flow",
+    "description": "Loglab flow file",
+    "type": "object",
+    "$defs": {
+        "events": {
+            "enum": [
+                {% for event in events %}
+                "{{ event }}"{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ]
+        },
+        "fields": {
+            "enum": [
+                {% for field in fields %}
+                "{{ field }}"{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ]
+        },
+        "step-body": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {"$ref": "#/$defs/events"},
+                    {"$ref": "#/$defs/spawn-body"},
+                    {"$ref": "#/$defs/sample-body"}
+                ]
+            }
+        },
+        "spawn-body": {
+            "type": "object",
+            "properties": {
+                "spawn_id": {"$ref": "#/$defs/fields"},
+                "spawn_cnt": {"type": "integer"},
+                "repeat": {"type": "integer"},
+                "steps": {"$ref": "#/$defs/step-body"}
+            }
+        },
+        "spawn-weight": {
+            "allOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "weight": {"type": "integer"}
+                    },
+                    "required": ["weight"]
+                },
+                {"$ref": "#/$defs/spawn-body"}
+            ]
+        },
+        "sample-weight": {
+            "allOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "weight": {"type": "integer"}
+                    },
+                    "required": ["weight"]
+                },
+                {"$ref": "#/$defs/sample-body"}
+            ]
+        },
+        "sample-body": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {"$ref": "#/$defs/spawn-weight"},
+                    {"$ref": "#/$defs/sample-weight"}
+                ]
+            }
+        },
+        "heads": {
+
+        }
+    },
+    "properties": {
+        "$schema": {
+            "type": "string",
+            "description": "Schema URI"
+        },
+        "labfile": {
+            "const": "{{ labfile }}",
+            "description": "랩파일 경로"
+        },
+        "flow": {
+            "oneOf": [
+                {"$ref": "#/$defs/spawn-body"},
+                {"$ref": "#/$defs/sample-body"}
+            ]
+        }
+    },
+    "additionalProperties": false
+}

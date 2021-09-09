@@ -1,0 +1,129 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://github.com/haje01/loglab/flow.schema.json",
+    "title": "Flow",
+    "description": "Loglab flow file",
+    "type": "object",
+    "$defs": {
+        "events": {
+            "enum": [
+                
+                "Login",
+                
+                "Logout",
+                
+                "CharLogin",
+                
+                "CharLogout",
+                
+                "KillMonster",
+                
+                "MonsterDropItem",
+                
+                "ItemGet",
+                
+                "LeaveMap",
+                
+                "EnterMap"
+                
+            ]
+        },
+        "fields": {
+            "enum": [
+                
+                "MonsterTypeId",
+                
+                "PlayTime",
+                
+                "AcntId",
+                
+                "CharId",
+                
+                "ItemInstId",
+                
+                "PosZ",
+                
+                "MonsterInstId",
+                
+                "PosX",
+                
+                "PosY",
+                
+                "ItemTypeId"
+                
+            ]
+        },
+        "step-body": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {"$ref": "#/$defs/events"},
+                    {"$ref": "#/$defs/spawn-body"},
+                    {"$ref": "#/$defs/sample-body"}
+                ]
+            }
+        },
+        "spawn-body": {
+            "type": "object",
+            "properties": {
+                "spawn_id": {"$ref": "#/$defs/fields"},
+                "spawn_cnt": {"type": "integer"},
+                "repeat": {"type": "integer"},
+                "steps": {"$ref": "#/$defs/step-body"}
+            }
+        },
+        "spawn-weight": {
+            "allOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "weight": {"type": "integer"}
+                    },
+                    "required": ["weight"]
+                },
+                {"$ref": "#/$defs/spawn-body"}
+            ]
+        },
+        "sample-weight": {
+            "allOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "weight": {"type": "integer"}
+                    },
+                    "required": ["weight"]
+                },
+                {"$ref": "#/$defs/sample-body"}
+            ]
+        },
+        "sample-body": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {"$ref": "#/$defs/spawn-weight"},
+                    {"$ref": "#/$defs/sample-weight"}
+                ]
+            }
+        },
+        "heads": {
+
+        }
+    },
+    "properties": {
+        "$schema": {
+            "type": "string",
+            "description": "Schema URI"
+        },
+        "labfile": {
+            "const": "/mnt/e/works/loglab/sample/foo.lab.json",
+            "description": "랩파일 경로"
+        },
+        "flow": {
+            "oneOf": [
+                {"$ref": "#/$defs/spawn-body"},
+                {"$ref": "#/$defs/sample-body"}
+            ]
+        }
+    },
+    "additionalProperties": false
+}

@@ -6,11 +6,13 @@ from glob import glob
 import click
 
 from loglab.doc import text_from_labfile
-from loglab.schema import verify_labfile, json_schema_from_labfile
+from loglab.schema import verify_labfile, log_schema_from_labfile,\
+    flow_schema_from_labfile
 
 
 _global_options = [
-    click.option('--labfile', '-l', 'labfile', help='사용할 랩파일의 위치를 명시적으로 지정'),
+    click.option('--labfile', '-l', 'labfile',
+                 help='사용할 랩파일의 위치를 명시적으로 지정'),
 ]
 
 
@@ -37,11 +39,11 @@ def find_labfile(labfile, print_msg=True):
     if num_labs == 1:
         return through(labs[0], print_msg)
     elif num_labs == 0:
-        print(f"Error: 현재 디렉토리에 랩파일이 없습니다. 새 랩파일을 "\
-            "만들거나, 사용할 랩파일을 명시적으로 지정해 주세요.")
+        print("Error: 현재 디렉토리에 랩파일이 없습니다. 새 랩파일을 "
+              "만들거나, 사용할 랩파일을 명시적으로 지정해 주세요.")
     else:
-        print(f"Error: 현재 디렉토리에 랩파일이 하나 이상 있습니다. "\
-            "사용할 랩파일을 명시적으로 지정해 주세요.")
+        print("Error: 현재 디렉토리에 랩파일이 하나 이상 있습니다. "
+              "사용할 랩파일을 명시적으로 지정해 주세요.")
     sys.exit(1)
 
 
@@ -64,17 +66,26 @@ def doc(labfile):
 def dummy(labfile):
     """가짜 로그 생성."""
     labfile = find_labfile(labfile)
-    labjs = verify_labfile(labfile)
+    verify_labfile(labfile)
     click.echo("Generate Dummy Log Events")
 
 
 @cli.command()
 @global_options
 def schema(labfile):
-    """로그용 JSON 스키마 생성."""
+    """로그 및 플로우 파일용 스키마 생성."""
     labfile = find_labfile(labfile)
     labjs = verify_labfile(labfile)
-    print(json_schema_from_labfile(labjs))
+    prj_dir = os.path.dirname(labfile)
+    prj_name = labjs['domain']['name']
+    log_scm_path = os.path.join(prj_dir, prj_name + ".log.schema.json")
+    print(f"'{log_scm_path} 에 로그 스키마 저장.")
+    with open(log_scm_path, 'wt') as f:
+        f.write(log_schema_from_labfile(labjs))
+    flow_scm_path = os.path.join(prj_dir, prj_name + ".flow.schema.json")
+    print(f"'{flow_scm_path} 에 플로우 스키마 저장.")
+    with open(flow_scm_path, 'wt') as f:
+        f.write(flow_schema_from_labfile(labfile, labjs))
 
 
 @cli.command()
@@ -82,7 +93,7 @@ def schema(labfile):
 def verify(labfile):
     """생성된 로그 파일 검증."""
     labfile = find_labfile(labfile)
-    labjs = verify_labfile(labfile)
+    verify_labfile(labfile)
     click.echo("Verify Log Format.")
 
 

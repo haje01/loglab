@@ -1,9 +1,10 @@
 """랩파일에서 로그용 JSON 스키마 생성."""
 import os
 import json
+from jinja2.loaders import PackageLoader
 
 from jsonschema import validate
-from jinja2 import Environment, BaseLoader
+from jinja2 import Environment, FileSystemLoader
 
 from loglab.util import AttrDict, load_file_from, LOGLAB_HOME,\
     fields_from_entity
@@ -32,11 +33,11 @@ def verify_labfile(lab_path, scm_path=None):
     return labjs
 
 
-def json_schema_from_labfile(labjs):
-    """랩파일 데이터에서 JSON 스키마 생성.
+def log_schema_from_labfile(labjs):
+    """랩파일 데이터에서 로그용 JSON 스키마 생성.
 
     Args:
-        labjs (dict): 랩파일 내용
+        labjs (dict): 랩파일 데이터
 
     """
     lab = AttrDict(labjs)
@@ -97,3 +98,34 @@ def json_schema_from_labfile(labjs):
     }}
 }}
     '''
+
+
+def flow_schema_from_labfile(labfile, labjs):
+    """랩파일 데이터에서 플로우 JSON 스키마 생성.
+
+    Args:
+        labfile (str): 랩파일 경로
+        labjs (dict): 랩파일 데이터
+
+    """
+    def _collect(fields, group):
+        for k, v in group.items():
+            if 'fields' in v:
+                fields |= set([f[0] for f in v['fields']])
+
+    def _collect_all_fields(labjs):
+        fields = set()
+        if 'bases' in labjs:
+            _collect(fields, labjs['bases'])
+        if 'events' in labjs:
+            _collect(fields, labjs['events'])
+        return fields
+
+    events = list(labjs['events'].keys())
+    fields = _collect_all_fields(labjs)
+    tmpl_path = os.path.join(LOGLAB_HOME, "template")
+    loader = FileSystemLoader(tmpl_path)
+    env = Environment(loader=loader)
+    tmpl = env.get_template("tmpl_flow.json")
+    return tmpl.render(labfile=labfile, events=events, fields=fields)
+
