@@ -233,6 +233,7 @@ Description : 계정 로그인
 ```js
 {
   // 생략
+
   "events": {
     "Login": {
       "desc": "계정 로그인",
@@ -288,6 +289,7 @@ Description : 계정 로그인
 ```js
 {
   // 생략
+
   "bases": {
     "Account": {
       "desc": "계정 이벤트",
@@ -354,8 +356,11 @@ Description : 계정 로그인
 ```js
 {
   // 생략
+
   "bases": {
+
     // 생략
+
     "Server": {
       "desc": "서버 이벤트",
       "fields": [
@@ -363,6 +368,7 @@ Description : 계정 로그인
       ]
     }
   },
+
   // 생략
 }
 ```
@@ -372,6 +378,7 @@ Description : 계정 로그인
 ```js
 {
   // 생략
+
   "events": {
     "Login": {
       "desc": "계정 로그인",
@@ -418,6 +425,7 @@ Description : 계정 로그인
 ```js
 {
   // 생략
+
   "bases": {
     "Server": {
       "desc": "서버 이벤트",
@@ -487,6 +495,7 @@ Description : 계정 로그인
 ```js
 {
   // 생략
+
   "bases": {
     "Server": {
       "desc": "서버 요소",
@@ -591,6 +600,7 @@ Description : 캐릭터 로그인
 ```js
 {
     // 생략
+
     "Logout": {
       "desc": "계정 로그인",
       "mixins": ["bases.Account"],
@@ -598,6 +608,7 @@ Description : 캐릭터 로그인
         ["PlayTime", "number", "플레이 시간 (초)", true]
       ]
     },
+
     // 생략
 }
 ```
@@ -625,11 +636,12 @@ Description : 계정 로그인
 
 ### 몬스터와 아이템
 
-좀 더 실제 게임과 가깝게 하기 위해 몬스터와 아이템 관련 이벤트도 추가하겠다. 먼저, 다음과 같은 베이스를 추가한다.
+좀 더 실제 게임과 가깝게 하기 위해 몬스터와 아이템 관련 이벤트도 만들겠다. 먼저, 다음과 같은 베이스를 추가한다.
 
 ```js
 {
     // 생략
+
     "Position": {
       "desc": "맵상의 위치 요소",
       "fields": [
@@ -646,6 +658,7 @@ Description : 계정 로그인
         ["MonInstId", "integer", "몬스터 인스턴스 ID"]
       ]
     }
+
     // 생략
 }
 ```
@@ -657,6 +670,7 @@ Description : 계정 로그인
 ```js
 {
     // 생략
+
     "KillMonster": {
       "desc": "몬스터를 잡음",
       "mixins": ["bases.Character", "bases.Position", "bases.Monster"],
@@ -692,6 +706,7 @@ Description : 몬스터를 잡음
 ```js
 {
     // 생략
+
     "Item": {
       "desc": "아이템 요소",
       "fields": [
@@ -699,6 +714,7 @@ Description : 몬스터를 잡음
         ["ItemInstId", "integer", "아이템 인스턴스 ID"]
       ]
     }
+
     // 생략
 }
 ```
@@ -710,6 +726,7 @@ Description : 몬스터를 잡음
 ```js
 {
     // 생략
+
     "MonsterDropItem": {
       "desc": "몬스터가 아이템을 떨어뜨림",
       "mixins": ["bases.Monster", "bases.Position", "bases.Item"]
@@ -737,10 +754,11 @@ Description : 몬스터가 아이템을 떨어뜨림
 +------------+----------+--------------------+
 ```
 
-캐릭터의 아이템 습득도 간단히 만들 수 있다.
+캐릭터의 아이템 습득 이벤트도 간단히 만들 수 있다.
 ```js
 {
     // 생략
+
     "GetItem": {
       "desc": "캐릭터의 아이템 습득",
       "mixins": ["bases.Character", "bases.Position", "bases.Item"]
@@ -771,10 +789,9 @@ Description : 캐릭터의 아이템 습득
 
 ## 필드값의 제약
 
+지금까지 필드를 만들 때 이용했던 타입 정보로는 충분히 실제 로그의 특성을 반영하지 못할 수 있다. 예를 들어 `ServerNo` 필드의 경우 단순히 정수가 아닌 0 이상의 정수가 와야할 것이다. 이렇게 필드에 대한 좀 더 세분화된 정보를 더하는 것을 **필드값을 제약(restrict)** 한다고 하겠다.
 
-지금까지 필드를 만들 때 이용했던 타입 정보로는 충분히 실제 로그의 특성을 반영하지 못할 수 있다. 예를 들어 `ServerNo` 필드의 경우 단순히 정수가 아닌 0 이상의 정수가 와야할 것이다. 이렇게 필드에 대한 좀 더 세분화된 정보를 더하는 것을 **필드값을 제약(restrict)** 한다고 표현한다.
-
-> 필드값의 제약은 뒤에 나올 로그 검증 및 더미 로그 생성에 요긴하게 사용된다.
+> 필드값의 제약 정보는 뒤에 나올 로그 검증 및 더미 로그 생성에 요긴하게 사용된다.
 
 필드값을 제약하기 위해서는 `fields` 항목에서 지금까지 사용하던 리스트 요소 방식은 사용할 수 없고, 아래와 같은 오브젝트 방식으로 기술해야 한다.
 

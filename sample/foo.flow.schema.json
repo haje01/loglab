@@ -31,25 +31,25 @@
         "fields": {
             "enum": [
                 
-                "ItemInstId",
-                
-                "CharId",
-                
-                "MonsterInstId",
-                
-                "PlayTime",
+                "PosY",
                 
                 "PosZ",
                 
-                "AcntId",
+                "ItemInstId",
                 
-                "MonsterTypeId",
+                "ItemTypeId",
                 
                 "PosX",
                 
-                "PosY",
+                "MonsterTypeId",
                 
-                "ItemTypeId"
+                "PlayTime",
+                
+                "CharId",
+                
+                "AcntId",
+                
+                "MonsterInstId"
                 
             ]
         },
