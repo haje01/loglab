@@ -26,12 +26,20 @@ def text_from_labfile(root):
 
     """
     out = StringIO()
-    headers = ['Property', 'Type', 'Description', 'Optional']
+
+    # 도메인
+    if 'domain' in root:
+        out.write('\n')
+        out.write("Domain : {}\n".format(root['domain']['name']))
+        if 'desc' in root['domain']:
+            out.write("Description : {}\n".format(root['domain']['desc']))
+
+    headers = ['Field', 'Type', 'Description', 'Optional']
     # 각 이벤트별로
     for ename, ebody in root['events'].items():
         out.write('\n')
         out.write("Event : {}\n".format(ename))
-        out.write("Description: {}\n".format(ebody['desc']))
+        out.write("Description : {}\n".format(ebody['desc']))
         rows = []
         fields = fields_from_entity(root, ebody, field_cb=_jsonify)
         for k, v in fields.items():

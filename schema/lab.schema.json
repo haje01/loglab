@@ -77,5 +77,6 @@
             "$ref": "#/$defs/entity-body"
         }
     },
+    "required": ["events"],
     "additionalProperties": false
   }

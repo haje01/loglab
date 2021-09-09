@@ -8,6 +8,7 @@ import click
 from loglab.doc import text_from_labfile
 from loglab.schema import verify_labfile, log_schema_from_labfile,\
     flow_schema_from_labfile
+from loglab.version import VERSION
 
 
 _global_options = [
@@ -50,6 +51,13 @@ def find_labfile(labfile, print_msg=True):
 @click.group()
 def cli():
     pass
+
+
+@cli.command()
+@global_options
+def version(labfile):
+    """로그랩 버전 표시."""
+    print(VERSION)
 
 
 @cli.command()
