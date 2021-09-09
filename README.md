@@ -208,14 +208,14 @@ Description : 계정 로그인
 }}
 ```
 
-> 지금 부터는 공간을 아끼기 위해 출력/JSON 내용의 맥락상 동일한 부분은 **생략** 하도록 하겠다.
+> 지금 부터는 공간을 아끼기 위해 출력/JSON 내용의 맥락상 동일한 부분은 `...` 표시 후 생략하도록 하겠다.
 
 
 이제 `doc` 명령을 내려보면:
 
 ```
 $ loglab doc
-# 생략
+# ...
 
 Event : Login
 Description : 계정 로그인
@@ -235,7 +235,7 @@ Description : 계정 로그인
 
 ```js
 {
-  // 생략
+  // ...
 
   "events": {
     "Login": {
@@ -258,7 +258,7 @@ Description : 계정 로그인
 
 ```
 $ loglab doc
-# 생략
+# ...
 
 Event : Login
 Description : 계정 로그인
@@ -291,7 +291,7 @@ Description : 계정 로그인
 
 ```js
 {
-  // 생략
+  // ...
 
   "bases": {
     "Account": {
@@ -323,7 +323,7 @@ Description : 계정 로그인
 
 ```
 $ loglab doc
-# 생략
+# ...
 
 Event : Login
 Description : 계정 로그인
@@ -359,11 +359,11 @@ Description : 계정 로그인
 
 ```js
 {
-  // 생략
+  // ...
 
   "bases": {
 
-    // 생략
+    // ...
 
     "Server": {
       "desc": "서버 이벤트",
@@ -373,7 +373,7 @@ Description : 계정 로그인
     }
   },
 
-  // 생략
+  // ...
 }
 ```
 
@@ -381,7 +381,7 @@ Description : 계정 로그인
 
 ```js
 {
-  // 생략
+  // ...
 
   "events": {
     "Login": {
@@ -400,7 +400,7 @@ Description : 계정 로그인
 
 ```
 $ loglab doc
-# 생략
+# ...
 
 Event : Login
 Description : 계정 로그인
@@ -428,7 +428,7 @@ Description : 계정 로그인
 
 ```js
 {
-  // 생략
+  // ...
 
   "bases": {
     "Server": {
@@ -470,21 +470,21 @@ Description : 계정 로그인
 
  ```js
  {
-    // 생략
+    // ...
 
     "Login": {
       "desc": "계정 로그인",
       "mixins": ["bases.Server", "bases.Account"]
     },
 
-    // 생략
+    // ...
  ```
 
  `doc` 결과는 다음과 같다:
 
 ```
 $ loglab doc
-# 생략
+# ...
 
 Event : Login
 Description : 계정 로그인
@@ -496,7 +496,7 @@ Description : 계정 로그인
 | AcntId   | integer  | 계정 ID       |
 +----------+----------+---------------+
 
-# 생략
+# ...
 ```
 
 > 만약 믹스인과  `fields` 에서 같은 이름의 필드가 등장한다면 `fields` 의 것이 선택된다.
@@ -510,11 +510,11 @@ Description : 계정 로그인
 
 ```js
 {
-  // 생략
+  // ...
 
   "bases": {
 
-    // 생략
+    // ...
 
     "Character": {
       "desc": "캐릭터 요소",
@@ -525,7 +525,7 @@ Description : 계정 로그인
     }
   },
 
-  // 생략
+  // ...
 }
 ```
 
@@ -533,11 +533,11 @@ Description : 계정 로그인
 
 ```js
 {
-  // 생략
+  // ...
 
   "events": {
 
-    // 생략
+    // ...
 
     "CharLogin": {
       "desc": "캐릭터 로그인",
@@ -555,7 +555,7 @@ Description : 계정 로그인
 
 ```
 $ loglab doc
-# 생략
+# ...
 
 Event : Login
 Description : 계정 로그인
@@ -611,11 +611,11 @@ Description : 캐릭터 로그인
 
 ```js
 {
-    // 생략
+    // ...
 
   "events": {
 
-    // 생략
+    // ...
 
     "Logout": {
       "desc": "계정 로그인",
@@ -625,7 +625,7 @@ Description : 캐릭터 로그인
       ]
     },
 
-    // 생략
+    // ...
 }
 ```
 
@@ -633,7 +633,7 @@ Description : 캐릭터 로그인
 
 ```
 $ loglab doc
-# 생략
+# ...
 
 Event : Logout
 Description : 계정 로그인
@@ -646,7 +646,7 @@ Description : 계정 로그인
 | PlayTime | number   | 플레이 시간 (초) | true       |
 +----------+----------+------------------+------------+
 
-# 생략
+# ...
 ```
 
 지금까지 없던 `Optional` 컬럼이 보이고 `PlayTime` 필드만이 `true`로 표시된다.
@@ -657,11 +657,11 @@ Description : 계정 로그인
 
 ```js
 {
-  // 생략
+  // ...
 
   "bases": {
 
-    // 생략
+    // ...
 
     "Position": {
       "desc": "맵상의 위치 요소",
@@ -680,7 +680,7 @@ Description : 계정 로그인
       ]
     }
 
-    // 생략
+    // ...
 }
 ```
 
@@ -691,11 +691,11 @@ Description : 계정 로그인
 ```js
 {
 
-  // 생략
+  // ...
 
   "events": {
 
-    // 생략
+    // ...
 
     "KillMonster": {
       "desc": "몬스터를 잡음",
@@ -707,7 +707,7 @@ Description : 계정 로그인
 아래는 `doc` 의 결과이다:
 ```
 $ loglab doc
-# 생략
+# ...
 
 Event : KillMonster
 Description : 몬스터를 잡음
@@ -726,7 +726,7 @@ Description : 몬스터를 잡음
 | MonInstId | integer  | 몬스터 인스턴스 ID |
 +-----------+----------+--------------------+
 
-# 생략
+# ...
 ```
 
 
@@ -736,11 +736,11 @@ Description : 몬스터를 잡음
 
 ```js
 {
-  // 생략
+  // ...
 
   "bases": {
 
-    // 생략
+    // ...
 
     "Item": {
       "desc": "아이템 요소",
@@ -750,7 +750,7 @@ Description : 몬스터를 잡음
       ]
     }
 
-    // 생략
+    // ...
 }
 ```
 
@@ -760,11 +760,11 @@ Description : 몬스터를 잡음
 
 ```js
 {
-  // 생략
+  // ...
 
   "events": {
 
-    // 생략
+    // ...
 
     "MonsterDropItem": {
       "desc": "몬스터가 아이템을 떨어뜨림",
@@ -777,7 +777,7 @@ Description : 몬스터를 잡음
 
 ```
 $ loglab doc
-# 생략
+# ...
 
 Event : MonsterDropItem
 Description : 몬스터가 아이템을 떨어뜨림
@@ -795,17 +795,17 @@ Description : 몬스터가 아이템을 떨어뜨림
 | ItemInstId | integer  | 아이템 인스턴스 ID |
 +------------+----------+--------------------+
 
-# 생략
+# ...
 ```
 
 캐릭터의 아이템 습득 이벤트도 간단히 만들 수 있다.
 ```js
 {
-  // 생략
+  // ...
 
   "events": {
 
-    // 생략
+    // ...
 
     "GetItem": {
       "desc": "캐릭터의 아이템 습득",
@@ -818,7 +818,7 @@ Description : 몬스터가 아이템을 떨어뜨림
 
 ```
 $ loglab doc
-# 생략
+# ...
 
 Event : GetItem
 Description : 캐릭터의 아이템 습득
@@ -837,7 +837,7 @@ Description : 캐릭터의 아이템 습득
 | ItemInstId | integer  | 아이템 인스턴스 ID |
 +------------+----------+--------------------+
 
-# 생략
+# ...
 ```
 
 ## 필드값의 제약
