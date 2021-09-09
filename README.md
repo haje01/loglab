@@ -462,10 +462,10 @@ Description : 계정 로그인
  믹스인은 `mixin` 리스트에 등장하는 순서대로 수행된다. 이것을 이용하면 특정 필드의 순서를 조정하거나 타입을 덮어쓸 수 있다. 예를 들어 위 예에서 `ServerNo` 필드가 `AcntId` 보다 먼저 나오게 하고 싶다면 `mixin` 리스트에 다음과 같이 바꿔주면 된다.
 
  ```js
-         "Login": {
-       "desc": "계정 로그인",
-       "mixins": ["bases.Server", "bases.Account"]
-     },
+    "Login": {
+      "desc": "계정 로그인",
+      "mixins": ["bases.Server", "bases.Account"]
+    },
  ```
 
 ```
@@ -597,7 +597,7 @@ Description : 캐릭터 로그인
 {
     // 생략
 
-        "Logout": {
+    "Logout": {
       "desc": "계정 로그인",
       "mixins": ["bases.Account"],
       "fields": [
@@ -664,7 +664,7 @@ Description : 계정 로그인
 ```js
 {
     // 생략
-        "KillMonster": {
+    "KillMonster": {
       "desc": "몬스터를 잡음",
       "mixins": ["bases.Character", "bases.Position", "bases.Monster"],
     }
@@ -699,7 +699,7 @@ Description : 몬스터를 잡음
 ```js
 {
     // 생략
-        "Item": {
+    "Item": {
       "desc": "아이템 요소",
       "fields": [
         ["ItemTypeId", "integer", "아이템 타입 ID"],
@@ -717,7 +717,7 @@ Description : 몬스터를 잡음
 ```js
 {
     // 생략
-        "MonsterDropItem": {
+    "MonsterDropItem": {
       "desc": "몬스터가 아이템을 떨어뜨림",
       "mixins": ["bases.Monster", "bases.Position", "bases.Item"]
     }
@@ -748,7 +748,7 @@ Description : 몬스터가 아이템을 떨어뜨림
 ```js
 {
     // 생략
-        "GetItem": {
+    "GetItem": {
       "desc": "캐릭터의 아이템 습득",
       "mixins": ["bases.Character", "bases.Position", "bases.Item"]
     }
