@@ -321,7 +321,8 @@ Description : 계정 로그인
 
 이렇게 하면 각 이벤트는 `Account` 의 필드를 가져다 쓰게 되는 것이다. `doc` 명령으로 확인하면:
 
-```$ loglab doc
+```
+$ loglab doc
 # 생략
 
 Event : Login
@@ -423,7 +424,7 @@ Description : 계정 로그인
 ```
 
 
-만약 서비스에서 계정에 관한 이벤트가 항상 서버 단위로 일어난다면, 계정 이벤트에 서버 이벤트를 포함해 더 간단히 만들 수 있다:
+만약 서비스에서 계정에 관한 이벤트가 항상 서버 단위로 일어난다면, 계정 베이스에 서버 베이스를 포함해 더 간단히 만들 수 있다:
 
 ```js
 {
@@ -468,13 +469,23 @@ Description : 계정 로그인
  믹스인은 `mixin` 리스트에 등장하는 순서대로 수행된다. 이것을 이용하면 특정 필드의 순서를 조정하거나 타입을 덮어쓸 수 있다. 예를 들어 위 예에서 `ServerNo` 필드가 `AcntId` 보다 먼저 나오게 하고 싶다면 `mixin` 리스트에 다음과 같이 바꿔주면 된다.
 
  ```js
+ {
+    // 생략
+
     "Login": {
       "desc": "계정 로그인",
       "mixins": ["bases.Server", "bases.Account"]
     },
+
+    // 생략
  ```
 
+ `doc` 결과는 다음과 같다:
+
 ```
+$ loglab doc
+# 생략
+
 Event : Login
 Description : 계정 로그인
 +----------+----------+---------------+
@@ -484,6 +495,8 @@ Description : 계정 로그인
 | ServerNo | integer  | 서버 번호     |
 | AcntId   | integer  | 계정 ID       |
 +----------+----------+---------------+
+
+# 생략
 ```
 
 > 만약 믹스인과  `fields` 에서 같은 이름의 필드가 등장한다면 `fields` 의 것이 선택된다.
@@ -493,26 +506,16 @@ Description : 계정 로그인
 
 게임에서 실제 플레이를 하는 것은 게임이 속한 캐릭터이다. 이에 캐릭터 관련 이벤트를 추가해보겠다.
 
-한 계정은 하나 이상의 캐릭터를 소유하고 선택하여 플레이할 수 있기에, 캐릭터의 로그인/아웃 이벤트를 다음과 같이 추가한다:
+한 계정은 하나 이상의 캐릭터를 소유하고 선택하여 플레이할 수 있기에 먼저 다음과 같은 `Character` 베이스를 추가한다.
 
 ```js
 {
   // 생략
 
   "bases": {
-    "Server": {
-      "desc": "서버 요소",
-      "fields": [
-        ["ServerNo", "integer", "서버 번호"]
-      ]
-    },
-    "Account": {
-      "desc": "계정 요소",
-      "mixins": ["bases.Server"],
-      "fields": [
-        ["AcntId", "integer", "계정 ID"]
-      ]
-    },
+
+    // 생략
+
     "Character": {
       "desc": "캐릭터 요소",
       "mixins": ["bases.Account"],
@@ -521,15 +524,21 @@ Description : 계정 로그인
       ]
     }
   },
+
+  // 생략
+}
+```
+
+이후 캐릭터의 로그인/아웃 이벤트를 다음과 같이 추가한다:
+
+```js
+{
+  // 생략
+
   "events": {
-    "Login": {
-      "desc": "계정 로그인",
-      "mixins": ["bases.Account"]
-    },
-    "Logout": {
-      "desc": "계정 로그인",
-      "mixins": ["bases.Account"]
-    },
+
+    // 생략
+
     "CharLogin": {
       "desc": "캐릭터 로그인",
       "mixins": ["bases.Character"]
@@ -604,6 +613,10 @@ Description : 캐릭터 로그인
 {
     // 생략
 
+  "events": {
+
+    // 생략
+
     "Logout": {
       "desc": "계정 로그인",
       "mixins": ["bases.Account"],
@@ -619,6 +632,7 @@ Description : 캐릭터 로그인
 `doc` 명령으로 보면 아래와 같다:
 
 ```
+$ loglab doc
 # 생략
 
 Event : Logout
@@ -643,6 +657,10 @@ Description : 계정 로그인
 
 ```js
 {
+  // 생략
+
+  "bases": {
+
     // 생략
 
     "Position": {
@@ -672,6 +690,11 @@ Description : 계정 로그인
 
 ```js
 {
+
+  // 생략
+
+  "events": {
+
     // 생략
 
     "KillMonster": {
@@ -683,6 +706,9 @@ Description : 계정 로그인
 
 아래는 `doc` 의 결과이다:
 ```
+$ loglab doc
+# 생략
+
 Event : KillMonster
 Description : 몬스터를 잡음
 +-----------+----------+--------------------+
@@ -699,6 +725,8 @@ Description : 몬스터를 잡음
 | MonTypeId | integer  | 몬스터 타입 ID     |
 | MonInstId | integer  | 몬스터 인스턴스 ID |
 +-----------+----------+--------------------+
+
+# 생략
 ```
 
 
@@ -708,6 +736,10 @@ Description : 몬스터를 잡음
 
 ```js
 {
+  // 생략
+
+  "bases": {
+
     // 생략
 
     "Item": {
@@ -728,6 +760,10 @@ Description : 몬스터를 잡음
 
 ```js
 {
+  // 생략
+
+  "events": {
+
     // 생략
 
     "MonsterDropItem": {
@@ -740,6 +776,9 @@ Description : 몬스터를 잡음
 몬스터가 주체이기에 지금까지와는 달리 계정이나 캐릭터 베이스가 없다. 대신 몬스터 개체의 정보가 먼저 나오도록 믹스인 순서를 조정하였다.  `doc` 의 결과는 다음과 같다:
 
 ```
+$ loglab doc
+# 생략
+
 Event : MonsterDropItem
 Description : 몬스터가 아이템을 떨어뜨림
 +------------+----------+--------------------+
@@ -755,11 +794,17 @@ Description : 몬스터가 아이템을 떨어뜨림
 | ItemTypeId | integer  | 아이템 타입 ID     |
 | ItemInstId | integer  | 아이템 인스턴스 ID |
 +------------+----------+--------------------+
+
+# 생략
 ```
 
 캐릭터의 아이템 습득 이벤트도 간단히 만들 수 있다.
 ```js
 {
+  // 생략
+
+  "events": {
+
     // 생략
 
     "GetItem": {
@@ -772,6 +817,9 @@ Description : 몬스터가 아이템을 떨어뜨림
 `doc` 의 결과는 아래와 같다:
 
 ```
+$ loglab doc
+# 생략
+
 Event : GetItem
 Description : 캐릭터의 아이템 습득
 +------------+----------+--------------------+
@@ -788,6 +836,8 @@ Description : 캐릭터의 아이템 습득
 | ItemTypeId | integer  | 아이템 타입 ID     |
 | ItemInstId | integer  | 아이템 인스턴스 ID |
 +------------+----------+--------------------+
+
+# 생략
 ```
 
 ## 필드값의 제약
