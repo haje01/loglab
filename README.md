@@ -212,7 +212,7 @@ Description : 계정 로그인
 
 ```
 $ loglab doc
-[생략]
+# 생략
 
 Event : Login
 Description : 계정 로그인
@@ -232,7 +232,7 @@ Description : 계정 로그인
 
 ```json
 {
-    [생략]
+    // 생략
 
 	"events": {
 		"Login": {
@@ -255,7 +255,7 @@ Description : 계정 로그인
 
 ```
 $ loglab doc
-[생략]
+# 생략
 
 Event : Login
 Description : 계정 로그인
@@ -288,7 +288,7 @@ Description : 계정 로그인
 
 ```json
 {
-	[생략]
+	// 생략
 
 	"bases": {
 		"Account": {
@@ -319,7 +319,7 @@ Description : 계정 로그인
 이렇게 하면 각 이벤트는 `Account` 의 필드를 가져다 쓰게 되는 것이다. `doc` 명령으로 확인하면:
 
 ```$ loglab doc
-[생략]
+# 생략
 
 Event : Login
 Description : 계정 로그인
@@ -355,10 +355,10 @@ Description : 계정 로그인
 
 ```json
 {
-	[생략]
+	// 생략
 
 	"bases": {
-    	[생략]
+    	// 생략
 		"Server": {
 			"desc": "서버 이벤트",
 			"fields": [
@@ -367,7 +367,7 @@ Description : 계정 로그인
 		}
 	},
 
-[생략]
+// 생략
 }
 ```
 
@@ -375,7 +375,7 @@ Description : 계정 로그인
 
 ```json
 {
-    [생략]
+    // 생략
 	"events": {
 		"Login": {
 			"desc": "계정 로그인",
@@ -393,7 +393,7 @@ Description : 계정 로그인
 
 ```
 $ loglab doc
-[생략]
+# 생략
 
 Event : Login
 Description : 계정 로그인
@@ -421,7 +421,7 @@ Description : 계정 로그인
 
 ```json
 {
-	[생략]
+	// 생략
 
 	"bases": {
 		"Server": {
@@ -491,7 +491,7 @@ Description : 계정 로그인
 
 ```json
 {
-	[생략]
+	// 생략
 	"bases": {
 		"Server": {
 			"desc": "서버 요소",
@@ -539,7 +539,7 @@ Description : 계정 로그인
 
 ```
 $ loglab doc
-[생략]
+# 생략
 
 Event : Login
 Description : 계정 로그인
@@ -595,7 +595,7 @@ Description : 캐릭터 로그인
 
 ```json
 {
-    [생략]
+    // 생략
 
         "Logout": {
 			"desc": "계정 로그인",
@@ -605,14 +605,14 @@ Description : 캐릭터 로그인
 			]
 		},
 
-    [생략]
+    // 생략
 }
 ```
 
 `doc` 명령으로 보면 아래와 같다:
 
 ```
-[생략]
+# 생략
 
 Event : Logout
 Description : 계정 로그인
@@ -625,7 +625,7 @@ Description : 계정 로그인
 | PlayTime | number   | 플레이 시간 (초) | true       |
 +----------+----------+------------------+------------+
 
-[생략]
+# 생략
 ```
 
 지금까지 없던 `Optional` 컬럼이 보이고 `PlayTime` 필드만이 `true`로 표시된다.
@@ -636,7 +636,7 @@ Description : 계정 로그인
 
 ```json
 {
-    [생략]
+    // 생략
 		"Position": {
 			"desc": "맵상의 위치 요소",
 			"fields": [
@@ -653,7 +653,7 @@ Description : 계정 로그인
 				["MonInstId", "integer", "몬스터 인스턴스 ID"]
 			]
 		}
-    [생략]
+    // 생략
 }
 ```
 
@@ -661,11 +661,14 @@ Description : 계정 로그인
 
 아래는 몬스터를 잡은 경우 이벤트이다:
 
-```
+```json
+{
+    // 생략
         "KillMonster": {
 			"desc": "몬스터를 잡음",
 			"mixins": ["bases.Character", "bases.Position", "bases.Monster"],
 		}
+}
 ```
 
 아래는 `doc` 의 결과이다:
@@ -695,7 +698,7 @@ Description : 몬스터를 잡음
 
 ```json
 {
-    [생략]
+    // 생략
         "Item": {
 			"desc": "아이템 요소",
 			"fields": [
@@ -703,7 +706,7 @@ Description : 몬스터를 잡음
 				["ItemInstId", "integer", "아이템 인스턴스 ID"]
 			]
 		}
-    [생략]
+    // 생략
 }
 ```
 
@@ -713,7 +716,7 @@ Description : 몬스터를 잡음
 
 ```json
 {
-    [생략]
+    // 생략
         "MonsterDropItem": {
 			"desc": "몬스터가 아이템을 떨어뜨림",
 			"mixins": ["bases.Monster", "bases.Position", "bases.Item"]
@@ -744,7 +747,7 @@ Description : 몬스터가 아이템을 떨어뜨림
 캐릭터의 아이템 습득도 간단히 만들 수 있다.
 ```json
 {
-    [생략]
+    // 생략
         "GetItem": {
 			"desc": "캐릭터의 아이템 습득",
 			"mixins": ["bases.Character", "bases.Position", "bases.Item"]
