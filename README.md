@@ -232,8 +232,7 @@ Description : 계정 로그인
 
 ```js
 {
-    // 생략
-
+  // 생략
   "events": {
     "Login": {
       "desc": "계정 로그인",
@@ -289,7 +288,6 @@ Description : 계정 로그인
 ```js
 {
   // 생략
-
   "bases": {
     "Account": {
       "desc": "계정 이벤트",
@@ -356,9 +354,8 @@ Description : 계정 로그인
 ```js
 {
   // 생략
-
   "bases": {
-      // 생략
+    // 생략
     "Server": {
       "desc": "서버 이벤트",
       "fields": [
@@ -366,8 +363,7 @@ Description : 계정 로그인
       ]
     }
   },
-
-// 생략
+  // 생략
 }
 ```
 
@@ -375,7 +371,7 @@ Description : 계정 로그인
 
 ```js
 {
-    // 생략
+  // 생략
   "events": {
     "Login": {
       "desc": "계정 로그인",
@@ -422,7 +418,6 @@ Description : 계정 로그인
 ```js
 {
   // 생략
-
   "bases": {
     "Server": {
       "desc": "서버 이벤트",
@@ -596,7 +591,6 @@ Description : 캐릭터 로그인
 ```js
 {
     // 생략
-
     "Logout": {
       "desc": "계정 로그인",
       "mixins": ["bases.Account"],
@@ -604,7 +598,6 @@ Description : 캐릭터 로그인
         ["PlayTime", "number", "플레이 시간 (초)", true]
       ]
     },
-
     // 생략
 }
 ```
