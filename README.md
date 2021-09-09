@@ -57,11 +57,11 @@ $ loglab version
 
 ```js
 {
-	"events": {
-		"Login": {
-			"desc": "계정 로그인"
-		}
-	}
+  "events": {
+    "Login": {
+      "desc": "계정 로그인"
+    }
+  }
 }
 ```
 
@@ -125,12 +125,12 @@ Options:
 
 ```js
 {
-	"$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
-	"events": {
-		"Login": {
-			"desc": "계정 로그인."
-		}
-	}
+  "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
+  "events": {
+    "Login": {
+      "desc": "계정 로그인."
+    }
+  }
 }
 ```
 
@@ -140,15 +140,15 @@ Options:
 
 ```js
 {
-	"$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
-	"domain": {
-		"name": "foo",
-		"desc": "위대한 모바일 게임"
-	},
-	"events": {
-		"Login": {
-			"desc": "계정 로그인"
-		}
+  "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
+  "domain": {
+    "name": "foo",
+    "desc": "위대한 모바일 게임"
+  },
+  "events": {
+    "Login": {
+      "desc": "계정 로그인"
+    }
     }
 }
 ```
@@ -234,20 +234,20 @@ Description : 계정 로그인
 {
     // 생략
 
-	"events": {
-		"Login": {
-			"desc": "계정 로그인",
-			"fields": [
-				["AcntId", "integer", "계정 ID"]
-			]
-		},
-		"Logout": {
-			"desc": "계정 로그아웃",
-			"fields": [
-				["AcntId", "integer", "계정 ID"]
-			]
-		}
-	}
+  "events": {
+    "Login": {
+      "desc": "계정 로그인",
+      "fields": [
+        ["AcntId", "integer", "계정 ID"]
+      ]
+    },
+    "Logout": {
+      "desc": "계정 로그아웃",
+      "fields": [
+        ["AcntId", "integer", "계정 ID"]
+      ]
+    }
+  }
 }
 ```
 
@@ -288,26 +288,26 @@ Description : 계정 로그인
 
 ```js
 {
-	// 생략
+  // 생략
 
-	"bases": {
-		"Account": {
-			"desc": "계정 이벤트",
-			"fields": [
-				["AcntId", "integer", "계정 ID"]
-			]
-		}
-	},
-	"events": {
-		"Login": {
-			"desc": "계정 로그인",
-			"mixins": ["bases.Account"]
-		},
-		"Logout": {
-			"desc": "계정 로그인",
-			"mixins": ["bases.Account"]
-		}
-	}
+  "bases": {
+    "Account": {
+      "desc": "계정 이벤트",
+      "fields": [
+        ["AcntId", "integer", "계정 ID"]
+      ]
+    }
+  },
+  "events": {
+    "Login": {
+      "desc": "계정 로그인",
+      "mixins": ["bases.Account"]
+    },
+    "Logout": {
+      "desc": "계정 로그인",
+      "mixins": ["bases.Account"]
+    }
+  }
 }
 
 ```
@@ -355,17 +355,17 @@ Description : 계정 로그인
 
 ```js
 {
-	// 생략
+  // 생략
 
-	"bases": {
-    	// 생략
-		"Server": {
-			"desc": "서버 이벤트",
-			"fields": [
-				["ServerNo", "integer", "서버 번호"]
-			]
-		}
-	},
+  "bases": {
+      // 생략
+    "Server": {
+      "desc": "서버 이벤트",
+      "fields": [
+        ["ServerNo", "integer", "서버 번호"]
+      ]
+    }
+  },
 
 // 생략
 }
@@ -376,16 +376,16 @@ Description : 계정 로그인
 ```js
 {
     // 생략
-	"events": {
-		"Login": {
-			"desc": "계정 로그인",
-			"mixins": ["bases.Account", "bases.Server"]
-		},
-		"Logout": {
-			"desc": "계정 로그인",
-			"mixins": ["bases.Account", "bases.Server"]
-		}
-	}
+  "events": {
+    "Login": {
+      "desc": "계정 로그인",
+      "mixins": ["bases.Account", "bases.Server"]
+    },
+    "Logout": {
+      "desc": "계정 로그인",
+      "mixins": ["bases.Account", "bases.Server"]
+    }
+  }
 }
 ```
 
@@ -421,33 +421,33 @@ Description : 계정 로그인
 
 ```js
 {
-	// 생략
+  // 생략
 
-	"bases": {
-		"Server": {
-			"desc": "서버 이벤트",
-			"fields": [
-				["ServerNo", "integer", "서버 번호"]
-			]
-		},
+  "bases": {
+    "Server": {
+      "desc": "서버 이벤트",
+      "fields": [
+        ["ServerNo", "integer", "서버 번호"]
+      ]
+    },
         "Account": {
-			"desc": "계정 이벤트",
-			"mixins": ["bases.Server"],
-			"fields": [
-				["AcntId", "integer", "계정 ID"]
-			]
-		}
-	},
-	"events": {
-		"Login": {
-			"desc": "계정 로그인",
-			"mixins": ["bases.Account"]
-		},
-		"Logout": {
-			"desc": "계정 로그인",
-			"mixins": ["bases.Account"]
-		}
-	}
+      "desc": "계정 이벤트",
+      "mixins": ["bases.Server"],
+      "fields": [
+        ["AcntId", "integer", "계정 ID"]
+      ]
+    }
+  },
+  "events": {
+    "Login": {
+      "desc": "계정 로그인",
+      "mixins": ["bases.Account"]
+    },
+    "Logout": {
+      "desc": "계정 로그인",
+      "mixins": ["bases.Account"]
+    }
+  }
 }
 ```
 
@@ -463,9 +463,9 @@ Description : 계정 로그인
 
  ```js
          "Login": {
- 			"desc": "계정 로그인",
- 			"mixins": ["bases.Server", "bases.Account"]
- 		},
+       "desc": "계정 로그인",
+       "mixins": ["bases.Server", "bases.Account"]
+     },
  ```
 
 ```
@@ -491,47 +491,47 @@ Description : 계정 로그인
 
 ```js
 {
-	// 생략
-	"bases": {
-		"Server": {
-			"desc": "서버 요소",
-			"fields": [
-				["ServerNo", "integer", "서버 번호"]
-			]
-		},
-		"Account": {
-			"desc": "계정 요소",
-			"mixins": ["bases.Server"],
-			"fields": [
-				["AcntId", "integer", "계정 ID"]
-			]
-		},
-		"Character": {
-			"desc": "캐릭터 요소",
-			"mixins": ["bases.Account"],
-			"fields": [
-				["CharId", "integer", "캐릭터 ID"]
-			]
-		}
-	},
-	"events": {
-		"Login": {
-			"desc": "계정 로그인",
-			"mixins": ["bases.Account"]
-		},
-		"Logout": {
-			"desc": "계정 로그인",
-			"mixins": ["bases.Account"]
-		},
-		"CharLogin": {
-			"desc": "캐릭터 로그인",
-			"mixins": ["bases.Character"]
-		},
-		"CharLogout": {
-			"desc": "캐릭터 로그인",
-			"mixins": ["bases.Character"]
-		}
-	}
+  // 생략
+  "bases": {
+    "Server": {
+      "desc": "서버 요소",
+      "fields": [
+        ["ServerNo", "integer", "서버 번호"]
+      ]
+    },
+    "Account": {
+      "desc": "계정 요소",
+      "mixins": ["bases.Server"],
+      "fields": [
+        ["AcntId", "integer", "계정 ID"]
+      ]
+    },
+    "Character": {
+      "desc": "캐릭터 요소",
+      "mixins": ["bases.Account"],
+      "fields": [
+        ["CharId", "integer", "캐릭터 ID"]
+      ]
+    }
+  },
+  "events": {
+    "Login": {
+      "desc": "계정 로그인",
+      "mixins": ["bases.Account"]
+    },
+    "Logout": {
+      "desc": "계정 로그인",
+      "mixins": ["bases.Account"]
+    },
+    "CharLogin": {
+      "desc": "캐릭터 로그인",
+      "mixins": ["bases.Character"]
+    },
+    "CharLogout": {
+      "desc": "캐릭터 로그인",
+      "mixins": ["bases.Character"]
+    }
+  }
 }
 ```
 
@@ -598,12 +598,12 @@ Description : 캐릭터 로그인
     // 생략
 
         "Logout": {
-			"desc": "계정 로그인",
-			"mixins": ["bases.Account"],
-			"fields": [
-				["PlayTime", "number", "플레이 시간 (초)", true]
-			]
-		},
+      "desc": "계정 로그인",
+      "mixins": ["bases.Account"],
+      "fields": [
+        ["PlayTime", "number", "플레이 시간 (초)", true]
+      ]
+    },
 
     // 생략
 }
@@ -637,22 +637,22 @@ Description : 계정 로그인
 ```js
 {
     // 생략
-		"Position": {
-			"desc": "맵상의 위치 요소",
-			"fields": [
-				["MapNo", "integer", "맵 번호"],
-				["PosX", "number", "맵상 X 위치"],
-				["PosY", "number", "맵상 Y 위치"],
-				["PosZ", "number", "맵상 Z 위치"]
-			]
-		},
-		"Monster": {
-			"desc": "몬스터 요소",
-			"fields": [
-				["MonTypeId", "integer", "몬스터 타입 ID"],
-				["MonInstId", "integer", "몬스터 인스턴스 ID"]
-			]
-		}
+    "Position": {
+      "desc": "맵상의 위치 요소",
+      "fields": [
+        ["MapNo", "integer", "맵 번호"],
+        ["PosX", "number", "맵상 X 위치"],
+        ["PosY", "number", "맵상 Y 위치"],
+        ["PosZ", "number", "맵상 Z 위치"]
+      ]
+    },
+    "Monster": {
+      "desc": "몬스터 요소",
+      "fields": [
+        ["MonTypeId", "integer", "몬스터 타입 ID"],
+        ["MonInstId", "integer", "몬스터 인스턴스 ID"]
+      ]
+    }
     // 생략
 }
 ```
@@ -665,9 +665,9 @@ Description : 계정 로그인
 {
     // 생략
         "KillMonster": {
-			"desc": "몬스터를 잡음",
-			"mixins": ["bases.Character", "bases.Position", "bases.Monster"],
-		}
+      "desc": "몬스터를 잡음",
+      "mixins": ["bases.Character", "bases.Position", "bases.Monster"],
+    }
 }
 ```
 
@@ -700,12 +700,12 @@ Description : 몬스터를 잡음
 {
     // 생략
         "Item": {
-			"desc": "아이템 요소",
-			"fields": [
-				["ItemTypeId", "integer", "아이템 타입 ID"],
-				["ItemInstId", "integer", "아이템 인스턴스 ID"]
-			]
-		}
+      "desc": "아이템 요소",
+      "fields": [
+        ["ItemTypeId", "integer", "아이템 타입 ID"],
+        ["ItemInstId", "integer", "아이템 인스턴스 ID"]
+      ]
+    }
     // 생략
 }
 ```
@@ -718,9 +718,9 @@ Description : 몬스터를 잡음
 {
     // 생략
         "MonsterDropItem": {
-			"desc": "몬스터가 아이템을 떨어뜨림",
-			"mixins": ["bases.Monster", "bases.Position", "bases.Item"]
-		}
+      "desc": "몬스터가 아이템을 떨어뜨림",
+      "mixins": ["bases.Monster", "bases.Position", "bases.Item"]
+    }
 }
 ```
 
@@ -749,9 +749,9 @@ Description : 몬스터가 아이템을 떨어뜨림
 {
     // 생략
         "GetItem": {
-			"desc": "캐릭터의 아이템 습득",
-			"mixins": ["bases.Character", "bases.Position", "bases.Item"]
-		}
+      "desc": "캐릭터의 아이템 습득",
+      "mixins": ["bases.Character", "bases.Position", "bases.Item"]
+    }
 }
 ```
 
@@ -787,6 +787,10 @@ Description : 캐릭터의 아이템 습득
 
 ```js
 ```
+
+[TODO]
+
+## 로그 파일 검증
 
 [TODO]
 
