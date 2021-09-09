@@ -15,14 +15,14 @@ LogLab의 설치를 위해서는 최소 Python 3.6 이상이 필요하다. 설�
 
 LogLab 의 홈페이지는 https://github.com/haje01/loglab 이다. 다음과 같이 설치하자:
 
-```shell
+```
 $ git checkout https://github.com/haje01/loglab
 $ pip install -e .
 ```
 
 설치가 잘 되었다면 로그랩의 커맨드라인 툴 `loglab` 을 이용할 수 있다. 아래와 같이 입력해보자:
 
-```shell
+```
 $ loglab
 Usage: loglab [OPTIONS] COMMAND [ARGS]...
 
@@ -40,7 +40,7 @@ Commands:
 
 위에서 볼 수 있듯 `loglab` 에는 몇 가지 명령어가 있는데, 예제를 통해 하나씩 살펴보도록 하겠다. 여기서는 간단히 버전을 확인해보자:
 
-```shell
+```
 $ loglab version
 0.0.1
 ```
@@ -72,7 +72,7 @@ $ loglab version
 
 이제 작업 디텍토리에서 `doc` 명령을 내려보자:
 
-```shell
+```
 $ loglab doc
 
 [사용할 랩파일 : /home/ubuntu/loglab_test/foo.lab.json]
@@ -106,7 +106,7 @@ Error: 현재 디렉토리에 랩파일이 하나 이상 있습니다. 사용할
 
 다음처럼 `doc` 명령의 도움말을 출력해보자:
 
-```shell
+```
 $ loglab doc --help
 Usage: loglab doc [OPTIONS]
 
@@ -154,11 +154,13 @@ Options:
 ```
 
 > 스키마가 잘 동작한다면 아래와 같은 가이드를 볼 수 있을 것이다.
-> ![스키마 가이드](doc/guide.png)
+> ![스키마 가이드](image/guide.png)
 
 도메인 정보 추가 후 다시 `doc` 명령을 실행하면 아래와 같이 출력된다.
 
 ```
+[사용할 랩파일 : /home/ubuntu/loglab_test/foo.lab.json]
+
 Domain : foo
 Description : 위대한 모바일 게임
 
@@ -208,7 +210,7 @@ Description : 계정 로그인
 
 이제 `doc` 명령을 내려보면:
 
-```shell
+```
 $ loglab doc
 [생략]
 
@@ -251,7 +253,7 @@ Description : 계정 로그인
 
 `doc` 명령을 내려보면:
 
-```shell
+```
 $ loglab doc
 [생략]
 
