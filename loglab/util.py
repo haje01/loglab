@@ -87,8 +87,10 @@ def _explain_rest(f):
         if 'exclusiveMaximum' in f:
             xmax = f['exclusiveMaximum']
 
-        assert not(amin is not None and xmin is not None)
-        assert not(amax is not None and xmax is not None)
+        assert amin is None or xmin is None,\
+            'minimum 과 exclusiveMinimum 함께 사용 불가'
+        assert amax is None or xmax is None,\
+            'maximum 과 exclusiveMaximum 함께 사용 불가'
 
         stmts = []
         if amin is not None:
