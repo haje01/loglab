@@ -934,10 +934,11 @@ Description : 계정 로그인
   - `format` : 문자열의 기정의된 포맷
     - `date-time`, `date`, `email`, `hostname`, `ipv4`, `ipv6`, `uri` 중 하나
 
-추가적으로  `ServerNo` 를 100 미만으로 제약하고 싶다면 `maximum` 을 이용한다.
+추가적으로  `ServerNo` 를 100 미만으로 제약하고 싶다면 `exclusiveMaximum` 을 이용한다.
 
 ```js
 //...
+
   "bases": {
     "Server": {
       "desc": "서버 정보",
@@ -947,10 +948,11 @@ Description : 계정 로그인
                     "desc": "서버 번호",
                     "type": "integer",
                     "minimum": 1,
-                    "maximum": 99
+                    "exclusiveMaximum": 100
                 }
       ]
     },
+
 //...
 ```
 
@@ -962,24 +964,24 @@ $ loglab doc
 
 Event : Login
 Description : 계정 로그인
-+----------+----------+---------------+----------------+
-| Field    | Type     | Description   | Restrict       |
-|----------+----------+---------------+----------------|
-| DateTime | datetime | 이벤트 일시   |                |
-| ServerNo | integer  | 서버 번호     | 1 이상 99 이하 |
-| AcntId   | integer  | 계정 ID       |                |
-+----------+----------+---------------+----------------+
++----------+----------+-------------------+------------------------+
+| Field    | Type     | Description       | Restrict               |
+|----------+----------+-------------------+------------------------|
+| DateTime | datetime | 이벤트 일시       |                        |
+| ServerNo | integer  | 서버 번호         | 1 이상 100 미만        |
+| AcntId   | integer  | 계정 ID           | 1 이상                 |
++----------+----------+-------------------+------------------------+
 
 Event : Logout
 Description : 계정 로그인
-+----------+----------+------------------+------------+----------------+
-| Field    | Type     | Description      | Optional   | Restrict       |
-|----------+----------+------------------+------------+----------------|
-| DateTime | datetime | 이벤트 일시      |            |                |
-| ServerNo | integer  | 서버 번호        |            | 1 이상 99 이하 |
-| AcntId   | integer  | 계정 ID          |            |                |
-| PlayTime | number   | 플레이 시간 (초) | true       |                |
-+----------+----------+------------------+------------+----------------+
++----------+----------+------------------+------------+-----------------+
+| Field    | Type     | Description      | Optional   | Restrict        |
+|----------+----------+------------------+------------+-----------------|
+| DateTime | datetime | 이벤트 일시      |            |                 |
+| ServerNo | integer  | 서버 번호        |            | 1 이상 100 미만 |
+| AcntId   | integer  | 계정 ID          |            | 1 이상          |
+| PlayTime | number   | 플레이 시간 (초) | true       |                 |
++----------+----------+------------------+------------+-----------------+
 
 # ...
 ```
