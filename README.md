@@ -985,7 +985,7 @@ Description : 계정 로그인
 
 # ...
 ```
-`1 이상 99 이하` 로 제약이 표시된다.
+`1 이상 100 미만` 으로 제약이 표시된다.
 
 다른 ID 계열 필드들, 즉 `AcntId`, `CharId`, `MonTypeId`, `MonInstId`, `ItemTypeId`, `ItemInstId` 과 `MapNo` 에도 1 이상이 되도록 제약을 걸어주는 것은 과제로 남기겠다 (리스트 형식으로 필드를 기술할 때보다 꽤 번거롭다).
 
@@ -1031,7 +1031,7 @@ Description : 계정 로그인
 | Field    | Type     | Description       | Restrict               |
 |----------+----------+-------------------+------------------------|
 | DateTime | datetime | 이벤트 일시       |                        |
-| ServerNo | integer  | 서버 번호         | 1 에서 99 까지         |
+| ServerNo | integer  | 서버 번호         | 1 이상 100 미만        |
 | AcntId   | integer  | 계정 ID           | 1 이상                 |
 | Platform | string   | 디바이스의 플랫폼 | ['ios', 'aos'] 중 하나 |
 +----------+----------+-------------------+------------------------+
