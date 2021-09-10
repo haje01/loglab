@@ -6,20 +6,20 @@
     },
     "bases": {
         "AcntEvent": {
-            "desc": "계정 이벤트",
+            "desc": "계정 정보",
             "fields": [
                 ["AcntId", "string", "계정 ID"]
             ]
         },
         "CharEvent": {
-            "desc": "캐릭터 이벤트",
+            "desc": "캐릭터 정보",
             "mixins": ["bases.AcntEvent"],
             "fields": [
                 ["CharId", "string", "캐릭터 ID"]
             ]
         },
         "PosEvent": {
-            "desc": "위치 이벤트",
+            "desc": "위치 정보",
             "fields": [
                 ["PosX", "number", "캐릭터 X 위치"],
                 ["PosY", "number", "캐릭터 Y 위치"],
@@ -27,18 +27,18 @@
             ]
         },
         "CharPosEvent": {
-            "desc": "캐릭터 위치 이벤트",
+            "desc": "캐릭터 위치 정보",
             "mixins": ["bases.CharEvent", "bases.PosEvent"]
         },
         "ItemEvent": {
-            "desc": "아이템 이벤트",
+            "desc": "아이템 정보",
             "fields": [
                 ["ItemTypeId", "integer", "아이템 타입 ID"],
                 ["ItemInstId", "integer", "아이템 인스턴스 ID"]
             ]
         },
         "MonsterEvent": {
-            "desc": "몬스터 이벤트",
+            "desc": "몬스터 정보",
             "fields": [
                 ["MonsterTypeId", "integer", "몬스터 타입 ID"],
                 ["MonsterInstId", "integer", "몬스터 인스턴스 ID"]
