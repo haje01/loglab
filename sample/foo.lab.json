@@ -5,6 +5,22 @@
         "desc": "위대한 모바일 게임"
     },
     "bases": {
+        "Server": {
+            "desc": "서버 정보",
+            "fields": [
+                {
+                    "name": "ServerNo",
+                    "desc": "서버 번호",
+                    "type": "integer",
+                    "minimum": 1
+                },
+                {
+                    "name": "ServerType",
+                    "desc": "서버 타입",
+                    "enum": ["dev", "alpha", "live"]
+                }
+            ]
+        },
         "AcntEvent": {
             "desc": "계정 정보",
             "fields": [
