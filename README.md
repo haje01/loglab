@@ -35,7 +35,7 @@ LogLab(로그랩) 은 다양한 서비스를 위한 로그를 설계하고 활�
   - [필드값의 제약](#필드값의-제약)
     - [서버 번호에 제약 걸기](#서버-번호에-제약-걸기)
     - [디바이스 플랫폼 필드 추가하기](#디바이스-플랫폼-필드-추가하기)
-  - [로그 파일 검증](#로그-파일-검증)
+  - [로그 파일의 검증](#로그-파일의-검증)
   - [더미 로그의 생성](#더미-로그의-생성)
     - [플로우 만들기](#플로우-만들기)
 
@@ -921,12 +921,11 @@ Description : 계정 로그인
 
 참고로, 제약문은 필드의 타입별로 아래와 같은 것들이 있다.
 
-- `integer`
-  - `minimum` : 정수의 포함하는 최소값
-  - `maximum` : 정수의 포함하는 최대값
-- `number`
-  - `minimum` : 실수의 포함하는 최소값
-  - `maximum` : 실수의 포함하는 최대값
+- `integer` 또는 `number`
+  - `minimum` : 포함하는 최소값
+  - `maximum` : 포함하는 최대값
+  - `exclusiveMinimum` : 제외하는 최소값
+  - `maximum` : 제외하는 최대값
 - `string`
   - `enum` : 허용하는 문자열의 나열값
   - `minLength` : 문자열의 최소 길이
@@ -935,7 +934,7 @@ Description : 계정 로그인
   - `format` : 문자열의 기정의된 포맷
     - `date-time`, `date`, `email`, `hostname`, `ipv4`, `ipv6`, `uri` 중 하나
 
-만약 `ServerNo` 를 100 미만으로 제약하고 싶다면 `maximum` 을 이용한다.
+추가적으로  `ServerNo` 를 100 미만으로 제약하고 싶다면 `maximum` 을 이용한다.
 
 ```js
 //...
@@ -967,7 +966,7 @@ Description : 계정 로그인
 | Field    | Type     | Description   | Restrict       |
 |----------+----------+---------------+----------------|
 | DateTime | datetime | 이벤트 일시   |                |
-| ServerNo | integer  | 서버 번호     | 1 에서 99 까지 |
+| ServerNo | integer  | 서버 번호     | 1 이상 99 이하 |
 | AcntId   | integer  | 계정 ID       |                |
 +----------+----------+---------------+----------------+
 
@@ -977,16 +976,16 @@ Description : 계정 로그인
 | Field    | Type     | Description      | Optional   | Restrict       |
 |----------+----------+------------------+------------+----------------|
 | DateTime | datetime | 이벤트 일시      |            |                |
-| ServerNo | integer  | 서버 번호        |            | 1 에서 99 까지 |
+| ServerNo | integer  | 서버 번호        |            | 1 이상 99 이하 |
 | AcntId   | integer  | 계정 ID          |            |                |
 | PlayTime | number   | 플레이 시간 (초) | true       |                |
 +----------+----------+------------------+------------+----------------+
 
 # ...
 ```
-`1 에서 99 까지` 로 제약이 표시된다.
+`1 이상 99 이하` 로 제약이 표시된다.
 
-ID 계열 필드들, 즉 `AcntId`, `CharId`, `MonTypeId`, `MonInstId`, `ItemTypeId`, `ItemInstId` 과 `MapNo` 에도 모두 1 이상이 되도록 제약을 걸어주자 (리스트 형식으로 필드를 기술할 때보다 꽤 번거롭다).
+다른 ID 계열 필드들, 즉 `AcntId`, `CharId`, `MonTypeId`, `MonInstId`, `ItemTypeId`, `ItemInstId` 과 `MapNo` 에도 1 이상이 되도록 제약을 걸어주는 것은 과제로 남기겠다 (리스트 형식으로 필드를 기술할 때보다 꽤 번거롭다).
 
 ### 디바이스 플랫폼 필드 추가하기
 
@@ -1038,7 +1037,11 @@ Description : 계정 로그인
 # ...
 ```
 
-## 로그 파일 검증
+## 로그 파일의 검증
+
+
+`loglab` 의 `vaverify` 명령으로 실제 생성된 로그 파일이 설계한 것에 맞게 나왔는지 검증할 수 있다.
+
 
 [TODO]
 

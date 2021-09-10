@@ -77,18 +77,30 @@ def _explain_rest(f):
     exps = []
     atype = f['type']
     if atype in ('integer', 'number'):
-        amin = amax = None
+        amin = amax = xmin = xmax = None
         if 'minimum' in f:
             amin = f['minimum']
         if 'maximum' in f:
             amax = f['maximum']
+        if 'exclusiveMinimum' in f:
+            xmin = f['exclusiveMinimum']
+        if 'exclusiveMaximum' in f:
+            xmax = f['exclusiveMaximum']
 
-        if amin is not None and amax is not None:
-            exps.append(f"{amin} 에서 {amax} 까지")
-        elif amin is not None:
-            exps.append(f"{amin} 이상")
-        elif amax is not None:
-            exps.append(f"{amin} 이하")
+        assert not(amin is not None and xmin is not None)
+        assert not(amax is not None and xmax is not None)
+
+        stmts = []
+        if amin is not None:
+            stmts.append(f"{amin} 이상")
+        if xmin is not None:
+            stmts.append(f"{xmin} 초과")
+        if amax is not None:
+            stmts.append(f"{amax} 이하")
+        if xmax is not None:
+            stmts.append(f"{xmax} 미만")
+        if len(stmts) > 0:
+            exps.append(' '.join(stmts))
     elif atype == 'string':
         minl = maxl = enum = ptrn = fmt = None
         if 'minLength' in f:
@@ -102,12 +114,13 @@ def _explain_rest(f):
         if 'format' in f:
             fmt = f['format']
 
-        if minl is not None and maxl is not None:
-            exps.append(f"{minl} 자 이상 {minl}자 이하")
-        elif minl is not None:
-            exps.append(f"{minl} 자 이상")
-        elif maxl is not None:
-            exps.append(f"{maxl} 자 이하")
+        stmts = []
+        if minl is not None:
+            stmts.append(f"{minl} 자 이상")
+        if maxl is not None:
+            stmts.append(f"{maxl} 자 이하")
+        if len(stmts) > 0:
+            exps.append(' '.join(stmts))
 
         if enum is not None:
             exps.append(f"{enum} 중 하나")

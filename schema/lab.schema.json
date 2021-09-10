@@ -59,8 +59,15 @@
                         "maximum": {
                             "type": "integer",
                             "description": "포함하는 최대값"
+                        },
+                        "exclusiveMinimum": {
+                            "type": "integer",
+                            "description": "제외하는 최소값"
+                        },
+                        "exclusiveMaximum": {
+                            "type": "integer",
+                            "description": "제외하는 최대값"
                         }
-
                     },
                     "required": ["type"]
                 },
@@ -77,8 +84,15 @@
                         "maximum": {
                             "type": "number",
                             "description": "포함하는 최대값"
+                        },
+                        "exclusiveMinimum": {
+                            "type": "integer",
+                            "description": "제외하는 최소값"
+                        },
+                        "exclusiveMaximum": {
+                            "type": "integer",
+                            "description": "제외하는 최대값"
                         }
-
                     },
                     "required": ["type"]
                 }
