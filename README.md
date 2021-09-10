@@ -925,7 +925,7 @@ Description : 계정 로그인
   - `minimum` : 포함하는 최소값
   - `maximum` : 포함하는 최대값
   - `exclusiveMinimum` : 제외하는 최소값
-  - `maximum` : 제외하는 최대값
+  - `exclusiveMaximum` : 제외하는 최대값
 - `string`
   - `enum` : 허용하는 문자열의 나열값
   - `minLength` : 문자열의 최소 길이
