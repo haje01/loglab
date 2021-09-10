@@ -72,6 +72,52 @@ def _fields_from_mixins(root, mixins):
     return fields
 
 
+def _explain_rest(f):
+    """제약을 설명으로 변환."""
+    exps = []
+    atype = f['type']
+    if atype in ('integer', 'number'):
+        amin = amax = None
+        if 'minimum' in f:
+            amin = f['minimum']
+        if 'maximum' in f:
+            amax = f['maximum']
+
+        if amin is not None and amax is not None:
+            exps.append(f"{amin} 에서 {amax} 까지")
+        elif amin is not None:
+            exps.append(f"{amin} 이상")
+        elif amax is not None:
+            exps.append(f"{amin} 이하")
+    elif atype == 'string':
+        minl = maxl = enum = ptrn = fmt = None
+        if 'minLength' in f:
+            minl = f['minLength']
+        if 'maxLength' in f:
+            maxl = f['maxLength']
+        if 'enum' in f:
+            enum = f['enum']
+        if 'pattern' in f:
+            ptrn = f['pattern']
+        if 'format' in f:
+            fmt = f['format']
+
+        if minl is not None and maxl is not None:
+            exps.append(f"{minl} 자 이상 {minl}자 이하")
+        elif minl is not None:
+            exps.append(f"{minl} 자 이상")
+        elif maxl is not None:
+            exps.append(f"{maxl} 자 이하")
+
+        if enum is not None:
+            exps.append(f"{enum} 중 하나")
+        if ptrn is not None:
+            exps.append(f"정규식 {ptrn} 매칭")
+        if fmt is not None:
+            exps.append(f"{fmt} 형식")
+    return '\n'.join(exps)
+
+
 def fields_from_entity(root, entity, field_cb=None):
     """랩파일의 엔터티에서 필드 정보 얻기.
 
@@ -81,6 +127,12 @@ def fields_from_entity(root, entity, field_cb=None):
         field_cb (function): 필드값 변환 함수
 
     """
+    def _parse_field(f):
+        """사전형 필드 정보 파싱."""
+        opt = f['option'] if 'option' in f else None
+        rest = _explain_rest(f)
+        return [f['name'], f['type'], f['desc'], opt, rest]
+
     fields = _init_fields()
     # mixin 이 있으면 그것의 필드를 가져옴
     if 'mixins' in entity:
@@ -88,6 +140,9 @@ def fields_from_entity(root, entity, field_cb=None):
         fields.update(_fields)
     if 'fields' in entity:
         for f in entity['fields']:
+            # 사전형 필드 정보 파싱
+            if type(f) is dict:
+                f = _parse_field(f)
             if field_cb is not None:
                 fields[f[0]] = field_cb(f[1:])
             else:

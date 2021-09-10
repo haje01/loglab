@@ -29,6 +29,7 @@ setup(
         "jsonschema",
         'pyyaml',
         'jinja2',
+        'pandas',
         'tabulate',
     ],
     extras_require={

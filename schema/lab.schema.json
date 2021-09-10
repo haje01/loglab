@@ -111,6 +111,10 @@
                                     "desc": {
                                         "type": "string",
                                         "description": "필드 설명"
+                                    },
+                                    "option": {
+                                        "type": "boolean",
+                                        "description": "옵션 여부"
                                     }
                                 },
                                 "required": ["name", "desc"]
