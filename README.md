@@ -979,7 +979,7 @@ Description : 계정 로그인
 ```
 `1 에서 99 까지` 로 제약이 표시된다.
 
-ID 계열 필드들, 즉 `AcntId`, `CharId`, `MonTypeId`, `MonInstId`, `ItemTypeId`, `ItemInstId` 과 `MapNo` 에도 모두 1 이상이 되도록 제약을 걸어주자 (리스트 형식으로 필드를 기술할 때 보다 꽤 번거롭다).
+ID 계열 필드들, 즉 `AcntId`, `CharId`, `MonTypeId`, `MonInstId`, `ItemTypeId`, `ItemInstId` 과 `MapNo` 에도 모두 1 이상이 되도록 제약을 걸어주자 (리스트 형식으로 필드를 기술할 때보다 꽤 번거롭다).
 
 ### 디바이스 플랫폼 필드 추가하기
 
