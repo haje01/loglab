@@ -5,7 +5,7 @@ import json
 import pandas as pd
 from tabulate import tabulate
 
-from loglab.util import fields_from_entity
+from loglab.util import fields_from_entity, explain_rstr
 
 
 def _jsonify(vals):
@@ -31,21 +31,39 @@ def text_from_labfile(root):
     # 도메인
     if 'domain' in root:
         out.write('\n')
-        out.write("Domain : {}\n".format(root['domain']['name']))
+        out.write(f"Domain : {root['domain']['name']}\n")
         if 'desc' in root['domain']:
             out.write("Description : {}\n".format(root['domain']['desc']))
+
+    # 커스텀 타입
+    if 'types' in root:
+        out.write('\n')
+        for tname, tdef in root['types'].items():
+            out.write(f"Type: types.{tname}\n")
+            out.write(f"Description : {tdef['desc']}\n")
+            rstr = explain_rstr(tdef)
+            df = pd.DataFrame(dict(BaseType=[tdef['type']],
+                              Description=[tdef['desc']],
+                              Restrict=[rstr]))
+            df = df.set_index('BaseType')
+            tbl = tabulate(df, headers=df.reset_index().columns, tablefmt='psql')
+            out.write(tbl)
+            out.write('\n')
 
     headers = ['Field', 'Type', 'Description', 'Optional', 'Restrict']
     # 각 이벤트별로
     for ename, ebody in root['events'].items():
         out.write('\n')
-        out.write("Event : {}\n".format(ename))
-        out.write("Description : {}\n".format(ebody['desc']))
+        out.write(f"Event : {ename}\n")
+        out.write(f"Description : {ebody['desc']}\n")
 
         rows = []
         fields = fields_from_entity(root, ebody, field_cb=_jsonify)
         max_col = 0
         for k, v in fields.items():
+            # restrict 제거
+            if len(v) >= 5:
+                v = v[:4]
             if max_col < len(v) + 1:
                 max_col = len(v) + 1
             rows.append([k] + v)

@@ -5,10 +5,39 @@
     "description": "Loglab lab file",
     "type": "object",
     "$defs": {
-        "type-body": {
-            "enum": ["string", "integer", "number", "boolean", "datetime"]
+        "ref-type-body": {
+            "anyOf": [
+                {"enum": ["string", "integer", "number", "boolean", "datetime"]},
+                {
+                    "type": "string",
+                    "pattern": "^types\\.[a-zA-Z0-9_]+"
+                }
+            ]
         },
-        "type-rest-body": {
+        "dict-field-body": {
+            "allOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": "필드 이름"
+                        },
+                        "desc": {
+                            "type": "string",
+                            "description": "필드 설명"
+                        },
+                        "option": {
+                            "type": "boolean",
+                            "description": "옵션 여부"
+                        }
+                    },
+                    "required": ["name", "desc"]
+                },
+                {"$ref": "#/$defs/type-rstr-body"}
+            ]
+        },
+        "type-rstr-body": {
             "anyOf": [
                 {
                     "type": "object",
@@ -24,7 +53,10 @@
                             "type": "array",
                             "description": "허용하는 나열값",
                             "items": {
-                                "type": "string"
+                                "anyOf": [
+                                    {"type": "string"},
+                                    {"type": "integer"}
+                                ]
                             }
                         },
                         "minLength": {
@@ -106,36 +138,14 @@
                         "type": "array",
                         "items": [
                             {"type": "string"},
-                            {"$ref": "#/$defs/type-body"},
+                            {"$ref": "#/$defs/ref-type-body"},
                             {"type": "string"},
                             {"type": "boolean"}
                         ],
                         "minItems": 3,
                         "maxItems": 5
                     },
-                    {
-                        "allOf": [
-                            {
-                                "type": "object",
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "description": "필드 이름"
-                                    },
-                                    "desc": {
-                                        "type": "string",
-                                        "description": "필드 설명"
-                                    },
-                                    "option": {
-                                        "type": "boolean",
-                                        "description": "옵션 여부"
-                                    }
-                                },
-                                "required": ["name", "desc"]
-                            },
-                            {"$ref": "#/$defs/type-rest-body"}
-                        ]
-                    }
+                    {"$ref": "#/$defs/dict-field-body"}
                 ]
             }
         },
@@ -164,6 +174,27 @@
                 }
             },
             "additionalProperties": false
+        },
+        "type-body": {
+            "type": "object",
+            "patternProperties": {
+                "[a-z]+": {
+                    "allOf": [
+                        {
+                            "type": "object",
+                            "properties": {
+                                "desc": {
+                                    "type": "string",
+                                    "description": "타입 설명"
+                                }
+                            },
+                            "required": ["desc"]
+                        },
+                        {"$ref": "#/$defs/type-rstr-body"}
+                    ]
+                }
+            },
+            "additionalProperties": false
         }
     },
     "properties": {
@@ -185,6 +216,10 @@
                 }
             },
             "required": ["name"]
+        },
+        "types": {
+            "description": "커스텀 타입",
+            "$ref": "#/$defs/type-body"
         },
         "bases": {
             "description": "기본 엔터티",

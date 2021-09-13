@@ -139,12 +139,12 @@ def _fields_from_mixins(root, mixins):
     return fields
 
 
-def _explain_rstr(f):
+def explain_rstr(f):
     """제약을 설명으로 변환."""
     exps = []
     atype = f['type']
     if atype in ('integer', 'number'):
-        amin = amax = xmin = xmax = None
+        amin = amax = xmin = xmax = enum = None
         if 'minimum' in f:
             amin = f['minimum']
         if 'maximum' in f:
@@ -153,6 +153,8 @@ def _explain_rstr(f):
             xmin = f['exclusiveMinimum']
         if 'exclusiveMaximum' in f:
             xmax = f['exclusiveMaximum']
+        if 'enum' in f:
+            enum = f['enum']
 
         assert amin is None or xmin is None,\
             'minimum 과 exclusiveMinimum 함께 사용 불가'
@@ -168,6 +170,9 @@ def _explain_rstr(f):
             stmts.append(f"{amax} 이하")
         if xmax is not None:
             stmts.append(f"{xmax} 미만")
+        if enum is not None:
+            exps.append(f"{enum} 중 하나")
+
         if len(stmts) > 0:
             exps.append(' '.join(stmts))
     elif atype == 'string':
@@ -212,7 +217,7 @@ def fields_from_entity(root, entity, field_cb=None):
     def _parse_field(f):
         """사전형 필드 정보 파싱."""
         opt = f['option'] if 'option' in f else None
-        exrstr = _explain_rstr(f)
+        exrstr = explain_rstr(f)
         name = f['name']
         atype = f['type']
         desc = f['desc']

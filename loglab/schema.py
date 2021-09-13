@@ -44,6 +44,18 @@ def log_schema_from_labfile(labjs):
         labjs (dict): 랩파일 데이터
 
     """
+    def _resolve_type(typ, v):
+        elms = typ.split('.')
+        assert len(elms) == 2, f"잘못된 형식의 타입입니다: {typ}"
+        tname = elms[1]
+        assert tname in labjs['types'].keys(), \
+            f"정의되지 않은 타입입니다: {typ}"
+        tdef = labjs['types'][tname]
+        if len(v) == 2:
+            v.append(None)
+        v = [tdef['type'], v[1], v[2], None, tdef]
+        return v
+
     lab = AttrDict(labjs)
     events = []
     items = []
@@ -54,7 +66,8 @@ def log_schema_from_labfile(labjs):
         reqs = []
         props = [f'"Event": {{"const": "{ename}"}}']
         for k, v in fields.items():
-            if v[0] == "datetime":
+            typ = v[0]
+            if typ == "datetime":
                 prop = f"""
                 "{k}": {{
                     "type": "string",
@@ -62,8 +75,10 @@ def log_schema_from_labfile(labjs):
                     "format": "date-time"
                 }}"""
             else:
+                if 'types' in typ:
+                    v = _resolve_type(typ, v)
                 finfo = {
-                    "type": v[0],
+                    "type": typ,
                     "description": v[1]
                 }
                 if len(v) == 5:
