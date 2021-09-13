@@ -1085,13 +1085,13 @@ $ loglab schema
 
 두 가지 스키마가 저장되는데, 하나는 **로그 스키마 (*.log.schema.json)** 이며 다른 하나는 **플로우 스키마 (*.flow.schema.json)** 이다. 로그 스키마는 실제 로그를 검증하는데 사용하고, 플로우 스키마는 더미 로그를 설계할 때 사용하는데 나중에 다룰 것이다.
 
-> 만약 로그 스키마가 다른 경로에 있다면 아래와 같이 `verify` 명령의 옵셩으로 지정할 수 있다.
+> 만약, 생성한 로그 스키마가 다른 디렉토리에 있다면 아래와 같이 `verify` 명령의 `-s` 옵셩으로 지정할 수 있다.
 > ```
 > $ loglab verify fakelog.txt -s /path/to/schema
 > ```
 
 
-스키마 생성 후 다시 `verify` 명령을 이용하면 검증을 수행한다.
+스키마 생성 후 다시 `verify` 명령으로 검증을 수행한다.
 
 ```
 $ loglab verify fakelog.txt
@@ -1119,7 +1119,7 @@ Error: [Line: 1] 'win' is not one of ['ios', 'aos']
 {'DateTime': '2021-08-13T20:20:39+09:00', 'Event': 'Login', 'ServerNo': 1, 'AcntId': 1000, 'Platform': 'win'}
 ```
 
-`ios` 또는 `aos` 만 허용한다는 에러가 나온다. 끝으로 `win` 을 `ios` 로 고치고 다시 해보자.
+이번에는 `ios` 또는 `aos` 만 허용한다는 에러가 나온다. 끝으로 `win` 을 `ios` 로 고치고 다시 해보자.
 
 ```
 $ loglab verify fakelog.txt
@@ -1127,9 +1127,7 @@ $ loglab verify fakelog.txt
 [사용할 스키마 파일 : /home/ubuntu/loglab_test/foo.log.schema.json]
 ```
 
-검증이 문제없이 성공하였다. 이 경우 아무런 메시지가 나오지 않는다.
-
-[TODO]
+검증이 문제없이 성공하였다. 이런 경우 아무런 메시지가 나오지 않는다.
 
 ## 더미 로그의 생성
 
