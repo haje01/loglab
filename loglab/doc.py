@@ -39,7 +39,7 @@ def text_from_labfile(root):
     if 'types' in root:
         out.write('\n')
         for tname, tdef in root['types'].items():
-            out.write(f"Type: types.{tname}\n")
+            out.write(f"Type : types.{tname}\n")
             out.write(f"Description : {tdef['desc']}\n")
             rstr = explain_rstr(tdef)
             df = pd.DataFrame(dict(BaseType=[tdef['type']],

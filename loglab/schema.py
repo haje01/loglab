@@ -84,7 +84,7 @@ def log_schema_from_labfile(labjs):
                 if len(v) == 5:
                     for rk, rv in v[4].items():
                         finfo[rk] = rv
-                body = json.dumps(finfo, ensure_ascii = False)
+                body = json.dumps(finfo, ensure_ascii=False)
                 prop = f"""
                 "{k}": {body}"""
             if len(v) <= 2 or v[2] in (False, None):

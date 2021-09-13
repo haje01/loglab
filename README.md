@@ -686,7 +686,7 @@ Description : 계정 로그인
     "Position": {
       "desc": "맵상의 위치 정보",
       "fields": [
-        ["MapNo", "integer", "맵 번호"],
+        ["MapId", "integer", "맵 번호"],
         ["PosX", "number", "맵상 X 위치"],
         ["PosY", "number", "맵상 Y 위치"],
         ["PosZ", "number", "맵상 Z 위치"]
@@ -737,7 +737,7 @@ Description : 몬스터를 잡음
 | ServerNo  | integer  | 서버 번호          |
 | AcntId    | integer  | 계정 ID            |
 | CharId    | integer  | 캐릭터 ID          |
-| MapNo     | integer  | 맵 번호            |
+| MapId     | integer  | 맵 번호            |
 | PosX      | number   | 맵상 X 위치        |
 | PosY      | number   | 맵상 Y 위치        |
 | PosZ      | number   | 맵상 Z 위치        |
@@ -748,7 +748,7 @@ Description : 몬스터를 잡음
 # ...
 ```
 
-믹스인한 베이스의 정보, 즉 계정 및 캐릭터, 지도상의 위치, 몬스터 개체에 관한 정보들이 잘 결합된 것을 확인할 수 있다. 이런 식으로 베이스를 잘 설계하고 그것을 믹스인하는 것 만으로도, 복잡한 로그 이벤트를 쉽게 만들 수 있다.
+믹스인한 베이스의 정보, 즉 계정 및 캐릭터, 지도상의 위치, 몬스터 개체에 관한 정보들이 잘 결합된 것을 확인할 수 있다. 이런 식으로 베이스를 잘 설계하고 그것을 믹스인하는 것 만으로, 복잡한 로그 이벤트를 쉽게 만들 수 있다.
 
 이제 아이템 관련 베이스를 추가해보자.
 
@@ -803,7 +803,7 @@ Description : 몬스터가 아이템을 떨어뜨림
 | DateTime   | datetime | 이벤트 일시        |
 | MonTypeId  | integer  | 몬스터 타입 ID     |
 | MonInstId  | integer  | 몬스터 인스턴스 ID |
-| MapNo      | integer  | 맵 번호            |
+| MapId      | integer  | 맵 번호            |
 | PosX       | number   | 맵상 X 위치        |
 | PosY       | number   | 맵상 Y 위치        |
 | PosZ       | number   | 맵상 Z 위치        |
@@ -846,7 +846,7 @@ Description : 캐릭터의 아이템 습득
 | ServerNo   | integer  | 서버 번호          |
 | AcntId     | integer  | 계정 ID            |
 | CharId     | integer  | 캐릭터 ID          |
-| MapNo      | integer  | 맵 번호            |
+| MapId      | integer  | 맵 번호            |
 | PosX       | number   | 맵상 X 위치        |
 | PosY       | number   | 맵상 Y 위치        |
 | PosZ       | number   | 맵상 Z 위치        |
@@ -990,7 +990,7 @@ Description : 계정 로그인
 ```
 `1 이상 100 미만` 으로 제약이 표시된다.
 
-예제에서 나온 ID 계열 필드들, 즉 `AcntId`, `CharId`, `MonTypeId`, `MonInstId`, `ItemTypeId`, `ItemInstId` 과 `MapNo` 등 에도 0 이상이 되도록 제약을 걸어주면 좋겠다. 그러나, 반복적인 제약을 매번 걸어주는 것은 상당히 번거롭다. 이에 커스텀 타입을 이용하는 방법을 소개하겠다.
+예제에서 나온 ID 계열 필드들, 즉 `AcntId`, `CharId`, `MonTypeId`, `MonInstId`, `ItemTypeId`, `ItemInstId` 과 `MapId` 등 에도 0 이상이 되도록 제약을 걸어주면 좋겠다. 그러나, 반복적인 제약을 매번 걸어주는 것은 상당히 번거롭다. 이에 커스텀 타입을 이용하는 방법을 소개하겠다.
 
 ### 커스텀 타입
 
@@ -1033,7 +1033,7 @@ Description : 계정 로그인
 }
 ```
 
-이제 `CharId`, `MonTypeId`, `MonInstId`, `ItemTypeId`, `ItemInstId` 과 `MapNo` 에 모두 `types.Id` 를 적용하여 간단히 제약을 걸 수 있다.
+이제 `CharId`, `MonTypeId`, `MonInstId`, `ItemTypeId`, `ItemInstId` 과 `MapId` 에 모두 `types.Id` 를 적용하여 간단히 제약을 걸 수 있다.
 
 ```js
 {

@@ -29,8 +29,7 @@ def cli():
 
 
 @cli.command()
-@global_options
-def version(labfile):
+def version():
     """로그랩 버전 표시."""
     print(VERSION)
 
