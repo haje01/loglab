@@ -860,7 +860,7 @@ Description : 캐릭터의 아이템 습득
 
 지금까지 필드를 만들 때 사용했던 타입 정보만으로는 실제 로그의 특성을 충분히 반영하지 못할 수 있다. 예를 들어 `Server` 베이스의 `ServerNo` 필드의 경우, 단순히 정수가 아닌 1 이상의 정수가 와야 할 것이다. 이렇게 필드의 값에 관해 더 세분화된 정보를 지정하는 것을 **필드값을 제약(restrict)** 한다고 하겠다.
 
-> 필드값의 제약은 로그 설계 측면에서 꼭 필요한 것은 아니지만, 뒤에 나올 로그 검증 및 더미 로그 생성 기능을 이용하려면 필요하다.
+> 필드값의 제약은 로그 설계 측면에서 꼭 필요한 것은 아니지만, 뒤에 나올 로그 검증 및 더미 로그 생성 기능을 이용할 때 유용하다.
 
 ### 서버 번호에 제약 걸기
 
@@ -944,12 +944,12 @@ Description : 계정 로그인
       "desc": "서버 정보",
       "fields": [
         {
-                    "name": "ServerNo",
-                    "desc": "서버 번호",
-                    "type": "integer",
-                    "minimum": 1,
-                    "exclusiveMaximum": 100
-                }
+          "name": "ServerNo",
+          "desc": "서버 번호",
+          "type": "integer",
+          "minimum": 1,
+          "exclusiveMaximum": 100
+        }
       ]
     },
 
@@ -1004,14 +1004,14 @@ Description : 계정 로그인
       "desc": "계정 로그인",
       "mixins": ["bases.Account"],
       "fields": [
-          {
-              "name": "Platform",
-              "desc": "디바이스의 플랫폼",
-              "type": "string",
-              "enum": [
-                  "ios", "aos"
-              ]
-          }
+        {
+          "name": "Platform",
+          "desc": "디바이스의 플랫폼",
+          "type": "string",
+          "enum": [
+              "ios", "aos"
+          ]
+        }
       ]
     },
 
