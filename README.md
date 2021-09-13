@@ -1038,12 +1038,96 @@ Description : 계정 로그인
 
 # ...
 ```
-
+****
 ## 로그 파일의 검증
 
+지금까지 설계된 로그의 정보를 이용하여 실제 로그를 검증할 수 있다. `loglab` 의 `verify` 명령으로 검증할 수 있는데, 먼저 도움말을 살펴보자.
 
-`loglab` 의 `vaverify` 명령으로 실제 생성된 로그 파일이 설계한 것에 맞게 나왔는지 검증할 수 있다.
+```
+$ loglab verify --help
+Usage: loglab verify [OPTIONS] LOGFILE
 
+  생성된 로그 파일 검증.
+
+Options:
+  -l, --labfile TEXT  사용할 랩파일의 위치를 명시적으로 지정
+  -s, --schema TEXT   로그 스키마 경로
+  --help              Show this message and exit.
+```
+
+`verify` 명령은 생성된 로그 파일의 경로(`LOGFILE`)를 필요로 하는 것을 알 수 있다.
+
+예제에서는 실제 서비스가 없기에, 테스트를 위해 다음과 같은 가상의 로그를 편집기로 만들고 `fakelog.txt` 파일로 저장하자.
+
+```js
+{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "Login", "ServerNo": 1, "AcntId": 1000}
+{"DateTime": "2021-08-13T20:21:01+09:00", "Event": "Logout", "ServerNo": 1, "AcntId": 1000}
+```
+
+> 한 줄씩 남기는 로그의 특성상, 한 라인 한 라인이 유효한 JSON 객체가 되어야 한다. 이런 형식을 [JSON Lines](https://jsonlines.org/) 라고 한다. 자세한 것은 링크를 참조하자.
+
+이제 로그 검증을 위해 다음과 같은 명령을 내리면, 생각하지 못했던 에러가 발생한다.
+
+```
+$ loglab verify fakelog.txt
+[사용할 랩파일 : /home/ubuntu/loglab_test/foo.lab.json]
+Error: 로그 스키마를 찾을 수 없습니다. schema 명령으로 생성하거나, 스키마의 경로를 옵션으로 지정하세요.
+```
+
+`verify` 명령은 로그 파일을 검증하기 위해 JSON 스키마 형식의 로그 스키마를 필요로 하는데, 그것을 찾을 수 없다는 것이다. 다음과 같이 `schema` 명령으로 지금까지 작성한 랩파일에서 JSON 로그 스키마를 만들수 있다.
+
+```
+$ loglab schema
+[사용할 랩파일 : /home/ubuntu/loglab_test/foo.lab.json]
+'/home/ubuntu/loglab_test/foo.log.schema.json 에 로그 스키마 저장.
+'/home/ubuntu/loglab_test/foo.flow.schema.json 에 플로우 스키마 저장.
+```
+
+두 가지 스키마가 저장되는데, 하나는 **로그 스키마** 이며 다른 하나는 **플로우 스키마** 이다. 로그 스키마는 실제 로그를 검증하는데 사용하고, 플로우 스키마는 더미 로그를 설계할 때 사용하는데 나중에 다룰 것이다.
+
+> 만약 로그 스키마가 다른 경로에 있다면 아래와 같이 `verify` 명령의 옵셩으로 지정할 수 있다.
+> ```
+> $ loglab verify fakelog.txt -s /path/to/schema
+> ```
+
+
+스키마 생성 후 다시 `verify` 명령을 이용하면 검증을 수행한다.
+
+```
+$ loglab verify fakelog.txt
+# ...
+
+[사용할 스키마 파일 : /home/ubuntu/loglab_test/foo.log.schema.json]
+Error: [Line: 1] 'Platform' is a required property
+{'DateTime': '2021-08-13T20:20:39+09:00', 'Event': 'Login', 'ServerNo': 1, 'AcntId': 1000}
+```
+
+`fakelog.txt` 의 첫 번째 줄의 `Login` 이벤트에서 필수인 `Platform` 필드가 빠졌기 때문에 에러가 발생한다. 다음과 같이 수정한다.
+
+```js
+{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "Login", "ServerNo": 1, "AcntId": 1000, "Platform": "win"}
+{"DateTime": "2021-08-13T20:21:01+09:00", "Event": "Logout", "ServerNo": 1, "AcntId": 1000}
+```
+
+의도적으로 잘못된 플랫폼값인 `win` 을 설정했다. 다시 `verify` 해보면,
+
+```
+$ loglab verify fakelog.txt
+[사용할 랩파일 : /home/ubuntu/loglab_test/foo.lab.json]
+[사용할 스키마 파일 : /home/ubuntu/loglab_test/foo.log.schema.json]
+Error: [Line: 1] 'win' is not one of ['ios', 'aos']
+{'DateTime': '2021-08-13T20:20:39+09:00', 'Event': 'Login', 'ServerNo': 1, 'AcntId': 1000, 'Platform': 'win'}
+```
+
+`ios` 또는 `aos` 만 허용한다는 에러가 나온다. 끝으로 `win` 을 `ios` 로 고치고 다시 해보자.
+
+```
+$ loglab verify fakelog.txt
+[사용할 랩파일 : /home/ubuntu/loglab_test/foo.lab.json]
+[사용할 스키마 파일 : /home/ubuntu/loglab_test/foo.log.schema.json]
+```
+
+검증이 문제없이 성공하였다. 이 경우 아무런 메시지가 나오지 않는다.
 
 [TODO]
 

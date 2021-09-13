@@ -1,9 +1,13 @@
 """랩파일에서 로그용 JSON 스키마 생성."""
 import os
+import sys
+import copy
 import json
+from collections import defaultdict
+
 from jinja2.loaders import PackageLoader
 
-from jsonschema import validate
+from jsonschema import validate, ValidationError
 from jinja2 import Environment, FileSystemLoader
 
 from loglab.util import AttrDict, load_file_from, LOGLAB_HOME,\
@@ -58,12 +62,17 @@ def log_schema_from_labfile(labjs):
                     "format": "date-time"
                 }}"""
             else:
+                finfo = {
+                    "type": v[0],
+                    "description": v[1]
+                }
+                if len(v) == 5:
+                    for rk, rv in v[4].items():
+                        finfo[rk] = rv
+                body = json.dumps(finfo, ensure_ascii = False)
                 prop = f"""
-                "{k}": {{
-                    "type": "{v[0]}",
-                    "description": "{v[1]}"
-                }}"""
-            if len(v) <= 2 or v[2] == False:
+                "{k}": {body}"""
+            if len(v) <= 2 or v[2] in (False, None):
                 reqs.append(f'"{k}"')
             props.append(prop)
         props = ",".join(props)
@@ -111,7 +120,11 @@ def flow_schema_from_labfile(labfile, labjs):
     def _collect(fields, group):
         for k, v in group.items():
             if 'fields' in v:
-                fields |= set([f[0] for f in v['fields']])
+                for field in v['fields']:
+                    if type(field) is dict:
+                        fields.add(field['name'])
+                    else:
+                        fields.add(field[0])
 
     def _collect_all_fields(labjs):
         fields = set()
@@ -129,3 +142,56 @@ def flow_schema_from_labfile(labfile, labjs):
     tmpl = env.get_template("tmpl_flow.json")
     return tmpl.render(labfile=labfile, events=events, fields=fields)
 
+
+def verify_logfile(schema, logfile):
+    """로그 파일을 스키마로 검증.
+
+    Args:
+        schema (str): 로그 스키마 파일 경로
+        logfile (str): 검증할 로그 파일 경로
+
+    """
+    # 로그 스키마에서 이벤트별 스키마 생성
+    evt_scm = {}
+    with open(schema, 'rt') as f:
+        body = f.read()
+        scmdata = json.loads(body)
+        for ref in scmdata['items']['oneOf']:
+            scm = copy.deepcopy(scmdata)
+            evt = ref['$ref'].split('/')[-1]
+            # 다른 이벤트는 제거
+            defs = {}
+            defs[evt]=scm['$defs'][evt]
+            scm['$defs'] = defs
+            scm['items'] = ref
+            evt_scm[evt] = scm
+
+    # 이벤트별 로그 모음
+    evt_lnos = defaultdict(list)
+    evt_logs = defaultdict(list)
+    with open(logfile, 'rt') as f:
+        for lno, line in enumerate(f):
+            log = json.loads(line)
+            if 'Event' not in log or log['Event'] not in evt_scm:
+                print("Error: 스키마에서 이벤트를 찾을 수 없습니다")
+                print(f"Line {lno}: {line}")
+                sys.exit(1)
+
+            evt = log['Event']
+            evt_lnos[evt].append(lno)
+            data = json.loads(line)
+            evt_logs[evt].append(data)
+
+    # 이벤트별로 검증
+    for evt, elogs in evt_logs.items():
+        escm = evt_scm[evt]
+        elogs = evt_logs[evt]
+        try:
+            validate(elogs, schema=escm)
+        except ValidationError as e:
+            no = list(e.absolute_path)[0]
+            lno = evt_lnos[evt][no]
+            log = evt_logs[evt][no]
+            print(f"Error: [Line: {lno + 1}] {e.message}")
+            print(log)
+            sys.exit(1)

@@ -1,5 +1,8 @@
 """유틸리티 모음."""
 import os
+import sys
+import copy
+from glob import glob
 from pathlib import Path
 from urllib.request import urlopen
 from urllib.parse import urlparse
@@ -7,6 +10,7 @@ from collections import OrderedDict
 
 
 LOGLAB_HOME = Path(os.path.dirname(os.path.abspath(__file__))).parent.absolute()
+
 
 class AttrDict(dict):
     """dict 키를 속성처럼 접근하는 헬퍼."""
@@ -24,6 +28,69 @@ class AttrDict(dict):
 
         for key in self.keys():
             self[key] = from_nested_dict(self[key])
+
+
+def find_labfile(labfile, print_msg=True):
+    """사용할 랩파일 디렉토리에서 찾기.
+
+    - 지정된 랩파일이 있으면 그것을,
+    - 아니면 현재 디렉토리에서 유일한 랩파일이 있으면 그것을
+    - 현재 디렉토리에 랩파일이 없거나 여럿 있으면 Error
+
+    Args:
+        labfile (str): 랩파일 경로
+        print_msg (bool): 메시지 출력 여부. 기본 True
+
+    Returns:
+        str: 찾은 랩파일의 절대 경로
+
+    """
+    def handle(labfile, print_msg):
+        labfile = os.path.abspath(labfile)
+        if print_msg:
+            print(f"[사용할 랩파일 : {labfile}]")
+        return labfile
+
+    if labfile is not None:
+        return handle(labfile, print_msg)
+
+    labs = glob("*.lab.json")
+    num_labs = len(labs)
+    if num_labs == 1:
+        return handle(labs[0], print_msg)
+    elif num_labs == 0:
+        print("Error: 현재 디렉토리에 랩파일이 없습니다. 새 랩파일을 "
+              "만들거나, 사용할 랩파일을 명시적으로 지정해 주세요.")
+    else:
+        print("Error: 현재 디렉토리에 랩파일이 하나 이상 있습니다. "
+              "사용할 랩파일을 명시적으로 지정해 주세요.")
+    sys.exit(1)
+
+
+def find_log_schema(labjs, _schema):
+    """로그 스키마 찾기.
+
+    - 지정된 스키마가 있으면 그것을,
+    - 아니면 현재 디렉토리에서 랩파일의 도메인 이름에 준하는 로그 스키마가 있으면 그것을,
+    - 아니면 Error
+
+    Args:
+        labjs (dict): 랩파일 데이터
+        _schema (str): 지정된 스키마
+
+    Return:
+        str: 찾은 로그 스키마의 절대 경로
+
+    """
+    if _schema is not None:
+        return os.path.abspath(_schema)
+
+    # 랩파일 도메인 이름에서 로그 스키마 파일명 유추
+    if 'domain' in labjs or 'name' in labjs['domain']:
+        domain = labjs['domain']['name']
+        schema = os.path.join(os.getcwd(), f'{domain}.log.schema.json')
+        if os.path.isfile(schema):
+            return schema
 
 
 def load_file_from(path):
@@ -72,7 +139,7 @@ def _fields_from_mixins(root, mixins):
     return fields
 
 
-def _explain_rest(f):
+def _explain_rstr(f):
     """제약을 설명으로 변환."""
     exps = []
     atype = f['type']
@@ -145,8 +212,16 @@ def fields_from_entity(root, entity, field_cb=None):
     def _parse_field(f):
         """사전형 필드 정보 파싱."""
         opt = f['option'] if 'option' in f else None
-        rest = _explain_rest(f)
-        return [f['name'], f['type'], f['desc'], opt, rest]
+        exrstr = _explain_rstr(f)
+        name = f['name']
+        atype = f['type']
+        desc = f['desc']
+        # 제약만 남기기
+        rstr = copy.deepcopy(f)
+        del rstr['name']
+        del rstr['type']
+        del rstr['desc']
+        return [name, atype, desc, opt, exrstr, rstr]
 
     fields = _init_fields()
     # mixin 이 있으면 그것의 필드를 가져옴
