@@ -1043,20 +1043,20 @@ Description : 계정 로그인
 
     // ...
 
-		"Monster": {
-			"desc": "몬스터 정보",
-			"fields": [
-				["MonTypeId", "types.Id", "몬스터 타입 ID"],
-				["MonInstId", "types.Id", "몬스터 인스턴스 ID"]
-			]
-		},
-		"Item": {
-			"desc": "아이템 정보",
-			"fields": [
+    "Monster": {
+      "desc": "몬스터 정보",
+      "fields": [
+        ["MonTypeId", "types.Id", "몬스터 타입 ID"],
+        ["MonInstId", "types.Id", "몬스터 인스턴스 ID"]
+      ]
+    },
+    "Item": {
+      "desc": "아이템 정보",
+      "fields": [
         ["ItemTypeId", "types.Id", "아이템 타입 ID"],
         ["ItemInstId", "types.Id", "아이템 인스턴스 ID"]
-			]
-		}
+      ]
+    }
 
     // ...
 }
