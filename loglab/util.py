@@ -158,7 +158,7 @@ def explain_rstr(f):
             if len(enum) > 0 and type(enum[0]) is dict:
                 expl = []
                 for d in enum:
-                    expl.append(f"{d['value']}: {d['desc']}")
+                    expl.append(f"{d['val']}: {d['desc']}")
                 enum = '\n'.join(expl)
             else:
                 enum = f'{enum} 중 하나'

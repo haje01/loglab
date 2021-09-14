@@ -152,7 +152,31 @@ Description : 몬스터가 아이템을 떨어뜨림
 | PosX       | number   | 맵상 X 위치        |                    |
 | PosY       | number   | 맵상 Y 위치        |                    |
 | PosZ       | number   | 맵상 Z 위치        |                    |
-| ItemTypeId | types.Id | 아이템 타입 ID     |                    |
+| ItemTypeId | integer  | 아이템 타입 ID     | 1: 공격 아이템     |
+|            |          |                    | 2: 방어 아이템     |
+|            |          |                    | 3: 치료 아이템     |
+| ItemInstId | types.Id | 아이템 인스턴스 ID |                    |
+| ItemName   | string   | 아이템 이름        | 7 자 이하          |
+|            |          |                    | 정규식 ^Itm.* 매칭 |
++------------+----------+--------------------+--------------------+'''
+    assert ans in out
+
+    ans = '''Event : GetItem
+Description : 캐릭터의 아이템 습득
++------------+----------+--------------------+--------------------+
+| Field      | Type     | Description        | Restrict           |
+|------------+----------+--------------------+--------------------|
+| DateTime   | datetime | 이벤트 일시        |                    |
+| ServerNo   | integer  | 서버 번호          | 1 이상 100 미만    |
+| AcntId     | types.Id | 계정 ID            |                    |
+| CharId     | types.Id | 캐릭터 ID          |                    |
+| MapId      | types.Id | 맵 번호            |                    |
+| PosX       | number   | 맵상 X 위치        |                    |
+| PosY       | number   | 맵상 Y 위치        |                    |
+| PosZ       | number   | 맵상 Z 위치        |                    |
+| ItemTypeId | integer  | 아이템 타입 ID     | 1: 공격 아이템     |
+|            |          |                    | 2: 방어 아이템     |
+|            |          |                    | 3: 치료 아이템     |
 | ItemInstId | types.Id | 아이템 인스턴스 ID |                    |
 | ItemName   | string   | 아이템 이름        | 7 자 이하          |
 |            |          |                    | 정규식 ^Itm.* 매칭 |
@@ -185,7 +209,7 @@ def test_schema(clear):
     ans = {
         "type": "string",
         "description": "이벤트 일시",
-        "format": "date-time"
+        "pattern": "^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\\.[0-9]+)?(([Zz])|([\\+|\\-]([01][0-9]|2[0-3]):[0-5][0-9]))$"
     }
     assert defs.Login.properties.DateTime == ans
 
@@ -205,6 +229,14 @@ def test_schema(clear):
         "enum": ["ios", "aos"]
     }
     assert defs.Login.properties.Platform == ans
+
+    # 설명이 있는 integer enum
+    ans =  {
+        'type': 'integer',
+        'description': '아이템 타입 ID',
+        'enum': [1, 2, 3]
+    }
+    assert defs.GetItem.properties.ItemTypeId == ans
 
     # required
     ans = ["DateTime", "ServerNo", "AcntId", "Platform"]
