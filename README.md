@@ -230,11 +230,13 @@ Description : 계정 로그인
 
 로그랩에서 사용할 수 있는 필드의 타입은 다음과 같다.
 
-- `datetime` : 날짜+시간. [RFC3339](https://json-schema.org/latest/json-schema-validation.html#RFC3339)를 따른다.
 - `string` : 문자열
 - `integer`: 정수
 - `number` : 실수 (`float` 과 일치)
 - `boolean` : 불린 (`true` 또는 `false`)
+- `datetime` : 일시(날짜+시간). [RFC3339](https://json-schema.org/latest/json-schema-validation.html#RFC3339)를 따른다.
+
+> RFC3399 일시의 예로 `2021-09-12T23:41:50.52Z` 은 UTC 로 기준 2021년 9월 12일 23시 41분 50.52 초이며 `2021-09-14T16:39:57+09:00` 은 한국 표준시(KST) 로 2021년 9월 14일 16시 39분 57초 이다.
 
 예를 들어, `Login` 이벤트의 경우 로그인한 계정 ID 필드가 필요할 것이다. 아래와 같이 추가한다.
 
@@ -925,7 +927,7 @@ Description : 계정 로그인
 
 `ServerNo` 필드가 있는 모든 이벤트에 `Restrict` 라는 새로운 컬럼이 보이고, `1 이상` 이라는 제약이 표시된다.
 
-참고로, 제약문은 필드의 타입별로 아래와 같은 것들이 있다.
+제약문은 필드의 타입별로 아래와 같은 것들이 있다.
 
 - `integer` 또는 `number`
   - `minimum` : 포함하는 최소값
@@ -937,8 +939,6 @@ Description : 계정 로그인
   - `minLength` : 문자열의 최소 길이
   - `maxLength` : 문자열의 최대 길이
   - `pattern` : 허용하는 문자열의 정규식 패턴
-  - `format` : 문자열의 기정의된 포맷
-    - `date-time`, `date`, `email`, `hostname`, `ipv4`, `ipv6`, `uri` 중 하나
 
 추가적으로  `ServerNo` 를 100 미만으로 제약하고 싶다면 `exclusiveMaximum` 을 이용한다.
 

@@ -220,6 +220,11 @@ def test_verify(clear):
     assert '스키마를 찾을 수 없습니다' in res.output
     res = runner.invoke(schema)
 
+    log = '{"DateTime": "2021-08-1dd20:20:39", "Event": "Login", "ServerNo": 1, "AcntId": 1000, "Platform": "ios"}'
+    write_log('fakelog.txt', log)
+    res = runner.invoke(verify, [fake_log])
+    assert "does not match '^([0-9]+)" in res.output
+
     log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "Login", "ServerNo": 1, "AcntId": 1000}'
     write_log('fakelog.txt', log)
     res = runner.invoke(verify, [fake_log])

@@ -1,6 +1,7 @@
 """LogLab 커맨드라인 툴."""
 import os
 import sys
+import json
 
 import click
 
@@ -64,7 +65,14 @@ def schema(labfile):
 
     print(f"'{log_scm_path} 에 로그 스키마 저장.")
     with open(log_scm_path, 'wt') as f:
-        f.write(log_schema_from_labfile(labjs))
+        try:
+            scm = log_schema_from_labfile(labjs)
+            f.write(scm)
+            json.loads(scm)
+        except json.decoder.JSONDecodeError as e:
+            print("Error: 생성된 JSON 스키마 에러. 로그랩 개발자에 문의 요망.")
+            print(e)
+            sys.exit(1)
 
     flow_scm_path = os.path.join(prj_dir, prj_name + ".flow.schema.json")
     print(f"'{flow_scm_path} 에 플로우 스키마 저장.")

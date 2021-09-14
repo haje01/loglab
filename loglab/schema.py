@@ -80,7 +80,7 @@ def log_schema_from_labfile(labjs):
                 "{k}": {{
                     "type": "string",
                     "description": "{v[1]}",
-                    "format": "date-time"
+                    "pattern": "^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\\\\.[0-9]+)?(([Zz])|([\\\\+|\\\\-]([01][0-9]|2[0-3]):[0-5][0-9]))$"
                 }}"""
             else:
                 if 'types' in typ:
@@ -178,7 +178,13 @@ def verify_logfile(schema, logfile):
     evt_scm = {}
     with open(schema, 'rt') as f:
         body = f.read()
-        scmdata = json.loads(body)
+        try:
+            scmdata = json.loads(body)
+        except json.decoder.JSONDecodeError as e:
+            print("Error: 로그랩이 생성한 JSON 스키마 에러. 로그랩 개발자에 문의 요망.")
+            print(e)
+            sys.exit(1)
+
         for ref in scmdata['items']['oneOf']:
             scm = copy.deepcopy(scmdata)
             evt = ref['$ref'].split('/')[-1]
@@ -196,9 +202,9 @@ def verify_logfile(schema, logfile):
         for lno, line in enumerate(f):
             try:
                 log = json.loads(line)
-            except json.decoder.JSONDecodeError:
+            except json.decoder.JSONDecodeError as e:
                 print(f"Error: [Line: {lno + 1}] 유효한 JSON 형식이 아닙니다.")
-                print(line)
+                print(e)
                 sys.exit(1)
 
             if 'Event' not in log or log['Event'] not in evt_scm:
