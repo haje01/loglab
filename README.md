@@ -805,7 +805,7 @@ Description : 몬스터가 아이템을 떨어뜨림
 | Field      | Type     | Description        |
 |------------+----------+--------------------|
 | DateTime   | datetime | 이벤트 일시        |
-| ServerNo   | integer  | 서버 번호         |
+| ServerNo   | integer  | 서버 번호          |
 | MonTypeId  | integer  | 몬스터 타입 ID     |
 | MonInstId  | integer  | 몬스터 인스턴스 ID |
 | MapId      | integer  | 맵 번호            |
