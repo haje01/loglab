@@ -5,7 +5,7 @@ import json
 
 import click
 
-from loglab.doc import text_from_labfile
+from loglab.show import text_from_labfile
 from loglab.schema import verify_labfile, log_schema_from_labfile,\
     flow_schema_from_labfile, verify_logfile
 from loglab.util import find_labfile, find_log_schema
@@ -37,20 +37,11 @@ def version():
 
 @cli.command()
 @global_options
-def doc(labfile):
-    """로그 문서 표시."""
+def show(labfile):
+    """로그 구조 출력."""
     labfile = find_labfile(labfile)
     labjs = verify_labfile(labfile)
     print(text_from_labfile(labjs))
-
-
-@cli.command()
-@global_options
-def dummy(labfile):
-    """가짜 로그 생성."""
-    labfile = find_labfile(labfile)
-    verify_labfile(labfile)
-    click.echo("Generate Dummy Log Events")
 
 
 @cli.command()
@@ -95,6 +86,15 @@ def verify(labfile, logfile, schema):
         sys.exit(1)
     print(f"[사용할 스키마 파일 : {schema}]")
     verify_logfile(schema, logfile)
+
+
+@cli.command()
+@global_options
+def dummy(labfile):
+    """가짜 로그 생성."""
+    labfile = find_labfile(labfile)
+    verify_labfile(labfile)
+    click.echo("Generate Dummy Log Events")
 
 
 if __name__ == "__main__":

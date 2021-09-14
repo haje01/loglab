@@ -7,7 +7,7 @@ import json
 import pytest
 from click.testing import CliRunner
 
-from loglab.cli import cli, version, doc, schema, verify
+from loglab.cli import cli, version, show, schema, verify
 from loglab.version import VERSION
 from loglab.util import AttrDict
 
@@ -61,7 +61,7 @@ def test_cli():
     assert res.exit_code == 0
     out = res.output
     assert 'Commands:' in out
-    assert 'doc' in out
+    assert 'show' in out
     assert 'dummy' in out
     assert 'schema' in out
     assert 'verify' in out
@@ -81,21 +81,21 @@ def test_labfile(clear):
     runner = CliRunner()
 
     # 랩파일 없이
-    res = runner.invoke(doc)
+    res = runner.invoke(show)
     assert "랩파일이 없습니다" in res.output
     assert res.exit_code == 1
 
     # 랩파일 둘 이상
     copy_files(["minimal.lab.json", "sample.lab.json"])
-    res = runner.invoke(doc)
+    res = runner.invoke(show)
     assert '하나 이상' in res.output
     assert res.exit_code == 1
 
 
-def test_doc():
+def test_show():
     sel_lab("sample")
     runner = CliRunner()
-    res = runner.invoke(doc)
+    res = runner.invoke(show)
     assert res.exit_code == 0
     out = res.output
 

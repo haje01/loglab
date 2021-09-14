@@ -1,4 +1,4 @@
-"""메타파일에서 로그 문서 생성."""
+"""랩파일에서 출력용 문서 생성."""
 from io import StringIO
 import json
 
