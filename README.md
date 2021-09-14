@@ -1144,9 +1144,9 @@ Description : 계정 로그인
 
 > `enum` 은 `string` 뿐만 아니라, `integer` 와 `number` 타입에 대해서 사용할 수 있다.
 
-나열형 항목의 값에 대해 구체적인 설명을 붙여야 하는 경우도 있다. `Item` 베이스의 `ItemTypeId` 필드에 나열을 이용해 등장할 수 있는 값을 제한하고 설명도 붙여야하는 경우룰 생각해 보자.
+나열형 항목의 값에 대해 구체적인 설명을 붙여야 하는 경우도 있다. `Item` 베이스의 `ItemTypeId` 필드에 나열을 이용해 등장할 수 있는 값을 제한하고 설명도 붙여야하는 경우를 생각해 보자.
 
-먼저 기존 `ItemTypeId` 필드의 선언 `["ItemInstId", "types.Id", "아이템 인스턴스 ID"]` 을 을 아래와 같이 오브젝트 형으로 수정한다.
+먼저 기존 `ItemTypeId` 필드의 리스트형 선언 `["ItemInstId", "types.Id", "아이템 인스턴스 ID"]` 을 아래와 같이 오브젝트 형으로 수정한다.
 
 ```js
 {
@@ -1156,9 +1156,9 @@ Description : 계정 로그인
 
     // ...
 
-		"Item": {
-			"desc": "아이템 정보",
-			"fields": [
+    "Item": {
+      "desc": "아이템 정보",
+      "fields": [
         {
             "name": "ItemTypeId",
             "type": "integer",
@@ -1166,8 +1166,8 @@ Description : 계정 로그인
             "enum": [1, 2, 3]
         },
         ["ItemInstId", "types.Id", "아이템 인스턴스 ID"]
-			]
-		}
+      ]
+    }
 
   // ...
 }
@@ -1183,9 +1183,9 @@ Description : 계정 로그인
 
     // ...
 
-		"Item": {
-			"desc": "아이템 정보",
-			"fields": [
+    "Item": {
+      "desc": "아이템 정보",
+      "fields": [
         {
           "name": "ItemTypeId",
           "type": "integer",
@@ -1206,8 +1206,8 @@ Description : 계정 로그인
           ]
         },
         ["ItemInstId", "types.Id", "아이템 인스턴스 ID"]
-			]
-		}
+      ]
+    }
 
   // ...
 }
