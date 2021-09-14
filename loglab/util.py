@@ -155,6 +155,13 @@ def explain_rstr(f):
             xmax = f['exclusiveMaximum']
         if 'enum' in f:
             enum = f['enum']
+            if len(enum) > 0 and type(enum[0]) is dict:
+                expl = []
+                for d in enum:
+                    expl.append(f"{d['value']}: {d['desc']}")
+                enum = '\n'.join(expl)
+            else:
+                enum = f'{enum} 중 하나'
 
         assert amin is None or xmin is None,\
             'minimum 과 exclusiveMinimum 함께 사용 불가'
@@ -171,7 +178,7 @@ def explain_rstr(f):
         if xmax is not None:
             stmts.append(f"{xmax} 미만")
         if enum is not None:
-            exps.append(f"{enum} 중 하나")
+            exps.append(enum)
 
         if len(stmts) > 0:
             exps.append(' '.join(stmts))

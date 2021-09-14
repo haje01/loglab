@@ -37,7 +37,7 @@ def verify_labfile(lab_path, scm_path=None, err_exit=True):
         labjs = json.loads(body)
         validate(labjs, schema=schema)
     except Exception as e:
-        print(f"Error: 랩파일 에러")
+        print("Error: 랩파일 에러")
         print(str(e))
         if err_exit:
             sys.exit(1)
@@ -91,6 +91,9 @@ def log_schema_from_labfile(labjs):
                 }
                 if len(v) == 5:
                     for rk, rv in v[4].items():
+                        # 객체형 나열값 처리
+                        if rk == 'enum' and len(rv) > 0 and type(rv[0]) is dict:
+                            rv = [k['value'] for k in rv]
                         finfo[rk] = rv
                 body = json.dumps(finfo, ensure_ascii=False)
                 prop = f"""

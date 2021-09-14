@@ -55,7 +55,19 @@
                             "items": {
                                 "anyOf": [
                                     {"type": "string"},
-                                    {"type": "integer"}
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "value": {
+                                                "type": "string",
+                                                "description": "값"
+                                            },
+                                            "desc": {
+                                                "type": "string",
+                                                "description": "설명"
+                                            }
+                                        }
+                                    }
                                 ]
                             }
                         },
@@ -76,7 +88,7 @@
                             ]
                         }
                     },
-                    "required": ["type"]
+                    "required" : ["type"]
                 },
                 {
                     "type": "object",
@@ -99,6 +111,28 @@
                         "exclusiveMaximum": {
                             "type": "integer",
                             "description": "제외하는 최대값"
+                        },
+                        "enum": {
+                            "type": "array",
+                            "description": "허용하는 나열값",
+                            "items": {
+                                "anyOf": [
+                                    {"type": "integer"},
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "value": {
+                                                "type": "integer",
+                                                "description": "값"
+                                            },
+                                            "desc": {
+                                                "type": "string",
+                                                "description": "설명"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
                         }
                     },
                     "required": ["type"]
@@ -124,6 +158,28 @@
                         "exclusiveMaximum": {
                             "type": "integer",
                             "description": "제외하는 최대값"
+                        },
+                        "enum": {
+                            "type": "array",
+                            "description": "허용하는 나열값",
+                            "items": {
+                                "anyOf": [
+                                    {"type": "number"},
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "value": {
+                                                "type": "number",
+                                                "description": "값"
+                                            },
+                                            "desc": {
+                                                "type": "string",
+                                                "description": "설명"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
                         }
                     },
                     "required": ["type"]
@@ -232,4 +288,4 @@
     },
     "required": ["events"],
     "additionalProperties": false
-  }
+}

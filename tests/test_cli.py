@@ -255,6 +255,11 @@ def test_verify(clear):
     res = runner.invoke(verify, [fake_log])
     assert "'Sword' does not match '^Itm.*'" in res.output
 
+    log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonTypeId": 3, "MonInstId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemTypeId": 100, "ItemInstId": 4, "ItemName": "Sword"}'
+    write_log('fakelog.txt', log)
+    res = runner.invoke(verify, [fake_log])
+    assert "100 is not one of [1, 2, 3]" in res.output
+
     log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonTypeId": 3, "MonInstId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemTypeId": 3, "ItemInstId": 4, "ItemName": "ItmSword"}'
     write_log('fakelog.txt', log)
     res = runner.invoke(verify, [fake_log])
