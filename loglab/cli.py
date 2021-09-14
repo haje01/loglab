@@ -8,7 +8,7 @@ import click
 from loglab.show import text_from_labfile
 from loglab.schema import verify_labfile, log_schema_from_labfile,\
     flow_schema_from_labfile, verify_logfile
-from loglab.util import find_labfile, find_log_schema
+from loglab.util import find_labfile, find_log_schema, request_tmp_dir
 from loglab.version import VERSION
 
 
@@ -50,9 +50,9 @@ def schema(labfile):
     """로그 및 플로우 파일용 스키마 생성."""
     labfile = find_labfile(labfile)
     labjs = verify_labfile(labfile)
-    prj_dir = os.path.dirname(labfile)
+    tmp_dir = request_tmp_dir(labfile)
     prj_name = labjs['domain']['name']
-    log_scm_path = os.path.join(prj_dir, prj_name + ".log.schema.json")
+    log_scm_path = os.path.join(tmp_dir, prj_name + ".log.schema.json")
 
     print(f"'{log_scm_path} 에 로그 스키마 저장.")
     with open(log_scm_path, 'wt') as f:
@@ -65,7 +65,7 @@ def schema(labfile):
             print(e)
             sys.exit(1)
 
-    flow_scm_path = os.path.join(prj_dir, prj_name + ".flow.schema.json")
+    flow_scm_path = os.path.join(tmp_dir, prj_name + ".flow.schema.json")
     print(f"'{flow_scm_path} 에 플로우 스키마 저장.")
     with open(flow_scm_path, 'wt') as f:
         f.write(flow_schema_from_labfile(labfile, labjs))
@@ -79,7 +79,7 @@ def verify(labfile, logfile, schema):
     """생성된 로그 파일 검증."""
     labfile = find_labfile(labfile)
     labjs = verify_labfile(labfile)
-    schema = find_log_schema(labjs, schema)
+    schema = find_log_schema(labfile, labjs, schema)
     if schema is None:
         print("Error: 로그 스키마를 찾을 수 없습니다. schema 명령으로 생성하거나, "
               "스키마의 경로를 옵션으로 지정하세요.")

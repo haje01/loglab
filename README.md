@@ -40,6 +40,7 @@ LogLab(로그랩) 은 다양한 서비스를 위한 로그를 설계하고 활�
   - [더미 로그의 생성](#더미-로그의-생성)
     - [플로우 만들기](#플로우-만들기)
   - [공용 랩파일을 통한 로그 표준화](#공용-랩파일을-통한-로그-표준화)
+    - [참조할 랩파일 받기](#참조할-랩파일-받기)
 
 ## 설치
 
@@ -73,7 +74,7 @@ Commands:
 
 ```
 $ loglab version
-0.0.1
+0.1
 ```
 
 지금부터는 가상의 모바일 게임 `foo` 를 위한 로그를 설계하는 예제를 통해 로그랩의 활용법을 하나씩 살펴보자.
@@ -106,7 +107,7 @@ $ loglab version
 ```
 $ loglab show
 
-[사용할 랩파일 : /home/ubuntu/loglab_test/foo.lab.json]
+[사용할 랩파일 : /home/ubuntu/loglab_test/.loglab/foo.lab.json]
 
 Event : Login
 Description : 계정 로그인
@@ -177,7 +178,7 @@ Options:
   "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
   "domain": {
     "name": "foo",
-    "desc": "위대한 모바일 게임"
+    "desc": "최고의 모바일 게임"
   },
   "events": {
     "Login": {
@@ -194,10 +195,10 @@ Options:
 
 ```
 $ loglab show
-[사용할 랩파일 : /home/ubuntu/loglab_test/foo.lab.json]
+[사용할 랩파일 : /home/ubuntu/loglab_test/.loglab/foo.lab.json]
 
 Domain : foo
-Description : 위대한 모바일 게임
+Description : 최고의 모바일 게임
 
 Event : Login
 Description : 계정 로그인
@@ -1073,10 +1074,10 @@ Description : 계정 로그인
 
 ```
 $ loglab show
-[사용할 랩파일 : /home/ubuntu/loglab_test/foo.lab.json]
+[사용할 랩파일 : /home/ubuntu/loglab_test/.loglab/foo.lab.json]
 
 Domain : foo
-Description : 위대한 모바일 게임
+Description : 최고의 모바일 게임
 
 Type: types.Id
 Description : Id 타입
@@ -1260,7 +1261,7 @@ Options:
 
 ```
 $ loglab verify fakelog.txt
-[사용할 랩파일 : /home/ubuntu/loglab_test/foo.lab.json]
+[사용할 랩파일 : /home/ubuntu/loglab_test/.loglab/foo.lab.json]
 Error: 로그 스키마를 찾을 수 없습니다. schema 명령으로 생성하거나, 스키마의 경로를 옵션으로 지정하세요.
 ```
 
@@ -1268,12 +1269,12 @@ Error: 로그 스키마를 찾을 수 없습니다. schema 명령으로 생성�
 
 ```
 $ loglab schema
-[사용할 랩파일 : /home/ubuntu/loglab_test/foo.lab.json]
-'/home/ubuntu/loglab_test/foo.log.schema.json 에 로그 스키마 저장.
-'/home/ubuntu/loglab_test/foo.flow.schema.json 에 플로우 스키마 저장.
+[사용할 랩파일 : /home/ubuntu/loglab_test/.loglab/foo.lab.json]
+'/home/ubuntu/loglab_test/.loglab/foo.log.schema.json 에 로그 스키마 저장.
+'/home/ubuntu/loglab_test/.loglab/foo.flow.schema.json 에 플로우 스키마 저장.
 ```
 
-두 가지 스키마가 저장되는데, 하나는 **로그 스키마 (*.log.schema.json)** 이며 다른 하나는 **플로우 스키마 (*.flow.schema.json)** 이다. 로그 스키마는 실제 로그를 검증하는데 사용되고, 플로우 스키마는 더미 로그를 설계할 때 사용되는데 나중에 다룰 것이다.
+로그랩이 만드는 임시 파일용 디렉토리 `.loglab` 아래 두 가지 스키마가 저장되는데, 하나는 **로그 스키마 (*.log.schema.json)** 이며 다른 하나는 **플로우 스키마 (*.flow.schema.json)** 이다. 로그 스키마는 실제 로그를 검증하는데 사용되고, 플로우 스키마는 더미 로그를 설계할 때 사용되는데 나중에 다룰 것이다.
 
 > 만약, 생성한 로그 스키마가 다른 디렉토리에 있다면 아래와 같이 `verify` 명령의 `-s` 옵셩으로 지정할 수 있다.
 > ```
@@ -1287,7 +1288,7 @@ $ loglab schema
 $ loglab verify fakelog.txt
 # ...
 
-[사용할 스키마 파일 : /home/ubuntu/loglab_test/foo.log.schema.json]
+[사용할 스키마 파일 : /home/ubuntu/loglab_test/.loglab/foo.log.schema.json]
 Error: [Line: 1] 'Platform' is a required property
 {'DateTime': '2021-08-13T20:20:39+09:00', 'Event': 'Login', 'ServerNo': 1, 'AcntId': 1000}
 ```
@@ -1303,8 +1304,8 @@ Error: [Line: 1] 'Platform' is a required property
 
 ```
 $ loglab verify fakelog.txt
-[사용할 랩파일 : /home/ubuntu/loglab_test/foo.lab.json]
-[사용할 스키마 파일 : /home/ubuntu/loglab_test/foo.log.schema.json]
+[사용할 랩파일 : /home/ubuntu/loglab_test/.loglab/foo.lab.json]
+[사용할 스키마 파일 : /home/ubuntu/loglab_test/.loglab/foo.log.schema.json]
 Error: [Line: 1] 'win' is not one of ['ios', 'aos']
 {'DateTime': '2021-08-13T20:20:39+09:00', 'Event': 'Login', 'ServerNo': 1, 'AcntId': 1000, 'Platform': 'win'}
 ```
@@ -1313,8 +1314,8 @@ Error: [Line: 1] 'win' is not one of ['ios', 'aos']
 
 ```
 $ loglab verify fakelog.txt
-[사용할 랩파일 : /home/ubuntu/loglab_test/foo.lab.json]
-[사용할 스키마 파일 : /home/ubuntu/loglab_test/foo.log.schema.json]
+[사용할 랩파일 : /home/ubuntu/loglab_test/.loglab/foo.lab.json]
+[사용할 스키마 파일 : /home/ubuntu/loglab_test/.loglab/foo.log.schema.json]
 ```
 
 검증이 문제없이 성공하였다. 이런 경우 아무런 메시지가 나오지 않는다.
@@ -1335,5 +1336,66 @@ $ loglab verify fakelog.txt
 
 지금까지 예로든 게임 `foo` 를 만드는 `acme` 라는 회사에서, 새로운 PC 온라인 게임 `boo` 를 출시한다고 하자. `boo` 는 `foo` 와 유사하지만 다른 점도 꽤 있다.
 
-회사는 앞으로도 다양한 서비스를 만들고 그 데이터를 처리 및 분석할 것이기에, 효율성을 위해 **로그의 기본 구조를 표준화** 하고 싶다. 이런 경우 조직 내에서 꼭 필요로하는 로그 구조를 공용 랩파일로 만든 뒤, 이것을 `foo` 와 `boo` 가 공유하고 확장해 나가는 방식으로 가능할 것이다.
+회사는 앞으로도 다양한 서비스를 만들고 그 데이터들을 처리 및 분석할 것이기에, 효율성을 위해 **로그의 기본 구조를 표준화** 하고 싶다. 이런 경우 조직 내에서 꼭 필요로하는 로그 구조를 공용 랩파일로 만든 뒤, 이것을 `foo` 와 `boo` 가 공유하고 확장해 나가는 방식으로 가능할 것이다.
 
+### 참조할 랩파일 받기
+
+먼저 참조할 랩파일을 로컬로 다운로드 받아야 하는데, 이 과정을 페치 (fetch) 라고 한다. 다음과 같이 수행한다.
+
+```
+$ loglab fetch https://www.acmegames.com/schema/acme.labfile.json
+```
+
+페치 받은 랩파일은 작업 디렉토리 아래 `.loglab/` 디렉토리에 URL 경로의 마지막 요소와 같은 이름으로 받아진다. 위 예에서는 `.loglab/acme.labfile.json` 로 저장된다.
+
+이제 다음과 같은 내용으로 `boo.labfile.json` 을 만든다.
+
+```js
+{
+  "domain": {
+    "name": "boo",
+    "desc": "최고의 PC 온라인 게임"
+  },
+  "super": [
+    ["acme.labfile.json", "acme"]
+  ]
+}
+```
+> 편의상 참조당하는 랩파일을 상위 랩파일, 참조하는 랩파일을 하위 랩파일로 부르겠다.
+
+`super` 리스트에 참고할 상위 랩파일들을 리스트 형식으로 기술하는데, `[랩파일 파일명, 랩파일 네임스페이스]` 형식이다. 참조된 부모 랩파일에서 선언된 모든 베이스와 이벤트는 기본적으로 자식 랩파일에서 직접 선언한 것과 같은 효과를 같는다.
+
+만약 상위 랩파일 내용에 변경이나 추가할 필요가 없다면 이대로 사용하면 된다. 만약 `acme` 에서 정의된 로그인 이벤트의 `Platform` 만 PC 온라인 서비스에 맞게 변경한다면 다음처럼 가능할 것이다.
+
+```js
+{
+  "domain": {
+    "name": "boo",
+    "desc": "최고의 PC 온라인 게임"
+  },
+  "parents": [
+    ["acme.labfile.json", "acme"]
+  ],
+  "events": {
+    "Login": {
+      "mixins": ["acme.events.Login"],
+      "fields": {
+        "name": "Platform",
+        "desc": "PC의 플랫폼",
+        "type": "string",
+        "enum": [
+            "win", "mac", "linux"
+        ]
+      }
+    }
+  }
+}
+```
+
+`acme.labfile.json` 구조를 그대로 사용하되, `Login` 의 `Platform` 필드의 나열값만 변경된다. `show` 를 해보면,
+
+```
+
+```
+
+[TODO]

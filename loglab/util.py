@@ -7,10 +7,11 @@ from pathlib import Path
 from urllib.request import urlopen
 from urllib.parse import urlparse
 from collections import OrderedDict
+from pathlib import Path
 
 
 LOGLAB_HOME = Path(os.path.dirname(os.path.abspath(__file__))).parent.absolute()
-
+TMP_DIR = '.loglab'
 
 class AttrDict(dict):
     """dict 키를 속성처럼 접근하는 헬퍼."""
@@ -67,7 +68,7 @@ def find_labfile(labfile, print_msg=True):
     sys.exit(1)
 
 
-def find_log_schema(labjs, _schema):
+def find_log_schema(labfile, labjs, _schema):
     """로그 스키마 찾기.
 
     - 지정된 스키마가 있으면 그것을,
@@ -75,6 +76,7 @@ def find_log_schema(labjs, _schema):
     - 아니면 Error
 
     Args:
+        labfile (str): 랩파일 경로
         labjs (dict): 랩파일 데이터
         _schema (str): 지정된 스키마
 
@@ -88,7 +90,8 @@ def find_log_schema(labjs, _schema):
     # 랩파일 도메인 이름에서 로그 스키마 파일명 유추
     if 'domain' in labjs or 'name' in labjs['domain']:
         domain = labjs['domain']['name']
-        schema = os.path.join(os.getcwd(), f'{domain}.log.schema.json')
+        tmp_dir = request_tmp_dir(labfile)
+        schema = os.path.join(tmp_dir, f'{domain}.log.schema.json')
         if os.path.isfile(schema):
             return schema
 
@@ -250,3 +253,10 @@ def fields_from_entity(root, entity, field_cb=None):
             else:
                 fields[f[0]] = f[1:]
     return fields
+
+
+def request_tmp_dir(labfile):
+    """랩파일이 있는 경로에서 임시 파일용 디렉토리를 확보."""
+    adir = os.path.join(os.path.dirname(labfile), TMP_DIR)
+    Path(adir).mkdir(parents=True, exist_ok=True)
+    return adir

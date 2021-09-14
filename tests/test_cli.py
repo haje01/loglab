@@ -1,7 +1,7 @@
 """cli 테스트."""
 import os
 from glob import glob
-from shutil import copyfile
+from shutil import copyfile, rmtree
 import json
 
 import pytest
@@ -26,12 +26,11 @@ def _clear():
     # 기존 파일 삭제
     for f in glob("*.lab.json"):
         os.remove(f)
-    for f in glob("*.log.schema.json"):
-        os.remove(f)
-    for f in glob("*.flow.schema.json"):
-        os.remove(f)
     for f in glob("*.txt"):
         os.remove(f)
+    # 임시 디렉토리 삭제
+    if os.path.isdir('.loglab'):
+        rmtree(".loglab")
 
 
 def copy_files(files):
@@ -195,7 +194,7 @@ def test_schema(clear):
     assert "foo.flow.schema.json 에 플로우 스키마 저장" in out
 
     # 로그 스키마 체크
-    with open("foo.log.schema.json", 'rt') as f:
+    with open(".loglab/foo.log.schema.json", 'rt') as f:
         body = f.read()
         data = json.loads(body)
         scm = AttrDict(data)
