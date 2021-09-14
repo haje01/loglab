@@ -56,17 +56,11 @@
                                 "anyOf": [
                                     {"type": "string"},
                                     {
-                                        "type": "object",
-                                        "properties": {
-                                            "value": {
-                                                "type": "string",
-                                                "description": "값"
-                                            },
-                                            "desc": {
-                                                "type": "string",
-                                                "description": "설명"
-                                            }
-                                        }
+                                        "type": "array",
+                                        "items": [
+                                            {"type": "string"},
+                                            {"type": "string"}
+                                        ]
                                     }
                                 ]
                             }
@@ -119,17 +113,11 @@
                                 "anyOf": [
                                     {"type": "integer"},
                                     {
-                                        "type": "object",
-                                        "properties": {
-                                            "value": {
-                                                "type": "integer",
-                                                "description": "값"
-                                            },
-                                            "desc": {
-                                                "type": "string",
-                                                "description": "설명"
-                                            }
-                                        }
+                                        "type": "array",
+                                        "items": [
+                                            {"type": "integer"},
+                                            {"type": "string"}
+                                        ]
                                     }
                                 ]
                             }
@@ -166,17 +154,11 @@
                                 "anyOf": [
                                     {"type": "number"},
                                     {
-                                        "type": "object",
-                                        "properties": {
-                                            "value": {
-                                                "type": "number",
-                                                "description": "값"
-                                            },
-                                            "desc": {
-                                                "type": "string",
-                                                "description": "설명"
-                                            }
-                                        }
+                                        "type": "array",
+                                        "items": [
+                                            {"type": "number"},
+                                            {"type": "string"}
+                                        ]
                                     }
                                 ]
                             }

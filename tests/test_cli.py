@@ -152,9 +152,9 @@ Description : 몬스터가 아이템을 떨어뜨림
 | PosX       | number   | 맵상 X 위치        |                    |
 | PosY       | number   | 맵상 Y 위치        |                    |
 | PosZ       | number   | 맵상 Z 위치        |                    |
-| ItemTypeId | integer  | 아이템 타입 ID     | 1: 공격 아이템     |
-|            |          |                    | 2: 방어 아이템     |
-|            |          |                    | 3: 치료 아이템     |
+| ItemTypeId | integer  | 아이템 타입 ID     | 1: 칼              |
+|            |          |                    | 2: 방패            |
+|            |          |                    | 3: 물약            |
 | ItemInstId | types.Id | 아이템 인스턴스 ID |                    |
 | ItemName   | string   | 아이템 이름        | 7 자 이하          |
 |            |          |                    | 정규식 ^Itm.* 매칭 |
@@ -174,9 +174,9 @@ Description : 캐릭터의 아이템 습득
 | PosX       | number   | 맵상 X 위치        |                    |
 | PosY       | number   | 맵상 Y 위치        |                    |
 | PosZ       | number   | 맵상 Z 위치        |                    |
-| ItemTypeId | integer  | 아이템 타입 ID     | 1: 공격 아이템     |
-|            |          |                    | 2: 방어 아이템     |
-|            |          |                    | 3: 치료 아이템     |
+| ItemTypeId | integer  | 아이템 타입 ID     | 1: 칼              |
+|            |          |                    | 2: 방패            |
+|            |          |                    | 3: 물약            |
 | ItemInstId | types.Id | 아이템 인스턴스 ID |                    |
 | ItemName   | string   | 아이템 이름        | 7 자 이하          |
 |            |          |                    | 정규식 ^Itm.* 매칭 |

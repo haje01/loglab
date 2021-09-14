@@ -155,10 +155,10 @@ def explain_rstr(f):
             xmax = f['exclusiveMaximum']
         if 'enum' in f:
             enum = f['enum']
-            if len(enum) > 0 and type(enum[0]) is dict:
+            if len(enum) > 0 and type(enum[0]) is list:
                 expl = []
                 for d in enum:
-                    expl.append(f"{d['val']}: {d['desc']}")
+                    expl.append(f"{d[0]}: {d[1]}")
                 enum = '\n'.join(expl)
             else:
                 enum = f'{enum} 중 하나'

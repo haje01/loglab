@@ -92,8 +92,8 @@ def log_schema_from_labfile(labjs):
                 if len(v) == 5:
                     for rk, rv in v[4].items():
                         # 객체형 나열값 처리
-                        if rk == 'enum' and len(rv) > 0 and type(rv[0]) is dict:
-                            rv = [k['val'] for k in rv]
+                        if rk == 'enum' and len(rv) > 0 and type(rv[0]) is list:
+                            rv = [k[0] for k in rv]
                         finfo[rk] = rv
                 body = json.dumps(finfo, ensure_ascii=False)
                 prop = f"""
