@@ -14,12 +14,13 @@ from loglab.util import AttrDict, load_file_from, LOGLAB_HOME,\
     fields_from_entity
 
 
-def verify_labfile(lab_path, scm_path=None):
+def verify_labfile(lab_path, scm_path=None, err_exit=True):
     """랩파일을 검증.
 
     Args:
         lab_path (str): 랩파일 URI
         scm_path (str): 스키마 파일 URI
+        err_exit (bool): 에러 발생시 종료 여부. 기본 True
 
     Returns:
         str: 읽어들인 랩파일 JSON 을 재활용할 수 있게 반환
@@ -27,14 +28,21 @@ def verify_labfile(lab_path, scm_path=None):
     """
     if scm_path is None:
         scm_path = os.path.join(LOGLAB_HOME,
-            'schema/lab.schema.json')
-    schema = load_file_from(scm_path)
-    schema = json.loads(schema)
-    body = load_file_from(lab_path)
-    labjs = json.loads(body)
+                                'schema/lab.schema.json')
 
-    validate(labjs, schema=schema)
-    return labjs
+    try:
+        schema = load_file_from(scm_path)
+        schema = json.loads(schema)
+        body = load_file_from(lab_path)
+        labjs = json.loads(body)
+        validate(labjs, schema=schema)
+    except Exception as e:
+        print(f"Error: 랩파일 에러")
+        print(str(e))
+        if err_exit:
+            sys.exit(1)
+    else:
+        return labjs
 
 
 def log_schema_from_labfile(labjs):
@@ -186,7 +194,13 @@ def verify_logfile(schema, logfile):
     evt_logs = defaultdict(list)
     with open(logfile, 'rt') as f:
         for lno, line in enumerate(f):
-            log = json.loads(line)
+            try:
+                log = json.loads(line)
+            except json.decoder.JSONDecodeError:
+                print(f"Error: [Line: {lno + 1}] 유효한 JSON 형식이 아닙니다.")
+                print(line)
+                sys.exit(1)
+
             if 'Event' not in log or log['Event'] not in evt_scm:
                 print("Error: 스키마에서 이벤트를 찾을 수 없습니다")
                 print(f"Line {lno}: {line}")

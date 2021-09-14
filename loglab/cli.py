@@ -83,7 +83,7 @@ def verify(labfile, logfile, schema):
     schema = find_log_schema(labjs, schema)
     if schema is None:
         print("Error: 로그 스키마를 찾을 수 없습니다. schema 명령으로 생성하거나, "
-             "스키마의 경로를 옵션으로 지정하세요.")
+              "스키마의 경로를 옵션으로 지정하세요.")
         sys.exit(1)
     print(f"[사용할 스키마 파일 : {schema}]")
     verify_logfile(schema, logfile)

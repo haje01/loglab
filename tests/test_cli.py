@@ -141,19 +141,22 @@ Description : 계정 로그인
 
     ans = '''Event : MonsterDropItem
 Description : 몬스터가 아이템을 떨어뜨림
-+------------+----------+--------------------+
-| Field      | Type     | Description        |
-|------------+----------+--------------------|
-| DateTime   | datetime | 이벤트 일시        |
-| MonTypeId  | types.Id | 몬스터 타입 ID     |
-| MonInstId  | types.Id | 몬스터 인스턴스 ID |
-| MapId      | types.Id | 맵 번호            |
-| PosX       | number   | 맵상 X 위치        |
-| PosY       | number   | 맵상 Y 위치        |
-| PosZ       | number   | 맵상 Z 위치        |
-| ItemTypeId | types.Id | 아이템 타입 ID     |
-| ItemInstId | types.Id | 아이템 인스턴스 ID |
-+------------+----------+--------------------+'''
++------------+----------+--------------------+--------------------+
+| Field      | Type     | Description        | Restrict           |
+|------------+----------+--------------------+--------------------|
+| DateTime   | datetime | 이벤트 일시        |                    |
+| ServerNo   | integer  | 서버 번호          | 1 이상 100 미만    |
+| MonTypeId  | types.Id | 몬스터 타입 ID     |                    |
+| MonInstId  | types.Id | 몬스터 인스턴스 ID |                    |
+| MapId      | types.Id | 맵 번호            |                    |
+| PosX       | number   | 맵상 X 위치        |                    |
+| PosY       | number   | 맵상 Y 위치        |                    |
+| PosZ       | number   | 맵상 Z 위치        |                    |
+| ItemTypeId | types.Id | 아이템 타입 ID     |                    |
+| ItemInstId | types.Id | 아이템 인스턴스 ID |                    |
+| ItemName   | string   | 아이템 이름        | 7 자 이하          |
+|            |          |                    | 정규식 ^Itm.* 매칭 |
++------------+----------+--------------------+--------------------+'''
     assert ans in out
 
 
@@ -217,35 +220,42 @@ def test_verify(clear):
     assert '스키마를 찾을 수 없습니다' in res.output
     res = runner.invoke(schema)
 
-    log = '''{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "Login", "ServerNo": 1, "AcntId": 1000}
-{"DateTime": "2021-08-13T20:21:01+09:00", "Event": "Logout", "ServerNo": 1, "AcntId": 1000}
-{"DateTime": "2021-08-13T20:21:01+09:00", "Event": "KillMonster", "ServerNo": 1, "AcntId": 1000, "CharId": 3, "MonTypeId": 3, "MonInstId": 3, "MapI": 0.6, "PosX": 0, "PosY": 0, "PosZ": 0}
-'''
+    log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "Login", "ServerNo": 1, "AcntId": 1000}'
     write_log('fakelog.txt', log)
     res = runner.invoke(verify, [fake_log])
     assert "'Platform' is a required property" in res.output
 
-    log = '''{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "Login", "ServerNo": 1, "AcntId": 1000, "Platform": "win"}
-{"DateTime": "2021-08-13T20:21:01+09:00", "Event": "Logout", "ServerNo": 1, "AcntId": 1000}
-{"DateTime": "2021-08-13T20:21:01+09:00", "Event": "KillMonster", "ServerNo": 1, "AcntId": 1000, "CharId": 3, "MonTypeId": 3, "MonInstId": 3, "MapI": 0.6, "PosX": 0, "PosY": 0, "PosZ": 0}
-'''
+    log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "Login", "ServerNo": 1, "AcntId": 1000, "Platform": "win"}'
     write_log('fakelog.txt', log)
     res = runner.invoke(verify, [fake_log])
     assert "'win' is not one of ['ios', 'aos']" in res.output
 
-
-    log = '''{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "Login", "ServerNo": 1, "AcntId": 1000, "Platform": "ios"}
-{"DateTime": "2021-08-13T20:21:01+09:00", "Event": "Logout", "ServerNo": 1, "AcntId": -1}
-{"DateTime": "2021-08-13T20:21:01+09:00", "Event": "KillMonster", "ServerNo": 1, "AcntId": 1000, "CharId": 3, "MonTypeId": 3, "MonInstId": 3, "MapI": 0.6, "PosX": 0, "PosY": 0, "PosZ": 0}
-'''
+    log = '{"DateTime": "2021-08-13T20:21:01+09:00", "Event": "Logout", "ServerNo": 1, "AcntId": -1}'
     write_log('fakelog.txt', log)
     res = runner.invoke(verify, [fake_log])
     assert "-1 is less than the minimum of 0" in res.output
 
-    log = '''{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "Login", "ServerNo": 1, "AcntId": 1000, "Platform": "ios"}
-{"DateTime": "2021-08-13T20:21:01+09:00", "Event": "Logout", "ServerNo": 1, "AcntId": 1000}
-{"DateTime": "2021-08-13T20:21:01+09:00", "Event": "KillMonster", "ServerNo": 1, "AcntId": 1000, "CharId": 3, "MonTypeId": 3, "MonInstId": 3, "MapI": 0.6, "PosX": 0, "PosY": 0, "PosZ": 0}
-'''
+    log = '{"DateTime": "2021-08-13T20:21:01+09:00", "Event": "KillMonster", "ServerNo": 1, "AcntId": 1000, "CharId": 3, "MonTypeId": 3, "MonInstId": 3, "PosX": 0, "PosY": 0, "PosZ": 0}'
     write_log('fakelog.txt', log)
     res = runner.invoke(verify, [fake_log])
     assert "'MapId' is a required property" in res.output
+
+    log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonTypeId": 3, "MonInstId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemTypeId": 3, "ItemInstId" 4}'
+    write_log('fakelog.txt', log)
+    res = runner.invoke(verify, [fake_log])
+    assert "유효한 JSON 형식이 아닙니다" in res.output
+
+    log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonTypeId": 3, "MonInstId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemTypeId": 3, "ItemInstId": 4, "ItemName": "Sword"}'
+    write_log('fakelog.txt', log)
+    res = runner.invoke(verify, [fake_log])
+    assert "'Sword' does not match '^Itm.*'" in res.output
+
+    log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonTypeId": 3, "MonInstId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemTypeId": 3, "ItemInstId": 4, "ItemName": "ItmSword"}'
+    write_log('fakelog.txt', log)
+    res = runner.invoke(verify, [fake_log])
+    assert "'ItmSword' is too long" in res.output
+
+    log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonTypeId": 3, "MonInstId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemTypeId": 3, "ItemInstId": 4, "ItemName": "ItmSwrd"}'
+    write_log('fakelog.txt', log)
+    res = runner.invoke(verify, [fake_log])
+    assert res.exit_code == 0

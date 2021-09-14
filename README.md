@@ -694,6 +694,7 @@ Description : 계정 로그인
     },
     "Monster": {
       "desc": "몬스터 정보",
+      "mixins": ["bases.Server"],
       "fields": [
         ["MonTypeId", "integer", "몬스터 타입 ID"],
         ["MonInstId", "integer", "몬스터 인스턴스 ID"]
@@ -704,7 +705,7 @@ Description : 계정 로그인
 }
 ```
 
-`Position` 베이스는 이벤트가 맵상의 특정 위치에서 발생한 경우를 위한 것이다. 몬스터를 잡거나, 아이템을 습득하는 것은 모두 맵상의 위치에서 일어나기에 필요하다. `Monster` 베이스는 특정 몬스터 개체에 관한 것이다.
+`Position` 베이스는 이벤트가 맵상의 특정 위치에서 발생한 경우를 위한 것이다. 몬스터를 잡거나, 아이템을 습득하는 것은 모두 맵상의 위치에서 일어나기에 필요하다. `Monster` 베이스는 특정 몬스터 개체에 관한 것이다. 몬스터도 서버 내에서만 존재할 수 있기에 `bases.Server` 를 믹스인 하였다.
 
 이제 캐릭터가 몬스터를 잡은 경우의 이벤트 `KillMonster` 를 추가한다.
 
@@ -762,6 +763,7 @@ Description : 몬스터를 잡음
 
     "Item": {
       "desc": "아이템 정보",
+      "mixins": ["bases.Server"],
       "fields": [
         ["ItemTypeId", "integer", "아이템 타입 ID"],
         ["ItemInstId", "integer", "아이템 인스턴스 ID"]
@@ -772,7 +774,7 @@ Description : 몬스터를 잡음
 }
 ```
 
-`Item` 은 특정 아이템 개체를 위한 베이스이다. 이것을 이용해 몬스터가 아이템을 떨어뜨리는 이벤트를 추가한다.
+`Item` 은 특정 아이템 개체를 위한 베이스이다. 아이템도 서버 내에서만 존재할 수 있기에 `bases.Server` 를 믹스인 하였다.이것을 이용해 몬스터가 아이템을 떨어뜨리는 이벤트를 추가한다.
 
 ```js
 {
@@ -789,6 +791,8 @@ Description : 몬스터를 잡음
 }
 ```
 
+> `Monster` 베이스와 `Item` 베이스에 모두 `Server` 베이스가 믹스인 되어있지만 같은 필드는 덮어 써지기에 문제는 없다.
+
 몬스터가 주체이기에 지금까지와는 달리 계정이나 캐릭터 베이스가 믹스인되지 않았다. 또 몬스터 개체의 정보가 먼저 나오도록 믹스인 순서를 조정하였다.  `doc` 의 결과는 다음과 같다.
 
 ```
@@ -801,6 +805,7 @@ Description : 몬스터가 아이템을 떨어뜨림
 | Field      | Type     | Description        |
 |------------+----------+--------------------|
 | DateTime   | datetime | 이벤트 일시        |
+| ServerNo   | integer  | 서버 번호         |
 | MonTypeId  | integer  | 몬스터 타입 ID     |
 | MonInstId  | integer  | 몬스터 인스턴스 ID |
 | MapId      | integer  | 맵 번호            |
@@ -1219,7 +1224,7 @@ Error: [Line: 1] 'win' is not one of ['ios', 'aos']
 {'DateTime': '2021-08-13T20:20:39+09:00', 'Event': 'Login', 'ServerNo': 1, 'AcntId': 1000, 'Platform': 'win'}
 ```
 
-이번에는 `ios` 또는 `aos` 만 허용한다는 에러가 나온다. 끝으로 `win` 을 `ios` 로 고치고 다시 해보자.
+이번에는 `ios` 또는 `aos` 만 허용한다는 에러가 나온다. `win` 을 `ios` 로 고치고 다시 해보자.
 
 ```
 $ loglab verify fakelog.txt
@@ -1229,7 +1234,7 @@ $ loglab verify fakelog.txt
 
 검증이 문제없이 성공하였다. 이런 경우 아무런 메시지가 나오지 않는다.
 
-> 랩파일 수정 후 스키마를 갱신하지 않으면 의도하지 않는 결과가 나올 수 있다. 랩파일 수정 후 검증을 원할 때는 꼭 `schema` 명령을 불러주도록 하자.
+> 랩파일 수정 후 스키마를 갱신하지 않으면 의도하지 않는 결과가 나올 수 있다. 수정된 랩파일에 맞게 검증을 원할 때는 꼭 `schema` 명령을 불러주도록 하자.
 
 ## 더미 로그의 생성
 
