@@ -138,6 +138,19 @@ Description : 계정 로그인
 +----------+----------+------------------+------------+-----------------+'''
     assert ans in out
 
+    ans = '''Event : CharLogout
+Description : 캐릭터 로그아웃
++----------+----------+------------------+------------+-----------------+
+| Field    | Type     | Description      | Optional   | Restrict        |
+|----------+----------+------------------+------------+-----------------|
+| DateTime | datetime | 이벤트 일시      |            |                 |
+| ServerNo | integer  | 서버 번호        |            | 1 이상 100 미만 |
+| AcntId   | types.Id | 계정 ID          |            |                 |
+| CharId   | types.Id | 캐릭터 ID        |            |                 |
+| PlayTime | number   | 플레이 시간 (초) | True       |                 |
++----------+----------+------------------+------------+-----------------+'''
+    assert ans in out
+
     ans = '''Event : MonsterDropItem
 Description : 몬스터가 아이템을 떨어뜨림
 +------------+----------+--------------------+--------------------+
