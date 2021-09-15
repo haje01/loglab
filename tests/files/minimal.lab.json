@@ -1,0 +1,7 @@
+{
+	"$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
+	"domain": {
+		"name": "foo",
+		"desc": "위대한 모바일 게임"
+	}
+}

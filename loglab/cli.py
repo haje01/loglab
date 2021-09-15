@@ -97,7 +97,9 @@ def fetch(url, output):
     edir = request_ext_dir()
     if output is None:
         output = url.split('/')[-1]
-    path = os.path.join(edir, 'sample.lab.json')
+    if not output.endswith('.lab.json'):
+        output += '.lab.json'
+    path = os.path.join(edir, output)
     download(url, path)
     print(f"'{path} 에 저장.")
 

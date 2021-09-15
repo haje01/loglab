@@ -20,9 +20,9 @@ def _clear():
 def test_download(clear):
     edir = request_ext_dir()
     assert '.loglab/extern' in edir
-    path = os.path.join(edir, 'sample.lab.json')
+    path = os.path.join(edir, 'foo.lab.json')
     download(
-        'https://raw.githubusercontent.com/haje01/loglab/master/tests/files/sample.lab.json',
+        'https://raw.githubusercontent.com/haje01/loglab/master/tests/files/foo.lab.json',
         path
     )
     assert os.path.isfile(path)

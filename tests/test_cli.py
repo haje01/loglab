@@ -14,7 +14,7 @@ from loglab.util import AttrDict, request_ext_dir
 
 CWD = os.path.dirname(__file__)
 os.chdir(CWD)
-SAMPLE_DIR = os.path.join(CWD, 'files')
+foo_DIR = os.path.join(CWD, 'files')
 
 
 @pytest.fixture
@@ -36,7 +36,7 @@ def _clear():
 def copy_files(files):
     # 대상 랩 파일 복사
     for fn in files:
-        path = os.path.join(SAMPLE_DIR, fn)
+        path = os.path.join(foo_DIR, fn)
         assert os.path.isfile(path)
         copyfile(path, fn)
 
@@ -85,14 +85,14 @@ def test_labfile(clear):
     assert res.exit_code == 1
 
     # 랩 파일 둘 이상
-    copy_files(["minimal.lab.json", "sample.lab.json"])
+    copy_files(["minimal.lab.json", "foo.lab.json"])
     res = runner.invoke(show)
     assert '하나 이상' in res.output
     assert res.exit_code == 1
 
 
 def test_show():
-    sel_lab("sample")
+    sel_lab("foo")
     runner = CliRunner()
     res = runner.invoke(show)
     assert res.exit_code == 0
@@ -197,7 +197,7 @@ Description : 캐릭터의 아이템 습득
 
 
 def test_schema(clear):
-    sel_lab("sample")
+    sel_lab("foo")
     runner = CliRunner()
     res = runner.invoke(schema)
     assert res.exit_code == 0
@@ -256,7 +256,7 @@ def test_schema(clear):
 
 
 def test_verify(clear):
-    sel_lab("sample")
+    sel_lab("foo")
     fake_log = 'fakelog.txt'
     runner = CliRunner()
     res = runner.invoke(verify, [fake_log])
@@ -317,9 +317,10 @@ def test_verify(clear):
 
 def test_fetch(clear):
     runner = CliRunner()
-    url = 'https://raw.githubusercontent.com/haje01/loglab/master/tests/files/sample.lab.json'
+    url = 'https://raw.githubusercontent.com/haje01/loglab/master/tests/files/foo.lab.json'
     res = runner.invoke(fetch, [url])
     assert res.exit_code == 0
     edir = request_ext_dir()
-    path = os.path.join(edir, 'sample.lab.json')
+    path = os.path.join(edir, 'foo.lab.json')
     assert os.path.isfile(path)
+
