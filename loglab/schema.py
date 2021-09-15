@@ -18,12 +18,12 @@ def verify_labfile(lab_path, scm_path=None, err_exit=True):
     """랩파일을 검증.
 
     Args:
-        lab_path (str): 랩파일 URI
+        lab_path (str): 랩 파일 URI
         scm_path (str): 스키마 파일 URI
         err_exit (bool): 에러 발생시 종료 여부. 기본 True
 
     Returns:
-        str: 읽어들인 랩파일 JSON 을 재활용할 수 있게 반환
+        str: 읽어들인 랩 파일 JSON 을 재활용할 수 있게 반환
 
     """
     if scm_path is None:
@@ -37,7 +37,7 @@ def verify_labfile(lab_path, scm_path=None, err_exit=True):
         labjs = json.loads(body)
         validate(labjs, schema=schema)
     except Exception as e:
-        print("Error: 랩파일 에러")
+        print("Error: 랩 파일 에러")
         print(str(e))
         if err_exit:
             sys.exit(1)
@@ -46,10 +46,10 @@ def verify_labfile(lab_path, scm_path=None, err_exit=True):
 
 
 def log_schema_from_labfile(labjs):
-    """랩파일 데이터에서 로그용 JSON 스키마 생성.
+    """랩 파일 데이터에서 로그용 JSON 스키마 생성.
 
     Args:
-        labjs (dict): 랩파일 데이터
+        labjs (dict): 랩 파일 데이터
 
     """
     def _resolve_type(typ, v):
@@ -136,11 +136,11 @@ def log_schema_from_labfile(labjs):
 
 
 def flow_schema_from_labfile(labfile, labjs):
-    """랩파일 데이터에서 플로우 JSON 스키마 생성.
+    """랩 파일 데이터에서 플로우 JSON 스키마 생성.
 
     Args:
-        labfile (str): 랩파일 경로
-        labjs (dict): 랩파일 데이터
+        labfile (str): 랩 파일 경로
+        labjs (dict): 랩 파일 데이터
 
     """
     def _collect(fields, group):

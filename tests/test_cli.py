@@ -7,9 +7,9 @@ import json
 import pytest
 from click.testing import CliRunner
 
-from loglab.cli import cli, version, show, schema, verify
+from loglab.cli import cli, version, show, schema, verify, fetch
 from loglab.version import VERSION
-from loglab.util import AttrDict
+from loglab.util import AttrDict, request_ext_dir
 
 
 CWD = os.path.dirname(__file__)
@@ -29,12 +29,12 @@ def _clear():
     for f in glob("*.txt"):
         os.remove(f)
     # 임시 디렉토리 삭제
-    if os.path.isdir('.loglab'):
-        rmtree(".loglab")
+    if os.path.isdir('.loglab/temp'):
+        rmtree(".loglab/temp")
 
 
 def copy_files(files):
-    # 대상 랩파일 복사
+    # 대상 랩 파일 복사
     for fn in files:
         path = os.path.join(SAMPLE_DIR, fn)
         assert os.path.isfile(path)
@@ -42,7 +42,7 @@ def copy_files(files):
 
 
 def sel_lab(labfile):
-    """랩파일 선택."""
+    """랩 파일 선택."""
     _clear()
     copy_files([labfile + ".lab.json"])
 
@@ -76,15 +76,15 @@ def test_version():
 
 
 def test_labfile(clear):
-    """랩파일 찾기 테스트."""
+    """랩 파일 찾기 테스트."""
     runner = CliRunner()
 
-    # 랩파일 없이
+    # 랩 파일 없이
     res = runner.invoke(show)
-    assert "랩파일이 없습니다" in res.output
+    assert "랩 파일이 없습니다" in res.output
     assert res.exit_code == 1
 
-    # 랩파일 둘 이상
+    # 랩 파일 둘 이상
     copy_files(["minimal.lab.json", "sample.lab.json"])
     res = runner.invoke(show)
     assert '하나 이상' in res.output
@@ -127,7 +127,7 @@ Description : 계정 로그인
 +----------+----------+-------------------+------------------------+'''
 
     ans = '''Event : Logout
-Description : 계정 로그인
+Description : 계정 로그아웃
 +----------+----------+------------------+------------+-----------------+
 | Field    | Type     | Description      | Optional   | Restrict        |
 |----------+----------+------------------+------------+-----------------|
@@ -207,7 +207,7 @@ def test_schema(clear):
     assert "foo.flow.schema.json 에 플로우 스키마 저장" in out
 
     # 로그 스키마 체크
-    with open(".loglab/foo.log.schema.json", 'rt') as f:
+    with open(".loglab/temp/foo.log.schema.json", 'rt') as f:
         body = f.read()
         data = json.loads(body)
         scm = AttrDict(data)
@@ -313,3 +313,13 @@ def test_verify(clear):
     write_log('fakelog.txt', log)
     res = runner.invoke(verify, [fake_log])
     assert res.exit_code == 0
+
+
+def test_fetch(clear):
+    runner = CliRunner()
+    url = 'https://raw.githubusercontent.com/haje01/loglab/master/tests/files/sample.lab.json'
+    res = runner.invoke(fetch, [url])
+    assert res.exit_code == 0
+    edir = request_ext_dir()
+    path = os.path.join(edir, 'sample.lab.json')
+    assert os.path.isfile(path)

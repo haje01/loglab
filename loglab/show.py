@@ -1,4 +1,4 @@
-"""랩파일에서 출력용 문서 생성."""
+"""랩 파일에서 출력용 문서 생성."""
 from io import StringIO
 import json
 
@@ -20,10 +20,10 @@ def _jsonify(vals):
 
 
 def text_from_labfile(root):
-    """랩파일에서 텍스트 문서 생성.
+    """랩 파일에서 텍스트 문서 생성.
 
     Args:
-        root (dict): 랩파일 데이터
+        root (dict): 랩 파일 데이터
 
     """
     out = StringIO()

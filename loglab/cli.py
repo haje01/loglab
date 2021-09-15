@@ -8,13 +8,14 @@ import click
 from loglab.show import text_from_labfile
 from loglab.schema import verify_labfile, log_schema_from_labfile,\
     flow_schema_from_labfile, verify_logfile
-from loglab.util import find_labfile, find_log_schema, request_tmp_dir
+from loglab.util import find_labfile, find_log_schema, request_tmp_dir,\
+    request_ext_dir, download
 from loglab.version import VERSION
 
 
 _global_options = [
     click.option('--labfile', '-l', 'labfile',
-                 help='사용할 랩파일의 위치를 명시적으로 지정'),
+                 help='사용할 랩 파일의 위치를 명시적으로 지정'),
 ]
 
 
@@ -84,8 +85,21 @@ def verify(labfile, logfile, schema):
         print("Error: 로그 스키마를 찾을 수 없습니다. schema 명령으로 생성하거나, "
               "스키마의 경로를 옵션으로 지정하세요.")
         sys.exit(1)
-    print(f"[사용할 스키마 파일 : {schema}]")
+    print(f"[로그 스키마 파일 : {schema}]")
     verify_logfile(schema, logfile)
+
+
+@cli.command()
+@click.argument('url')
+@click.option('-o', '--output', help="저장할 파일명")
+def fetch(url, output):
+    """외부 랩 파일 다운로드."""
+    edir = request_ext_dir()
+    if output is None:
+        output = url.split('/')[-1]
+    path = os.path.join(edir, 'sample.lab.json')
+    download(url, path)
+    print(f"'{path} 에 저장.")
 
 
 @cli.command()

@@ -32,6 +32,7 @@ setup(
         'jinja2',
         'pandas',
         'tabulate',
+        'requests'
     ],
     extras_require={
         'dev': [

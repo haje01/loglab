@@ -9,9 +9,13 @@ from urllib.parse import urlparse
 from collections import OrderedDict
 from pathlib import Path
 
+from requests import get
+
 
 LOGLAB_HOME = Path(os.path.dirname(os.path.abspath(__file__))).parent.absolute()
-TMP_DIR = '.loglab'
+RESULT_DIR = '.loglab'
+TEMP_DIR = os.path.join(RESULT_DIR, 'temp')
+EXTERN_DIR = os.path.join(RESULT_DIR, 'extern')
 
 class AttrDict(dict):
     """dict 키를 속성처럼 접근하는 헬퍼."""
@@ -32,24 +36,24 @@ class AttrDict(dict):
 
 
 def find_labfile(labfile, print_msg=True):
-    """사용할 랩파일 디렉토리에서 찾기.
+    """사용할 랩 파일 디렉토리에서 찾기.
 
-    - 지정된 랩파일이 있으면 그것을,
-    - 아니면 현재 디렉토리에서 유일한 랩파일이 있으면 그것을
-    - 현재 디렉토리에 랩파일이 없거나 여럿 있으면 Error
+    - 지정된 랩 파일이 있으면 그것을,
+    - 아니면 현재 디렉토리에서 유일한 랩 파일이 있으면 그것을
+    - 현재 디렉토리에 랩 파일이 없거나 여럿 있으면 Error
 
     Args:
-        labfile (str): 랩파일 경로
+        labfile (str): 랩 파일 경로
         print_msg (bool): 메시지 출력 여부. 기본 True
 
     Returns:
-        str: 찾은 랩파일의 절대 경로
+        str: 찾은 랩 파일의 절대 경로
 
     """
     def handle(labfile, print_msg):
         labfile = os.path.abspath(labfile)
         if print_msg:
-            print(f"[사용할 랩파일 : {labfile}]")
+            print(f"[랩 파일 : {labfile}]")
         return labfile
 
     if labfile is not None:
@@ -60,11 +64,11 @@ def find_labfile(labfile, print_msg=True):
     if num_labs == 1:
         return handle(labs[0], print_msg)
     elif num_labs == 0:
-        print("Error: 현재 디렉토리에 랩파일이 없습니다. 새 랩파일을 "
-              "만들거나, 사용할 랩파일을 명시적으로 지정해 주세요.")
+        print("Error: 현재 디렉토리에 랩 파일이 없습니다. 새 랩 파일을 "
+              "만들거나, 사용할 랩 파일을 명시적으로 지정해 주세요.")
     else:
-        print("Error: 현재 디렉토리에 랩파일이 하나 이상 있습니다. "
-              "사용할 랩파일을 명시적으로 지정해 주세요.")
+        print("Error: 현재 디렉토리에 랩 파일이 하나 이상 있습니다. "
+              "사용할 랩 파일을 명시적으로 지정해 주세요.")
     sys.exit(1)
 
 
@@ -72,12 +76,12 @@ def find_log_schema(labfile, labjs, _schema):
     """로그 스키마 찾기.
 
     - 지정된 스키마가 있으면 그것을,
-    - 아니면 현재 디렉토리에서 랩파일의 도메인 이름에 준하는 로그 스키마가 있으면 그것을,
+    - 아니면 현재 디렉토리에서 랩 파일의 도메인 이름에 준하는 로그 스키마가 있으면 그것을,
     - 아니면 Error
 
     Args:
-        labfile (str): 랩파일 경로
-        labjs (dict): 랩파일 데이터
+        labfile (str): 랩 파일 경로
+        labjs (dict): 랩 파일 데이터
         _schema (str): 지정된 스키마
 
     Return:
@@ -87,7 +91,7 @@ def find_log_schema(labfile, labjs, _schema):
     if _schema is not None:
         return os.path.abspath(_schema)
 
-    # 랩파일 도메인 이름에서 로그 스키마 파일명 유추
+    # 랩 파일 도메인 이름에서 로그 스키마 파일명 유추
     if 'domain' in labjs or 'name' in labjs['domain']:
         domain = labjs['domain']['name']
         tmp_dir = request_tmp_dir(labfile)
@@ -128,7 +132,7 @@ def _fields_from_mixins(root, mixins):
     재귀적으로 올라가며 처리.
 
     Args:
-        root (dict): 랩파일 데이터
+        root (dict): 랩 파일 데이터
         mixins (list): 믹스인 엔터티 이름 리스트
 
     Returns:
@@ -216,10 +220,10 @@ def explain_rstr(f):
 
 
 def fields_from_entity(root, entity, field_cb=None):
-    """랩파일의 엔터티에서 필드 정보 얻기.
+    """랩 파일의 엔터티에서 필드 정보 얻기.
 
     Args:
-        root (dict): 랩파일 데이터
+        root (dict): 랩 파일 데이터
         entity (dict): 엔터티 데이터
         field_cb (function): 필드값 변환 함수
 
@@ -255,8 +259,54 @@ def fields_from_entity(root, entity, field_cb=None):
     return fields
 
 
-def request_tmp_dir(labfile):
-    """랩파일이 있는 경로에서 임시 파일용 디렉토리를 확보."""
-    adir = os.path.join(os.path.dirname(labfile), TMP_DIR)
+def request_tmp_dir(labfile=None):
+    """랩 파일이 있는 경로에서 임시 파일용 디렉토리를 확보.
+
+    랩 파일 경로가 없으면 현제 디렉토리를 이용
+
+    Args:
+        labfile (string): 랩 파일 경로
+
+    """
+    return _request_dir(labfile, TEMP_DIR)
+
+
+def request_ext_dir(labfile=None):
+    """랩 파일이 있는 경로에서 임시 파일용 디렉토리를 확보.
+
+    랩 파일 경로가 없으면 현제 디렉토리를 이용
+
+    Args:
+        labfile (string): 랩 파일 경로
+
+    """
+    return _request_dir(labfile, EXTERN_DIR)
+
+
+def _request_dir(labfile, subdir):
+    if labfile is not None:
+        adir = os.path.dirname(labfile)
+    else:
+        adir = os.getcwd()
+    adir = os.path.join(adir, subdir)
     Path(adir).mkdir(parents=True, exist_ok=True)
     return adir
+
+
+def download(url, filepath=None):
+    """파일 다운로드.
+
+    URL 에서 지정된 파일 경로로 파일 다운로드.
+    지정된 파일 경로가 없으면 현재 디렉토리에서 URL 경로의 마지막 요소로 저장
+
+    Args:
+        url (string): 다운 받을 URL
+        filepath (string): 저장할 파일 경로. 기본 None
+
+    """
+    if filepath is None:
+        filepath = url.split('/')[-1]
+
+    with open(filepath, "wb") as f:
+        res = get(url)
+        f.write(res.content)
