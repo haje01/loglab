@@ -14,6 +14,22 @@
                 }
             ]
         },
+        "super-body": {
+            "object": "array",
+            "items": {
+                "type": "array",
+                "items": [
+                    {
+                        "type": "string",
+                        "pattern": "[a-zA-Z0-9_]+.lab.json"
+                    },
+                    {
+                        "type": "string",
+                        "pattern": "[a-zA-Z0-9_]+"
+                    }
+                ]
+            }
+        },
         "dict-field-body": {
             "allOf": [
                 {
@@ -255,6 +271,10 @@
             },
             "required": ["name"]
         },
+        "super": {
+            "description": "상위 랩 파일",
+            "$ref": "#/$defs/super-body"
+        },
         "types": {
             "description": "커스텀 타입",
             "$ref": "#/$defs/type-body"
@@ -268,6 +288,5 @@
             "$ref": "#/$defs/entity-body"
         }
     },
-    "required": ["events"],
     "additionalProperties": false
 }
