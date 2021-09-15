@@ -1,0 +1,10 @@
+{
+    "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
+    "domain": {
+        "name": "acme",
+        "desc": "최고의 게임 회사"
+    },
+    "super": [
+        ["acme.lab.json", "acme"]
+    ]
+}

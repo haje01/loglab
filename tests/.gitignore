@@ -1,4 +1,3 @@
-*.lab.json
 *.log.schema.json
 *.flow.schema.json
 *.txt
