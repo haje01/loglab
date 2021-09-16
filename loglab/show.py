@@ -1,6 +1,5 @@
 """랩 파일에서 출력용 문서 생성."""
 from io import StringIO
-import json
 
 import pandas as pd
 from tabulate import tabulate
@@ -19,14 +18,24 @@ def _jsonify(vals):
     return _vals
 
 
-def text_from_labfile(root):
+def text_from_labfile(root, out=None, ns=None):
     """랩 파일에서 텍스트 문서 생성.
 
     Args:
         root (dict): 랩 파일 데이터
+        out (StringIO): 문자열 IO
+        ns (string): 네임스페이스
 
     """
-    out = StringIO()
+    if out is None:
+        out = StringIO()
+
+    # 가져온 랩 파일 먼저
+    if '_extern_' in root:
+        for k, v in root['_extern_'].items():
+            text_from_labfile(v, out, k)
+
+    nsp = '' if ns is None else f'{ns}.'
 
     # 도메인
     if 'domain' in root:
@@ -39,7 +48,7 @@ def text_from_labfile(root):
     if 'types' in root:
         out.write('\n')
         for tname, tdef in root['types'].items():
-            out.write(f"Type : types.{tname}\n")
+            out.write(f"Type : {nsp}types.{tname}\n")
             out.write(f"Description : {tdef['desc']}\n")
             rstr = explain_rstr(tdef)
             df = pd.DataFrame(dict(BaseType=[tdef['type']],
@@ -50,11 +59,14 @@ def text_from_labfile(root):
             out.write(tbl)
             out.write('\n')
 
+    if 'events' not in root:
+        return out.getvalue()
+
     headers = ['Field', 'Type', 'Description', 'Optional', 'Restrict']
     # 각 이벤트별로
     for ename, ebody in root['events'].items():
         out.write('\n')
-        out.write(f"Event : {ename}\n")
+        out.write(f"Event : {nsp}{ename}\n")
         out.write(f"Description : {ebody['desc']}\n")
 
         rows = []

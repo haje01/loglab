@@ -14,7 +14,7 @@ from loglab.util import AttrDict, request_ext_dir
 
 CWD = os.path.dirname(__file__)
 os.chdir(CWD)
-foo_DIR = os.path.join(CWD, 'files')
+FILE_DIR = os.path.join(CWD, 'files')
 
 
 @pytest.fixture
@@ -28,15 +28,15 @@ def _clear():
         os.remove(f)
     for f in glob("*.txt"):
         os.remove(f)
-    # 임시 디렉토리 삭제
-    if os.path.isdir('.loglab/temp'):
-        rmtree(".loglab/temp")
+    if os.path.isdir('.loglab'):
+        # 결과 디렉토리 삭제
+        rmtree(".loglab")
 
 
 def copy_files(files):
     # 대상 랩 파일 복사
     for fn in files:
-        path = os.path.join(foo_DIR, fn)
+        path = os.path.join(FILE_DIR, fn)
         assert os.path.isfile(path)
         copyfile(path, fn)
 
@@ -48,8 +48,17 @@ def sel_lab(labfile):
 
 
 def write_log(fname, body):
-    """가짜 로그 생성."""
+    """임시 로그 생성."""
     with open(fname, 'wt') as f:
+        f.write(body)
+
+
+def write_lab(fname, body):
+    """임시 랩파일 생성."""
+    _clear()
+    if not fname.endswith('.lab.json'):
+        path = fname + '.lab.json'
+    with open(path, 'wt') as f:
         f.write(body)
 
 
@@ -92,8 +101,17 @@ def test_labfile(clear):
 
 
 def test_show():
-    sel_lab("foo")
     runner = CliRunner()
+
+    sel_lab("minimal")
+    res = runner.invoke(show)
+    assert res.exit_code == 0
+    out = res.output
+    ans = '''Domain : foo
+Description : 위대한 모바일 게임'''
+    assert ans in out
+
+    sel_lab("foo")
     res = runner.invoke(show)
     assert res.exit_code == 0
     out = res.output
@@ -194,6 +212,69 @@ Description : 캐릭터의 아이템 습득
 |            |          |                    | 정규식 ^Itm.* 매칭 |
 +------------+----------+--------------------+--------------------+'''
     assert ans in out
+
+
+def test_impshow(clear):
+    """상위 랩 파일이 있는 경우 show."""
+    runner = CliRunner()
+
+    sel_lab("boo")
+    res = runner.invoke(show)
+    assert res.exit_code == 1
+    assert "먼저 fetch 하세요" in res.output
+
+    url = 'https://raw.githubusercontent.com/haje01/loglab/master/tests/files/acme.lab.json'
+    res = runner.invoke(fetch, [url])
+    assert res.exit_code == 0
+
+    res = runner.invoke(show)
+    ans = '''Domain : acme
+Description : 최고의 게임 회사
+
+Type : acme.types.Id
+Description : Id 타입
++------------+---------------+------------+
+| BaseType   | Description   | Restrict   |
+|------------+---------------+------------|
+| integer    | Id 타입       | 0 이상     |
++------------+---------------+------------+
+
+Event : acme.Login
+Description : 계정 로그인
++----------+----------+-------------------+------------------------+
+| Field    | Type     | Description       | Restrict               |
+|----------+----------+-------------------+------------------------|
+| DateTime | datetime | 이벤트 일시       |                        |
+| ServerNo | integer  | 서버 번호         | 1 이상 100 미만        |
+| AcntId   | types.Id | 계정 ID           |                        |
+| Platform | string   | 디바이스의 플랫폼 | ['ios', 'aos'] 중 하나 |
++----------+----------+-------------------+------------------------+
+
+Event : acme.Logout
+Description : 계정 로그인
++----------+----------+------------------+------------+-----------------+
+| Field    | Type     | Description      | Optional   | Restrict        |
+|----------+----------+------------------+------------+-----------------|
+| DateTime | datetime | 이벤트 일시      |            |                 |
+| ServerNo | integer  | 서버 번호        |            | 1 이상 100 미만 |
+| AcntId   | types.Id | 계정 ID          |            |                 |
+| PlayTime | number   | 플레이 시간 (초) | true       |                 |
++----------+----------+------------------+------------+-----------------+
+
+Domain : boo
+Description : 최고의 PC 온라인 게임
+
+Event : Login
+Description : 로그인
++----------+----------+---------------+---------------------------------+
+| Field    | Type     | Description   | Restrict                        |
+|----------+----------+---------------+---------------------------------|
+| DateTime | datetime | 이벤트 일시   |                                 |
+| ServerNo | integer  | 서버 번호     | 1 이상 100 미만                 |
+| AcntId   | types.Id | 계정 ID       |                                 |
+| Platform | string   | PC의 플랫폼   | ['win', 'mac', 'linux'] 중 하나 |
++----------+----------+---------------+---------------------------------+'''
+    assert ans in res.output
 
 
 def test_schema(clear):
@@ -323,4 +404,3 @@ def test_fetch(clear):
     edir = request_ext_dir()
     path = os.path.join(edir, 'foo.lab.json')
     assert os.path.isfile(path)
-

@@ -1,10 +1,26 @@
 {
     "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
     "domain": {
-        "name": "acme",
-        "desc": "최고의 게임 회사"
+        "name": "boo",
+        "desc": "최고의 PC 온라인 게임"
     },
-    "super": [
+    "import": [
         ["acme.lab.json", "acme"]
-    ]
+    ],
+    "events": {
+        "Login": {
+          "desc": "로그인",
+          "mixins": ["acme.events.Login"],
+          "fields": [
+              {
+                "name": "Platform",
+                "desc": "PC의 플랫폼",
+                "type": "string",
+                "enum": [
+                    "win", "mac", "linux"
+                ]
+              }
+          ]
+        }
+      }
 }

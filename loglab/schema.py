@@ -9,9 +9,10 @@ from jinja2.loaders import PackageLoader
 
 from jsonschema import validate, ValidationError
 from jinja2 import Environment, FileSystemLoader
+from requests.api import request
 
 from loglab.util import AttrDict, load_file_from, LOGLAB_HOME,\
-    fields_from_entity
+    fields_from_entity, request_ext_dir
 
 
 def verify_labfile(lab_path, scm_path=None, err_exit=True):
@@ -34,37 +35,65 @@ def verify_labfile(lab_path, scm_path=None, err_exit=True):
         schema = load_file_from(scm_path)
         schema = json.loads(schema)
         body = load_file_from(lab_path)
-        labjs = json.loads(body)
-        validate(labjs, schema=schema)
+        lab = json.loads(body)
+        validate(lab, schema=schema)
     except Exception as e:
         print("Error: 랩 파일 에러")
         print(str(e))
         if err_exit:
             sys.exit(1)
     else:
-        return labjs
+
+        return lab
 
 
-def log_schema_from_labfile(labjs):
-    """랩 파일 데이터에서 로그용 JSON 스키마 생성.
+def merge_import(labfile, lab):
+    """랩 파일이 참고하는 상위 랩 파일을 병합.
 
     Args:
-        labjs (dict): 랩 파일 데이터
+        labfile (str): 랩파일 경로
+        lab (dict): 랩 데이터
+
+    """
+    if 'import' not in lab:
+        return lab
+
+    if '_extern_' not in lab:
+        lab['_extern_'] = {}
+
+    for imp in lab['import']:
+        edir = request_ext_dir(labfile)
+        path = os.path.join(edir, imp[0])
+        ns = imp[1]
+        if not os.path.isfile(path):
+            raise FileNotFoundError(path)
+
+        with open(path, 'rt') as f:
+            body = f.read()
+            data = json.loads(body)
+            lab['_extern_'][ns] = AttrDict(data)
+
+
+def log_schema_from_labfile(lab):
+    """랩 데이터에서 로그용 JSON 스키마 생성.
+
+    Args:
+        lab (dict): 랩 데이터
 
     """
     def _resolve_type(typ, v):
         elms = typ.split('.')
         assert len(elms) == 2, f"잘못된 형식의 타입입니다: {typ}"
         tname = elms[1]
-        assert tname in labjs['types'].keys(), \
+        assert tname in lab['types'].keys(), \
             f"정의되지 않은 타입입니다: {typ}"
-        tdef = labjs['types'][tname]
+        tdef = lab['types'][tname]
         if len(v) == 2:
             v.append(None)
         v = [tdef['type'], v[1], v[2], None, tdef]
         return v
 
-    lab = AttrDict(labjs)
+    lab = AttrDict(lab)
     events = []
     items = []
     for ename, ebody in lab.events.items():
@@ -135,12 +164,12 @@ def log_schema_from_labfile(labjs):
     '''
 
 
-def flow_schema_from_labfile(labfile, labjs):
-    """랩 파일 데이터에서 플로우 JSON 스키마 생성.
+def flow_schema_from_labfile(labfile, lab):
+    """랩 데이터 에서 플로우 JSON 스키마 생성.
 
     Args:
         labfile (str): 랩 파일 경로
-        labjs (dict): 랩 파일 데이터
+        lab (dict): 랩 데이터
 
     """
     def _collect(fields, group):
@@ -152,16 +181,16 @@ def flow_schema_from_labfile(labfile, labjs):
                     else:
                         fields.add(field[0])
 
-    def _collect_all_fields(labjs):
+    def _collect_all_fields(lab):
         fields = set()
-        if 'bases' in labjs:
-            _collect(fields, labjs['bases'])
-        if 'events' in labjs:
-            _collect(fields, labjs['events'])
+        if 'bases' in lab:
+            _collect(fields, lab['bases'])
+        if 'events' in lab:
+            _collect(fields, lab['events'])
         return fields
 
-    events = list(labjs['events'].keys())
-    fields = _collect_all_fields(labjs)
+    events = list(lab['events'].keys())
+    fields = _collect_all_fields(lab)
     tmpl_path = os.path.join(LOGLAB_HOME, "template")
     loader = FileSystemLoader(tmpl_path)
     env = Environment(loader=loader)

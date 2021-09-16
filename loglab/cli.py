@@ -7,7 +7,7 @@ import click
 
 from loglab.show import text_from_labfile
 from loglab.schema import verify_labfile, log_schema_from_labfile,\
-    flow_schema_from_labfile, verify_logfile
+    flow_schema_from_labfile, verify_logfile, merge_import
 from loglab.util import find_labfile, find_log_schema, request_tmp_dir,\
     request_ext_dir, download
 from loglab.version import VERSION
@@ -42,6 +42,11 @@ def show(labfile):
     """로그 구조 출력."""
     labfile = find_labfile(labfile)
     labjs = verify_labfile(labfile)
+    try:
+        merge_import(labfile, labjs)
+    except FileNotFoundError as e:
+        print(f"Error: 가져올 파일 '{e}' 을 찾을 수 없습니다. 먼저 fetch 하세요.")
+        sys.exit(1)
     print(text_from_labfile(labjs))
 
 

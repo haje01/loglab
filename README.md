@@ -40,7 +40,7 @@ LogLab(로그랩) 은 다양한 서비스를 위한 로그를 설계하고 활�
   - [더미 로그의 생성](#더미-로그의-생성)
     - [플로우 파일 만들기](#플로우-파일-만들기)
   - [공용 랩 파일을 통한 로그 표준화](#공용-랩-파일을-통한-로그-표준화)
-    - [참조할 랩 파일 받기](#참조할-랩-파일-받기)
+    - [외부 랩 파일 가져오기](#외부-랩-파일-가져오기)
   - [로그랩을 활용하는 다양한 방법](#로그랩을-활용하는-다양한-방법)
     - [레가시 로그 정리용](#레가시-로그-정리용)
 
@@ -1278,11 +1278,11 @@ Error: 로그 스키마를 찾을 수 없습니다. schema 명령으로 생성�
 ```
 $ loglab schema
 [랩 파일 : /home/ubuntu/loglab_test/foo.lab.json]
-'/home/ubuntu/loglab_test/.loglab/temp/foo.log.schema.json 에 로그 스키마 저장.
-'/home/ubuntu/loglab_test/.loglab/temp/foo.flow.schema.json 에 플로우 스키마 저장.
+'/home/ubuntu/loglab_test/.loglab/foo.log.schema.json 에 로그 스키마 저장.
+'/home/ubuntu/loglab_test/.loglab/foo.flow.schema.json 에 플로우 스키마 저장.
 ```
 
-로그랩이 만드는 임시 파일용 디렉토리 `.loglab/temp` 아래 두 가지 스키마가 저장되는데, 하나는 **로그 스키마 (*.log.schema.json)** 이며 다른 하나는 **플로우 스키마 (*.flow.schema.json)** 이다. 로그 스키마는 실제 로그를 검증하는데 사용되고, 플로우 스키마는 더미 로그를 설계할 때 사용되는데 나중에 다룰 것이다.
+로그랩이 만드는 임시 파일용 디렉토리 `.loglab` 아래 두 가지 스키마가 저장되는데, 하나는 **로그 스키마 (*.log.schema.json)** 이며 다른 하나는 **플로우 스키마 (*.flow.schema.json)** 이다. 로그 스키마는 실제 로그를 검증하는데 사용되고, 플로우 스키마는 더미 로그를 설계할 때 사용되는데 나중에 다룰 것이다.
 
 > 만약, 생성한 로그 스키마가 다른 디렉토리에 있다면 아래와 같이 `verify` 명령의 `-s` 옵셩으로 지정할 수 있다.
 > ```
@@ -1296,7 +1296,7 @@ $ loglab schema
 $ loglab verify fakelog.txt
 # ...
 
-[로그 스키마 파일 : /home/ubuntu/loglab_test/.loglab/temp/foo.log.schema.json]
+[로그 스키마 파일 : /home/ubuntu/loglab_test/.loglab/foo.log.schema.json]
 Error: [Line: 1] 'Platform' is a required property
 {'DateTime': '2021-08-13T20:20:39+09:00', 'Event': 'Login', 'ServerNo': 1, 'AcntId': 1000}
 ```
@@ -1313,7 +1313,7 @@ Error: [Line: 1] 'Platform' is a required property
 ```
 $ loglab verify fakelog.txt
 [랩 파일 : /home/ubuntu/loglab_test/foo.lab.json]
-[로그 스키마 파일 : /home/ubuntu/loglab_test/.loglab/temp/foo.log.schema.json]
+[로그 스키마 파일 : /home/ubuntu/loglab_test/.loglab/foo.log.schema.json]
 Error: [Line: 1] 'win' is not one of ['ios', 'aos']
 {'DateTime': '2021-08-13T20:20:39+09:00', 'Event': 'Login', 'ServerNo': 1, 'AcntId': 1000, 'Platform': 'win'}
 ```
@@ -1323,7 +1323,7 @@ Error: [Line: 1] 'win' is not one of ['ios', 'aos']
 ```
 $ loglab verify fakelog.txt
 [랩 파일 : /home/ubuntu/loglab_test/foo.lab.json]
-[로그 스키마 파일 : /home/ubuntu/loglab_test/.loglab/temp/foo.log.schema.json]
+[로그 스키마 파일 : /home/ubuntu/loglab_test/.loglab/foo.log.schema.json]
 ```
 
 검증이 문제없이 성공했다. 이런 경우 아무런 메시지가 나오지 않는다.
@@ -1411,19 +1411,19 @@ $ loglab verify fakelog.txt
 }
 ```
 
-### 참조할 랩 파일 받기
+### 외부 랩 파일 가져오기
 
-먼저 참조할 랩 파일을 로컬로 다운로드 받아야 하는데, `loglab` 의 `fetch` 명령을 통해 할 수 있다. 다음과 같이 수행한다.
+먼저 사용할 외부 랩 파일을 로컬로 다운로드 받아야 하는데, `loglab` 의 `fetch` 명령을 통해 할 수 있다. 다음과 같이 수행한다.
 
 ```
 $ loglab fetch https://raw.githubusercontent.com/haje01/loglab/master/tests/files/acme.lab.json
 ```
 
-> 실제 조직에서는 `https://www.acmegames.com/loglab/acme.lab.json` 형식의 URL 에서 받을 수 있도록 하자.
+> 실제로는 `https://www.acmegames.com/loglab/acme.lab.json` 식으로 형식을 갖춘 URL 에서 받을 수 있도록 하자.
 
-페치 받은 랩 파일은 작업 디렉토리 아래 `.loglab/extern` 디렉토리에 URL 경로의 마지막 요소와 같은 파일 이름으로 받아진다. 위 예에서는 `.loglab/extern/acme.lab.json` 로 저장된다.
+페치로 받은 랩 파일은 작업 디렉토리 아래 `.loglab/extern` 디렉토리에 URL 경로의 마지막 요소와 같은 파일 이름으로 받아진다. 위 예에서는 `.loglab/extern/acme.lab.json` 로 저장된다.
 
-> 만약 파일 다운로드가 불가능한 환경이라면, 파일을 직접 해당 디렉토리에 복사해 넣어도 된다.
+> `fetch` 는 편의를 위한 명령이다. 다른 방식으로 받은 파일을 직접 복사해 사용해도 괜찮다.
 
 이제 다음과 같은 내용으로 `boo.lab.json` 을 만든다.
 
@@ -1433,57 +1433,110 @@ $ loglab fetch https://raw.githubusercontent.com/haje01/loglab/master/tests/file
     "name": "boo",
     "desc": "최고의 PC 온라인 게임"
   },
-  "super": [
+  "import": [
     ["acme.lab.json", "acme"]
   ]
 }
 ```
 
-편의상 참조당하는 랩 파일을 **상위 랩 파일**, 참조하는 랩 파일을 **하위 랩 파일**로 부르겠다. `super` 리스트에 참고할 상위 랩 파일들을 리스트 형식으로 기술하는데, 각 항목은 `[페치된 랩 파일명, 네임스페이스]` 형식이다.
+`import` 리스트에 가져올 외부 랩 파일을 `[받은파일_이름, 네임스페이스_이름]` 형식의 리스트로 기술한다.
 
-> 하나 이상의 상위 랩 파일을 가질 수 있으며, 같은 베이스나 필드는 믹스인의 경우와 마찬가지로 나중에 나오는 것이 우선한다.
+> 하나 이상의 외부 랩 파일을 가져올 수 있으며, 같은 베이스나 필드는 믹스인의 경우와 마찬가지로 나중에 나오는 것이 우선한다.
 
-참조된 부모 랩 파일에서 선언한 모든 베이스와 이벤트는 기본적으로 자식 랩 파일에서 직접 선언한 것과 같은 효과를 같는다.
+외부 랩 파일에서 선언한 모든 커스텀 타입, 베이스와 이벤트는 이 랩 파일에서 직접 선언한 것과 같은 효과를 같는다.
 
-`show` 를 해보면,
+`show` 를 해보면 가져온 외부 랩파일의 내용에 네임스페이스 이름 `acme` 가 접두어로 붙어 출력된다.
+
 
 ```
+$ loglab show
+Domain : acme
+Description : 최고의 게임 회사
+
+Type : acme.types.Id
+Description : Id 타입
++------------+---------------+------------+
+| BaseType   | Description   | Restrict   |
+|------------+---------------+------------|
+| integer    | Id 타입       | 0 이상     |
++------------+---------------+------------+
+
+Event : acme.Login
+Description : 계정 로그인
++----------+----------+-------------------+------------------------+
+| Field    | Type     | Description       | Restrict               |
+|----------+----------+-------------------+------------------------|
+| DateTime | datetime | 이벤트 일시       |                        |
+| ServerNo | integer  | 서버 번호         | 1 이상 100 미만        |
+| AcntId   | types.Id | 계정 ID           |                        |
+| Platform | string   | 디바이스의 플랫폼 | ['ios', 'aos'] 중 하나 |
++----------+----------+-------------------+------------------------+
+
+Event : acme.Logout
+Description : 계정 로그인
++----------+----------+------------------+------------+-----------------+
+| Field    | Type     | Description      | Optional   | Restrict        |
+|----------+----------+------------------+------------+-----------------|
+| DateTime | datetime | 이벤트 일시      |            |                 |
+| ServerNo | integer  | 서버 번호        |            | 1 이상 100 미만 |
+| AcntId   | types.Id | 계정 ID          |            |                 |
+| PlayTime | number   | 플레이 시간 (초) | true       |                 |
++----------+----------+------------------+------------+-----------------+
 ```
 
-만약 상위 랩 파일 내용에 변경이나 추가할 필요가 없다면 이대로 사용하면 되겠다. 그렇지만 대부분 서비스에 맞게 수정이나 확장이 필요할 것이다.만약 `acme` 에서 정의된 로그인 이벤트의 `Platform` 만 PC 온라인 서비스에 맞게 변경한다면 다음처럼 가능할 것이다.
+만약 외부 랩 파일 내용에 변경이나 추가할 필요가 없다면 이대로 사용하면 되겠지만, 대부분 서비스에 맞게 수정이나 확장이 필요할 것이다. `acme` 에서 정의된 로그인 이벤트의 `Platform` 를 PC 온라인 서비스에 맞게 다음처럼 변경해보자.
 
 ```js
 {
+  "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
   "domain": {
     "name": "boo",
     "desc": "최고의 PC 온라인 게임"
   },
-  "super": [
+  "import": [
     ["acme.lab.json", "acme"]
   ],
   "events": {
     "Login": {
+      "desc": "로그인",
       "mixins": ["acme.events.Login"],
-      "fields": {
-        "name": "Platform",
-        "desc": "PC의 플랫폼",
-        "type": "string",
-        "enum": [
-            "win", "mac", "linux"
-        ]
-      }
+      "fields": [
+        {
+          "name": "Platform",
+          "desc": "PC의 플랫폼",
+          "type": "string",
+          "enum": [
+              "win", "mac", "linux"
+          ]
+        }
+      ]
     }
   }
 }
 ```
 
-`acme.lab.json` 구조를 그대로 사용하되, `Login` 의 `Platform` 필드의 나열값만 변경된다. `show` 를 해보면,
+`acme` 의 `Login` 이벤트를 믹스인한 새로운 `Login` 을 만들고, `Platform` 필드의 나열값을 재정의 하고 있다. `show` 를 해보면,
 
 ```
+$ loglab show
+# ...
 
+Domain : boo
+Description : 최고의 PC 온라인 게임
+
+Event : Login
+Description : 로그인
++----------+----------+---------------+---------------------------------+
+| Field    | Type     | Description   | Restrict                        |
+|----------+----------+---------------+---------------------------------|
+| DateTime | datetime | 이벤트 일시   |                                 |
+| ServerNo | integer  | 서버 번호     | 1 이상 100 미만                 |
+| AcntId   | types.Id | 계정 ID       |                                 |
+| Platform | string   | PC의 플랫폼   | ['win', 'mac', 'linux'] 중 하나 |
++----------+----------+---------------+---------------------------------+
 ```
 
-[TODO]
+`Platform` 필드의 나열값이 바뀐 것을 확인할 수 있다.
 
 ## 로그랩을 활용하는 다양한 방법
 

@@ -140,8 +140,14 @@ def _fields_from_mixins(root, mixins):
     """
     fields = _init_fields()
     for mi in mixins:
-        parent, entity = mi.split('.')
-        _fields = fields_from_entity(root, root[parent][entity])
+        _root = root
+        elms = mi.split('.')
+        if len(elms) > 2:
+            nskey = '.'.join(elms[:-2])
+            _root = root['_extern_'][nskey]
+            elms = elms[-2:]
+        parent, entity = elms
+        _fields = fields_from_entity(_root, _root[parent][entity])
         fields.update(_fields)
     return fields
 
@@ -225,6 +231,7 @@ def fields_from_entity(root, entity, field_cb=None):
     Args:
         root (dict): 랩 파일 데이터
         entity (dict): 엔터티 데이터
+        ns (str): 네임스페이스
         field_cb (function): 필드값 변환 함수
 
     """
@@ -247,6 +254,8 @@ def fields_from_entity(root, entity, field_cb=None):
     if 'mixins' in entity:
         _fields = _fields_from_mixins(root, entity['mixins'])
         fields.update(_fields)
+
+    # 엔터티 자체 필드 반영
     if 'fields' in entity:
         for f in entity['fields']:
             # 사전형 필드 정보 파싱

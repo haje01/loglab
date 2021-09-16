@@ -14,7 +14,7 @@
                 }
             ]
         },
-        "super-body": {
+        "import-body": {
             "object": "array",
             "items": {
                 "type": "array",
@@ -271,9 +271,9 @@
             },
             "required": ["name"]
         },
-        "super": {
-            "description": "상위 랩 파일",
-            "$ref": "#/$defs/super-body"
+        "import": {
+            "description": "가져올 파일",
+            "$ref": "#/$defs/import-body"
         },
         "types": {
             "description": "커스텀 타입",
