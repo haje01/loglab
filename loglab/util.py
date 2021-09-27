@@ -8,6 +8,8 @@ from urllib.request import urlopen
 from urllib.parse import urlparse
 from collections import OrderedDict
 from pathlib import Path
+from glob import glob
+from shutil import rmtree
 
 from requests import get
 
@@ -126,7 +128,7 @@ def _init_fields():
     return fields
 
 
-def _fields_from_mixins(root, mixins):
+def _fields_from_mixins(root, mixins, dmp):
     """mixins 엔터티에서 필드 정보 얻기.
 
     재귀적으로 올라가며 처리.
@@ -134,6 +136,7 @@ def _fields_from_mixins(root, mixins):
     Args:
         root (dict): 랩 파일 데이터
         mixins (list): 믹스인 엔터티 이름 리스트
+        dmp (str): 도메인 접두어
 
     Returns:
         dict: 필드 정보
@@ -143,11 +146,11 @@ def _fields_from_mixins(root, mixins):
         _root = root
         elms = mi.split('.')
         if len(elms) > 2:
-            nskey = '.'.join(elms[:-2])
-            _root = root['_extern_'][nskey]
+            dmp = '.'.join(elms[:-2])
+            _root = root['_extern_'][dmp]
             elms = elms[-2:]
         parent, entity = elms
-        _fields = fields_from_entity(_root, _root[parent][entity])
+        _fields = fields_from_entity(_root, _root[parent][entity], dmp)
         fields.update(_fields)
     return fields
 
@@ -225,13 +228,13 @@ def explain_rstr(f):
     return '\n'.join(exps)
 
 
-def fields_from_entity(root, entity, field_cb=None):
+def fields_from_entity(root, entity, dmp, field_cb=None):
     """랩 파일의 엔터티에서 필드 정보 얻기.
 
     Args:
         root (dict): 랩 파일 데이터
         entity (dict): 엔터티 데이터
-        ns (str): 네임스페이스
+        dmp (str): 도메인 접두어
         field_cb (function): 필드값 변환 함수
 
     """
@@ -252,7 +255,7 @@ def fields_from_entity(root, entity, field_cb=None):
     fields = _init_fields()
     # mixin 이 있으면 그것의 필드를 가져옴
     if 'mixins' in entity:
-        _fields = _fields_from_mixins(root, entity['mixins'])
+        _fields = _fields_from_mixins(root, entity['mixins'], domain)
         fields.update(_fields)
 
     # 엔터티 자체 필드 반영
@@ -261,10 +264,11 @@ def fields_from_entity(root, entity, field_cb=None):
             # 사전형 필드 정보 파싱
             if type(f) is dict:
                 f = _parse_field(f)
+            fname = f'{domain}.{f[0]}' if domain is not None else f[0]
             if field_cb is not None:
-                fields[f[0]] = field_cb(f[1:])
+                fields[fname] = field_cb(f[1:])
             else:
-                fields[f[0]] = f[1:]
+                fields[fname] = f[1:]
     return fields
 
 
@@ -319,3 +323,18 @@ def download(url, filepath=None):
     with open(filepath, "wb") as f:
         res = get(url)
         f.write(res.content)
+
+
+def test_reset():
+    """테스트 관련 초기화."""
+    cwd = os.path.join(LOGLAB_HOME, 'tests')
+    os.chdir(cwd)
+
+    # 기존 파일 삭제
+    for f in glob("*.lab.json"):
+        os.remove(f)
+    for f in glob("*.txt"):
+        os.remove(f)
+    if os.path.isdir('.loglab'):
+        # 결과 디렉토리 삭제
+        rmtree(".loglab")

@@ -5,8 +5,6 @@ import copy
 import json
 from collections import defaultdict
 
-from jinja2.loaders import PackageLoader
-
 from jsonschema import validate, ValidationError
 from jinja2 import Environment, FileSystemLoader
 from requests.api import request
@@ -43,12 +41,11 @@ def verify_labfile(lab_path, scm_path=None, err_exit=True):
         if err_exit:
             sys.exit(1)
     else:
-
         return lab
 
 
-def merge_import(labfile, lab):
-    """랩 파일이 참고하는 상위 랩 파일을 병합.
+def handle_import(labfile, lab):
+    """랩 파일이 참고하는 외부 랩 파일 가져오기.
 
     Args:
         labfile (str): 랩파일 경로
@@ -64,14 +61,14 @@ def merge_import(labfile, lab):
     for imp in lab['import']:
         edir = request_ext_dir(labfile)
         path = os.path.join(edir, imp[0])
-        ns = imp[1]
+        dm = imp[1]
         if not os.path.isfile(path):
             raise FileNotFoundError(path)
 
         with open(path, 'rt') as f:
             body = f.read()
             data = json.loads(body)
-            lab['_extern_'][ns] = AttrDict(data)
+            lab['_extern_'][dm] = AttrDict(data)
 
 
 def log_schema_from_labfile(lab):
@@ -81,13 +78,14 @@ def log_schema_from_labfile(lab):
         lab (dict): 랩 데이터
 
     """
-    def _resolve_type(typ, v):
+    def _resolve_type(typ, v, domain):
         elms = typ.split('.')
         assert len(elms) == 2, f"잘못된 형식의 타입입니다: {typ}"
         tname = elms[1]
-        assert tname in lab['types'].keys(), \
+        types = lab['types'] if domain == '' else lab['_extern_'][domain]['types']
+        assert tname in types.keys(), \
             f"정의되지 않은 타입입니다: {typ}"
-        tdef = lab['types'][tname]
+        tdef = types[tname]
         if len(v) == 2:
             v.append(None)
         v = [tdef['type'], v[1], v[2], None, tdef]
@@ -99,21 +97,24 @@ def log_schema_from_labfile(lab):
     for ename, ebody in lab.events.items():
         item = f'{{"$ref": "#/$defs/{ename}"}}'
         items.append(item)
-        fields = fields_from_entity(lab, ebody)
+        fields = fields_from_entity(lab, ebody, None)
         reqs = []
         props = [f'"Event": {{"const": "{ename}"}}']
         for k, v in fields.items():
+            elms = k.split('.')
+            fdm = '.'.join(elms[:-1])
+            fnm = elms[-1]
             typ = v[0]
             if typ == "datetime":
                 prop = f"""
-                "{k}": {{
+                "{fnm}": {{
                     "type": "string",
                     "description": "{v[1]}",
                     "pattern": "^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\\\\.[0-9]+)?(([Zz])|([\\\\+|\\\\-]([01][0-9]|2[0-3]):[0-5][0-9]))$"
                 }}"""
             else:
                 if 'types' in typ:
-                    v = _resolve_type(typ, v)
+                    v = _resolve_type(typ, v, fdm)
                 finfo = {
                     "type": typ,
                     "description": v[1]
@@ -126,9 +127,11 @@ def log_schema_from_labfile(lab):
                         finfo[rk] = rv
                 body = json.dumps(finfo, ensure_ascii=False)
                 prop = f"""
-                "{k}": {body}"""
+                "{fnm}": {body}"""
             if len(v) <= 2 or v[2] in (False, None):
-                reqs.append(f'"{k}"')
+                rf = f'"{fnm}"'
+                if rf not in reqs:
+                    reqs.append(f'"{fnm}"')
             props.append(prop)
         props = ",".join(props)
         reqs = ", ".join(reqs)

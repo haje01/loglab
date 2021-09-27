@@ -1,20 +1,13 @@
 import os
-from shutil import rmtree
 
 import pytest
 
-from loglab.util import download, request_ext_dir
+from loglab.util import download, request_ext_dir, test_clear
 
 
 @pytest.fixture
 def clear():
-    _clear()
-
-
-def _clear():
-    # 결과 디렉토리 삭제
-    if os.path.isdir('.loglab'):
-        rmtree(".loglab")
+    test_reset()
 
 
 def test_download(clear):

@@ -7,7 +7,7 @@ import click
 
 from loglab.show import text_from_labfile
 from loglab.schema import verify_labfile, log_schema_from_labfile,\
-    flow_schema_from_labfile, verify_logfile, merge_import
+    flow_schema_from_labfile, verify_logfile, handle_import
 from loglab.util import find_labfile, find_log_schema, request_tmp_dir,\
     request_ext_dir, download
 from loglab.version import VERSION
@@ -38,16 +38,17 @@ def version():
 
 @cli.command()
 @global_options
-def show(labfile):
+@click.option('-d', '--domain', is_flag=True, help="도메인 이름 표시")
+def show(labfile, domain):
     """로그 구조 출력."""
     labfile = find_labfile(labfile)
     labjs = verify_labfile(labfile)
     try:
-        merge_import(labfile, labjs)
+        handle_import(labfile, labjs)
     except FileNotFoundError as e:
         print(f"Error: 가져올 파일 '{e}' 을 찾을 수 없습니다. 먼저 fetch 하세요.")
         sys.exit(1)
-    print(text_from_labfile(labjs))
+    print(text_from_labfile(labjs, prefix_dm=domain))
 
 
 @cli.command()
@@ -56,6 +57,12 @@ def schema(labfile):
     """로그 및 플로우 파일용 스키마 생성."""
     labfile = find_labfile(labfile)
     labjs = verify_labfile(labfile)
+    try:
+        handle_import(labfile, labjs)
+    except FileNotFoundError as e:
+        print(f"Error: 가져올 파일 '{e}' 을 찾을 수 없습니다. 먼저 fetch 하세요.")
+        sys.exit(1)
+
     tmp_dir = request_tmp_dir(labfile)
     prj_name = labjs['domain']['name']
     log_scm_path = os.path.join(tmp_dir, prj_name + ".log.schema.json")

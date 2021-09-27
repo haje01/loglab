@@ -1,7 +1,6 @@
 """cli 테스트."""
 import os
-from glob import glob
-from shutil import copyfile, rmtree
+from shutil import copyfile
 import json
 
 import pytest
@@ -9,28 +8,16 @@ from click.testing import CliRunner
 
 from loglab.cli import cli, version, show, schema, verify, fetch
 from loglab.version import VERSION
-from loglab.util import AttrDict, request_ext_dir
+from loglab.util import AttrDict, request_ext_dir, test_reset
 
 
 CWD = os.path.dirname(__file__)
-os.chdir(CWD)
 FILE_DIR = os.path.join(CWD, 'files')
 
 
 @pytest.fixture
 def clear():
-    _clear()
-
-
-def _clear():
-    # 기존 파일 삭제
-    for f in glob("*.lab.json"):
-        os.remove(f)
-    for f in glob("*.txt"):
-        os.remove(f)
-    if os.path.isdir('.loglab'):
-        # 결과 디렉토리 삭제
-        rmtree(".loglab")
+    test_reset()
 
 
 def copy_files(files):
@@ -214,8 +201,8 @@ Description : 캐릭터의 아이템 습득
     assert ans in out
 
 
-def test_impshow(clear):
-    """상위 랩 파일이 있는 경우 show."""
+def test_imp_show(clear):
+    """외부 랩 파일 가져온 경우 show."""
     runner = CliRunner()
 
     sel_lab("boo")
@@ -228,7 +215,9 @@ def test_impshow(clear):
     assert res.exit_code == 0
 
     res = runner.invoke(show)
-    ans = '''Domain : acme
+    ans = '''[랩 파일 : /mnt/e/works/loglab/tests/boo.lab.json]
+
+Domain : acme
 Description : 최고의 게임 회사
 
 Type : acme.types.Id
@@ -241,39 +230,47 @@ Description : Id 타입
 
 Event : acme.Login
 Description : 계정 로그인
-+----------+----------+-------------------+------------------------+
-| Field    | Type     | Description       | Restrict               |
-|----------+----------+-------------------+------------------------|
-| DateTime | datetime | 이벤트 일시       |                        |
-| ServerNo | integer  | 서버 번호         | 1 이상 100 미만        |
-| AcntId   | types.Id | 계정 ID           |                        |
-| Platform | string   | 디바이스의 플랫폼 | ['ios', 'aos'] 중 하나 |
-+----------+----------+-------------------+------------------------+
++---------------+----------+-------------------+------------------------+
+| Field         | Type     | Description       | Restrict               |
+|---------------+----------+-------------------+------------------------|
+| DateTime      | datetime | 이벤트 일시       |                        |
+| acme.ServerNo | integer  | 서버 번호         | 1 이상 100 미만        |
+| acme.AcntId   | types.Id | 계정 ID           |                        |
+| acme.Platform | string   | 디바이스의 플랫폼 | ['ios', 'aos'] 중 하나 |
++---------------+----------+-------------------+------------------------+
 
 Event : acme.Logout
 Description : 계정 로그인
-+----------+----------+------------------+------------+-----------------+
-| Field    | Type     | Description      | Optional   | Restrict        |
-|----------+----------+------------------+------------+-----------------|
-| DateTime | datetime | 이벤트 일시      |            |                 |
-| ServerNo | integer  | 서버 번호        |            | 1 이상 100 미만 |
-| AcntId   | types.Id | 계정 ID          |            |                 |
-| PlayTime | number   | 플레이 시간 (초) | true       |                 |
-+----------+----------+------------------+------------+-----------------+
++---------------+----------+------------------+------------+-----------------+
+| Field         | Type     | Description      | Optional   | Restrict        |
+|---------------+----------+------------------+------------+-----------------|
+| DateTime      | datetime | 이벤트 일시      |            |
+    |
+| acme.ServerNo | integer  | 서버 번호        |            | 1 이상 100  미만 |
+| acme.AcntId   | types.Id | 계정 ID          |            |
+    |
+| acme.PlayTime | number   | 플레이 시간 (초) | true       |
+    |
++---------------+----------+------------------+------------+-----------------+
 
 Domain : boo
 Description : 최고의 PC 온라인 게임
 
 Event : Login
 Description : 로그인
-+----------+----------+---------------+---------------------------------+
-| Field    | Type     | Description   | Restrict                        |
-|----------+----------+---------------+---------------------------------|
-| DateTime | datetime | 이벤트 일시   |                                 |
-| ServerNo | integer  | 서버 번호     | 1 이상 100 미만                 |
-| AcntId   | types.Id | 계정 ID       |                                 |
-| Platform | string   | PC의 플랫폼   | ['win', 'mac', 'linux'] 중 하나 |
-+----------+----------+---------------+---------------------------------+'''
++---------------+----------+-------------------+---------------------------------+
+| Field         | Type     | Description       | Restrict
+        |
+|---------------+----------+-------------------+---------------------------------|
+| DateTime      | datetime | 이벤트 일시       |
+        |
+| acme.ServerNo | integer  | 서버 번호         | 1 이상 100 미만
+        |
+| acme.AcntId   | types.Id | 계정 ID           |
+        |
+| acme.Platform | string   | 디바이스의 플랫폼 | ['ios', 'aos'] 중 하나          |
+| Platform      | string   | PC의 플랫폼       | ['win', 'mac', 'linux'] 중 하나 |
++---------------+----------+-------------------+---------------------------------+'''
     assert ans in res.output
 
 
@@ -394,6 +391,78 @@ def test_verify(clear):
     write_log('fakelog.txt', log)
     res = runner.invoke(verify, [fake_log])
     assert res.exit_code == 0
+
+
+def test_imp_schema(clear):
+    """외부 랩 파일 가져온 경우 schema."""
+    sel_lab("boo")
+    runner = CliRunner()
+    res = runner.invoke(schema)
+    assert res.exit_code == 1
+    assert "먼저 fetch 하세요" in res.output
+
+    url = 'https://raw.githubusercontent.com/haje01/loglab/master/tests/files/acme.lab.json'
+    res = runner.invoke(fetch, [url])
+    assert res.exit_code == 0
+    out = res.output
+
+    res = runner.invoke(schema)
+    assert res.exit_code == 0
+    out = res.output
+    assert "boo.log.schema.json 에 로그 스키마 저장" in out
+    assert "boo.flow.schema.json 에 플로우 스키마 저장" in out
+
+    # 로그 스키마 체크
+    with open(".loglab/temp/boo.log.schema.json", 'rt') as f:
+        body = f.read()
+        data = json.loads(body)
+        scm = AttrDict(data)
+        defs = scm['$defs']
+
+    # 이벤트 타입 const
+    ans = {"const": "Login"}
+    assert defs.Login.properties.Event == ans
+
+    # datetime 포맷
+    ans = {
+        "type": "string",
+        "description": "이벤트 일시",
+        "pattern": "^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\\.[0-9]+)?(([Zz])|([\\+|\\-]([01][0-9]|2[0-3]):[0-5][0-9]))$"
+    }
+    assert defs.Login.properties.DateTime == ans
+
+    # integer 제약
+    ans = {
+        "type": "integer",
+        "description": "서버 번호",
+        "minimum": 1,
+        "exclusiveMaximum": 100
+    }
+    assert defs.Login.properties.ServerNo == ans
+
+    # string enum
+    ans = {
+        "type": "string",
+        "description": "PC의 플랫폼",
+        "enum": ["win", "mac", "linux"]
+    }
+    assert defs.Login.properties.Platform == ans
+
+    # required
+    ans = ["DateTime", "ServerNo", "AcntId", "Platform"]
+    assert defs.Login.required == ans
+
+
+def test_imp_verify(clear):
+    """외부 랩 파일 가져온 경우 verify."""
+    sel_lab("boo")
+    fake_log = 'fakelog.txt'
+
+    runner = CliRunner()
+    res = runner.invoke(verify, [fake_log])
+    assert res.exit_code == 1
+    assert '스키마를 찾을 수 없습니다' in res.output
+    res = runner.invoke(schema)
 
 
 def test_fetch(clear):

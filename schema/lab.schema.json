@@ -10,7 +10,7 @@
                 {"enum": ["string", "integer", "number", "boolean", "datetime"]},
                 {
                     "type": "string",
-                    "pattern": "^types\\.[a-zA-Z0-9_]+"
+                    "pattern": "^([a-z0-9_]\\.)*types\\.[a-zA-Z0-9_]+"
                 }
             ]
         },
@@ -262,7 +262,8 @@
             "properties": {
                 "name": {
                     "description": "도메인 이름",
-                    "type": "string"
+                    "type": "string",
+                    "pattern": "^[a-z0-9_]+"
                 },
                 "desc": {
                     "description": "도메인 설명",
