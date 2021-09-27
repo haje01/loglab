@@ -5,6 +5,7 @@ import pandas as pd
 from tabulate import tabulate
 from jinja2 import Environment, FileSystemLoader
 
+from loglab.dom import build_dom
 from loglab.util import fields_from_entity, explain_rstr, LOGLAB_HOME
 
 
@@ -19,13 +20,16 @@ def _jsonify(vals):
     return _vals
 
 
-def _write_custom_types(root, out, dmp, host):
+def _get_dmp(domain):
+    return f'{domain}.' if len(domain) > 0 else ''
+
+
+def _write_custom_types(dom, out):
     out.write('\n')
-    for tname, tdef in root['types'].items():
-        # 호스트에서 재정의된 타입은 출력 않음
-        if host is not None and 'types' in host:
-            if tname in host['types']:
-                continue
+    for tname, tlst in dom['types'].items():
+        td = tlst[-1]
+        dmp = _get_dmp(td[0])
+        tdef = td[1]
         out.write(f"Type : {dmp}types.{tname}\n")
         out.write(f"Description : {tdef['desc']}\n")
         rstr = explain_rstr(tdef)
@@ -38,24 +42,24 @@ def _write_custom_types(root, out, dmp, host):
         out.write('\n')
 
 
-def _write_events(root, out, domain, prefix_dm, dmp, ename, ebody, host):
+def _write_events(name, data, out):
     headers = ['Field', 'Type', 'Description', 'Optional', 'Restrict']
 
     out.write('\n')
-    out.write(f"Event : {dmp}{ename}\n")
-    out.write(f"Description : {ebody['desc']}\n")
+    dmp = _get_dmp(data[0])
+    edef = data[1]
+    out.write(f"Event : {dmp}{name}\n")
+    out.write(f"Description : {edef['desc']}\n")
 
     rows = []
-    fields = fields_from_entity(root, ebody, domain, prefix_dm, field_cb=_jsonify)
-    max_col = 0
-    for k, v in fields.items():
-        # restrict 제거
-        if len(v) >= 5:
-            v = v[:4]
-        if max_col < len(v) + 1:
-            max_col = len(v) + 1
-        rows.append([k] + v)
-    df = pd.DataFrame(rows, columns=headers[:max_col]).set_index('Field')
+    for k, v in edef['fields'].items():
+        fdata = v[-1]
+        dmp = _get_dmp(fdata[0])
+        fdef = fdata[1]
+        rstr = explain_rstr(fdef)
+        opt = fdef['option'] if 'option' in fdef else None
+        rows.append([k, fdef['type'], fdef['desc'], opt, rstr])
+    df = pd.DataFrame(rows, columns=headers).set_index('Field')
     df = df.dropna(how='all', axis=1)
     tbl = tabulate(df, headers=df.reset_index().columns, tablefmt='psql')
     out.write(tbl)
@@ -76,37 +80,54 @@ def text_from_labfile(root, out=None, domain=None, prefix_dm=False, host=None):
     if out is None:
         out = StringIO()
 
-    # 가져온 랩 파일 먼저
-    if '_extern_' in root:
-        for k, v in root['_extern_'].items():
-            text_from_labfile(v, out, k, prefix_dm=prefix_dm,
-                              host=root)
+    # # 가져온 랩 파일 먼저
+    # if '_extern_' in root:
+    #     for k, v in root['_extern_'].items():
+    #         text_from_labfile(v, out, k, prefix_dm=prefix_dm,
+    #                           host=root)
 
-    dmp = ''
-    if domain is not None and prefix_dm:
-        dmp = f'{domain}.'
+    # dmp = ''
+    # if domain is not None and prefix_dm:
+    #     dmp = f'{domain}.'
+
+    # # 도메인
+    # if 'domain' in root:
+    #     out.write('\n')
+    #     out.write(f"Domain : {root['domain']['name']}\n")
+    #     if 'desc' in root['domain']:
+    #         out.write("Description : {}\n".format(root['domain']['desc']))
+
+    # # 커스텀 타입
+    # if 'types' in root:
+    #     _write_custom_types(root, out, prefix_dm, dmp, host)
+
+    # if 'events' not in root:
+    #     return out.getvalue()
+
+    # # 각 이벤트별로
+    # for ename, ebody in root['events'].items():
+    #     # 호스트에서 재정의된 이벤트는 출력 않음
+    #     if host is not None and 'events' in host:
+    #         if ename in host['events']:
+    #             continue
+    #     _write_events(root, out, domain, prefix_dm, dmp, ename, ebody, host)
+
+    dom = build_dom(root)
 
     # 도메인
-    if 'domain' in root:
-        out.write('\n')
-        out.write(f"Domain : {root['domain']['name']}\n")
-        if 'desc' in root['domain']:
-            out.write("Description : {}\n".format(root['domain']['desc']))
+    out.write('\n')
+    out.write(f"Domain : {dom['domain']['name']}\n")
+    if 'desc' in dom['domain']:
+        out.write("Description : {}\n".format(dom['domain']['desc']))
 
     # 커스텀 타입
     if 'types' in root:
-        _write_custom_types(root, out, prefix_dm, dmp, host)
-
-    if 'events' not in root:
-        return out.getvalue()
+        _write_custom_types(dom, out)
 
     # 각 이벤트별로
-    for ename, ebody in root['events'].items():
-        # 호스트에서 재정의된 이벤트는 출력 않음
-        if host is not None and 'events' in host:
-            if ename in host['events']:
-                continue
-        _write_events(root, out, domain, prefix_dm, dmp, ename, ebody, host)
+    for ename, elst in dom['events'].items():
+        edata = elst[-1]
+        _write_events(ename, edata, out)
 
     return out.getvalue()
 

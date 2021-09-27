@@ -128,31 +128,31 @@ def _init_fields():
     return fields
 
 
-def _fields_from_mixins(root, mixins, dmp):
-    """mixins 엔터티에서 필드 정보 얻기.
+# def _fields_from_mixins(root, mixins, dmp):
+#     """mixins 엔터티에서 필드 정보 얻기.
 
-    재귀적으로 올라가며 처리.
+#     재귀적으로 올라가며 처리.
 
-    Args:
-        root (dict): 랩 파일 데이터
-        mixins (list): 믹스인 엔터티 이름 리스트
-        dmp (str): 도메인 접두어
+#     Args:
+#         root (dict): 랩 파일 데이터
+#         mixins (list): 믹스인 엔터티 이름 리스트
+#         dmp (str): 도메인 접두어
 
-    Returns:
-        dict: 필드 정보
-    """
-    fields = _init_fields()
-    for mi in mixins:
-        _root = root
-        elms = mi.split('.')
-        if len(elms) > 2:
-            dmp = '.'.join(elms[:-2])
-            _root = root['_extern_'][dmp]
-            elms = elms[-2:]
-        parent, entity = elms
-        _fields = fields_from_entity(_root, _root[parent][entity], dmp)
-        fields.update(_fields)
-    return fields
+#     Returns:
+#         dict: 필드 정보
+#     """
+#     fields = _init_fields()
+#     for mi in mixins:
+#         _root = root
+#         elms = mi.split('.')
+#         if len(elms) > 2:
+#             dmp = '.'.join(elms[:-2])
+#             _root = root['_extern_'][dmp]
+#             elms = elms[-2:]
+#         parent, entity = elms
+#         _fields = fields_from_entity(_root, _root[parent][entity], dmp)
+#         fields.update(_fields)
+#     return fields
 
 
 def explain_rstr(f):

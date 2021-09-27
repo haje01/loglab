@@ -30,7 +30,7 @@ def copy_files(files):
 
 def sel_lab(labfile):
     """랩 파일 선택."""
-    _clear()
+    test_reset()
     copy_files([labfile + ".lab.json"])
 
 
@@ -42,7 +42,7 @@ def write_log(fname, body):
 
 def write_lab(fname, body):
     """임시 랩파일 생성."""
-    _clear()
+    test_reset()
     if not fname.endswith('.lab.json'):
         path = fname + '.lab.json'
     with open(path, 'wt') as f:
@@ -127,9 +127,10 @@ Description : 계정 로그인
 |----------+----------+-------------------+------------------------|
 | DateTime | datetime | 이벤트 일시       |                        |
 | ServerNo | integer  | 서버 번호         | 1 이상 100 미만        |
-| AcntId   | types.Id | 계정 ID           |                        |
+| AcntId   | integer  | 계정 ID           | 0 이상                 |
 | Platform | string   | 디바이스의 플랫폼 | ['ios', 'aos'] 중 하나 |
 +----------+----------+-------------------+------------------------+'''
+    assert ans in out
 
     ans = '''Event : Logout
 Description : 계정 로그아웃
@@ -138,8 +139,8 @@ Description : 계정 로그아웃
 |----------+----------+------------------+------------+-----------------|
 | DateTime | datetime | 이벤트 일시      |            |                 |
 | ServerNo | integer  | 서버 번호        |            | 1 이상 100 미만 |
-| AcntId   | types.Id | 계정 ID          |            |                 |
-| PlayTime | number   | 플레이 시간 (초) | true       |                 |
+| AcntId   | integer  | 계정 ID          |            | 0 이상          |
+| PlayTime | number   | 플레이 시간 (초) | True       |                 |
 +----------+----------+------------------+------------+-----------------+'''
     assert ans in out
 
@@ -150,8 +151,8 @@ Description : 캐릭터 로그아웃
 |----------+----------+------------------+------------+-----------------|
 | DateTime | datetime | 이벤트 일시      |            |                 |
 | ServerNo | integer  | 서버 번호        |            | 1 이상 100 미만 |
-| AcntId   | types.Id | 계정 ID          |            |                 |
-| CharId   | types.Id | 캐릭터 ID        |            |                 |
+| AcntId   | integer  | 계정 ID          |            | 0 이상          |
+| CharId   | integer  | 캐릭터 ID        |            | 0 이상          |
 | PlayTime | number   | 플레이 시간 (초) | True       |                 |
 +----------+----------+------------------+------------+-----------------+'''
     assert ans in out
@@ -163,16 +164,16 @@ Description : 몬스터가 아이템을 떨어뜨림
 |------------+----------+--------------------+--------------------|
 | DateTime   | datetime | 이벤트 일시        |                    |
 | ServerNo   | integer  | 서버 번호          | 1 이상 100 미만    |
-| MonTypeId  | types.Id | 몬스터 타입 ID     |                    |
-| MonInstId  | types.Id | 몬스터 인스턴스 ID |                    |
-| MapId      | types.Id | 맵 번호            |                    |
+| MonTypeId  | integer  | 몬스터 타입 ID     | 0 이상             |
+| MonInstId  | integer  | 몬스터 인스턴스 ID | 0 이상             |
+| MapId      | integer  | 맵 번호            | 0 이상             |
 | PosX       | number   | 맵상 X 위치        |                    |
 | PosY       | number   | 맵상 Y 위치        |                    |
 | PosZ       | number   | 맵상 Z 위치        |                    |
 | ItemTypeId | integer  | 아이템 타입 ID     | 1: 칼              |
 |            |          |                    | 2: 방패            |
 |            |          |                    | 3: 물약            |
-| ItemInstId | types.Id | 아이템 인스턴스 ID |                    |
+| ItemInstId | integer  | 아이템 인스턴스 ID | 0 이상             |
 | ItemName   | string   | 아이템 이름        | 7 자 이하          |
 |            |          |                    | 정규식 ^Itm.* 매칭 |
 +------------+----------+--------------------+--------------------+'''
@@ -185,16 +186,16 @@ Description : 캐릭터의 아이템 습득
 |------------+----------+--------------------+--------------------|
 | DateTime   | datetime | 이벤트 일시        |                    |
 | ServerNo   | integer  | 서버 번호          | 1 이상 100 미만    |
-| AcntId     | types.Id | 계정 ID            |                    |
-| CharId     | types.Id | 캐릭터 ID          |                    |
-| MapId      | types.Id | 맵 번호            |                    |
+| AcntId     | integer  | 계정 ID            | 0 이상             |
+| CharId     | integer  | 캐릭터 ID          | 0 이상             |
+| MapId      | integer  | 맵 번호            | 0 이상             |
 | PosX       | number   | 맵상 X 위치        |                    |
 | PosY       | number   | 맵상 Y 위치        |                    |
 | PosZ       | number   | 맵상 Z 위치        |                    |
 | ItemTypeId | integer  | 아이템 타입 ID     | 1: 칼              |
 |            |          |                    | 2: 방패            |
 |            |          |                    | 3: 물약            |
-| ItemInstId | types.Id | 아이템 인스턴스 ID |                    |
+| ItemInstId | integer  | 아이템 인스턴스 ID | 0 이상             |
 | ItemName   | string   | 아이템 이름        | 7 자 이하          |
 |            |          |                    | 정규식 ^Itm.* 매칭 |
 +------------+----------+--------------------+--------------------+'''
@@ -215,6 +216,7 @@ def test_imp_show(clear):
     assert res.exit_code == 0
 
     res = runner.invoke(show)
+    import pdb; pdb.set_trace()
     ans = '''[랩 파일 : /mnt/e/works/loglab/tests/boo.lab.json]
 
 Domain : acme

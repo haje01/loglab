@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from loglab.util import download, request_ext_dir, test_clear
+from loglab.util import download, request_ext_dir, test_reset
 
 
 @pytest.fixture

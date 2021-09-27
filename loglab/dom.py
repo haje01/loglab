@@ -6,6 +6,12 @@ from json.encoder import py_encode_basestring
 import pandas as pd
 
 
+def _build_domain(data):
+    if 'domain' not in data:
+        raise Exception("Required domain information not found.")
+    return data['domain']
+
+
 def _build_types(data, _dnames=None, _types=None):
     if _types is None:
         _types = defaultdict(list)
@@ -47,7 +53,7 @@ def _resolve_type(tname, _types):
     raise Exception(f"Can not find '{tname}' in type data")
 
 
-def _norm_fields(data, _types, _dnames):
+def _norm_fields(data, _types, _dnames, for_event=False):
     if 'fields' not in data:
         return data
 
@@ -62,27 +68,48 @@ def _norm_fields(data, _types, _dnames):
 
     if not _is_norm(data['fields']):
         fields = defaultdict(list)
+        if for_event:
+            tdata = dict(type='datetime', desc='이벤트 일시')
+            fields['DateTime'].append(['', tdata])
+
         for f in data['fields']:
             path = '.'.join(_dnames)
+            rst = {}
+            if type(f) is dict:
+                rst = copy.deepcopy(f)
+                del rst['name']
+                del rst['type']
+                del rst['desc']
+                f = [f['name'], f['type'], f['desc']]
+                if 'option' in f:
+                    f.append(f['option'])
+                    del rst['option']
+
             tname = f'{path}.{f[1]}' if len(path) > 0 else f[1]
             if 'types' in tname:
                 tdata = _resolve_type(tname, _types)
                 tdata['desc'] = f[2]
             else:
                 tdata = dict(type=tname, desc=f[2])
+                if len(f) > 3:
+                    tdata['option'] = f[3]
+
+            if len(rst) > 0:
+                for k, v in rst.items():
+                    tdata[k] = v
             fields[f[0]].append([path, tdata])
         data['fields'] = fields
 
     return data
 
 
-def _resolve_mixins(name, _dnames, _types, _bases, _events=None):
+def _resolve_mixins(name, _dnames, _bases, _events=None, for_event=False):
     pbase = name in _bases
     pevent = name in _events if _events is not None else False
     if not pbase and not pevent:
         raise Exception("Can not find mixin {name} in both bases and events.")
     if pbase and pevent:
-        raise Exception(f"Since the name '{name} is duplicated in the bases "
+        raise Exception(f"Since the name '{name}' is duplicated in the bases "
                         "& events, It is ambiguous to select.")
     if _events is None and pevent:
         raise Exception("You can not mixin an event for a base.")
@@ -93,6 +120,10 @@ def _resolve_mixins(name, _dnames, _types, _bases, _events=None):
         return data
 
     fields = defaultdict(list)
+    if for_event:
+        tdata = dict(type='datetime', desc='이벤트 일시')
+        fields['DateTime'].append(['', tdata])
+
     for mpath in data['mixins']:
         mpath = '.'.join(_dnames + [mpath])
         mname, mdata = _find_mixin(mpath, _bases, _events)
@@ -101,24 +132,28 @@ def _resolve_mixins(name, _dnames, _types, _bases, _events=None):
         # mixins first
         for mf, mds in mdata[1]['fields'].items():
             fields[mf].append(mds[-1])
+        # then fields
         if 'fields' in data:
             for k, v in data['fields'].items():
-                fields[k].append(v[-1])
+                if k != 'DateTime' or k not in fields:
+                    fields[k].append(v[-1])
 
     data['fields'] = fields
-
     del data['mixins']
-    return data
 
 
 def _find_mixin(path, _bases, _events):
+    if '.' not in path:
+        raise Exception(f"Illegal mixin path '{path}'")
     elms = path.split('.')
     atype = elms[-2]
+    if atype not in ('bases', 'events'):
+        raise Exception(f"Illegal mixin type '{atype}'")
     name = elms[-1]
     path = '.'.join(elms[:-2])
     _refer = _bases if atype == 'bases' else _events
     if name not in _refer:
-        raise Exception(f"Can not find mixin '{path}' in {atype}")
+        raise Exception(f"Can not find mixin '{name}' in {atype}")
     for e in _refer[name]:
         if e[0] == path:
             return name, e
@@ -155,7 +190,7 @@ def _build_bases(data, _dnames=None, _types=None, _bases=None):
         _bases[bname].append([path, ndata])
 
     for bname, bdata in nbdata.items():
-        _resolve_mixins(bname, _dnames, _types, _bases)
+        _resolve_mixins(bname, _dnames, _bases)
 
     return _bases
 
@@ -190,11 +225,27 @@ def _build_events(data, _dnames=None, _types=None, _bases=None, _events=None):
     nedata = {}
     for ename, edata in data['events'].items():
         path = '.'.join(_dnames)
-        ndata = _norm_fields(edata, _types, _dnames)
+        ndata = _norm_fields(edata, _types, _dnames, True)
         nedata[ename] = ndata
         _events[ename].append([path, ndata])
 
     for ename, edata in nedata.items():
-        _resolve_mixins(ename, _dnames, _types, _bases, _events)
+        _resolve_mixins(ename, _dnames, _bases, _events, True)
 
     return _events
+
+
+def build_dom(data):
+    """DOM 을 만듦.
+
+    Args:
+        data (dict): lab 파일 데이터
+
+    """
+    domain = _build_domain(data)
+
+    types = defaultdict(list)
+    bases = defaultdict(list)
+    events = defaultdict(list)
+    _build_events(data, None, types, bases, events)
+    return dict(domain=domain, types=types, bases=bases, events=events)

@@ -2,16 +2,22 @@ import pandas as pd
 import pytest
 import copy
 
-from loglab.util import test_reset
-from loglab.dom import _build_types, _build_bases, _build_events
+from loglab.dom import _build_domain, _build_types, _build_bases, _build_events
 
 
-@pytest.fixture
-def clear():
-    test_reset
+def test_domain():
+    data = {
+        "domain": {
+            "name": "bcom",
+            "desc": "위대한 회사"
+        }
+    }
+    domain = _build_domain(data)
+    assert domain['name'] == 'bcom'
+    assert domain['desc'] == "위대한 회사"
 
 
-def test_types(clear):
+def test_types():
     data1 = {
         "domain": {
             "name": "bcom",
@@ -81,7 +87,7 @@ def test_types(clear):
     } == types
 
 
-def test_mixins(clear):
+def test_mixins():
     data1 = {
         "domain": {
             "name": "foo",
@@ -149,7 +155,7 @@ def test_mixins(clear):
 } == bases
 
 
-def test_bases(clear):
+def test_bases():
     data1 = {
         "domain": {
             "name": "bcom",
@@ -352,7 +358,203 @@ def test_bases(clear):
     } == bases
 
 
-def test_events(clear):
+def test_bases2():
+    data = {
+        "domain": {
+            "name": "bcom",
+            "desc": "위대한 회사"
+        },
+        "types": {
+            "Id": {
+                "type": "integer",
+                "desc": "Id 타입",
+                "minimum": 0
+            }
+        },
+        "bases": {
+            "Server": {
+                "desc": "서버 정보",
+                "fields": [
+                    {
+                        "name": "ServerNo",
+                        "desc": "서버 번호",
+                        "type": "integer",
+                        "option": True,
+                        "minimum": 1,
+                        "exclusiveMaximum": 100
+                    }
+                ]
+            }
+        }
+    }
+    bases = _build_bases(data)
+    assert {
+        'Server': [
+            ['',
+            {
+                'desc': '서버 정보',
+                'fields': {
+                    'ServerNo': [
+                        ['',
+                        {
+                            'type': 'integer',
+                            'desc': '서버 번호',
+                            "option": True,
+                            'minimum': 1,
+                            'exclusiveMaximum': 100
+                        }
+                        ]
+                    ]
+                }
+            }
+            ]
+        ]} == bases
+
+
+def test_events():
+    data = {
+        "domain": {
+            "name": "bcom",
+            "desc": "위대한 회사"
+        },
+        "types": {
+            "Id": {
+                "type": "integer",
+                "desc": "Id 타입",
+                "minimum": 0
+            }
+        },
+        "bases": {
+            "Account": {
+                "desc": "계정 정보",
+                "fields": [
+                    ["AcntId", "types.Id", "계정 ID"]
+                ]
+            }
+        },
+        "events": {
+            "Logout": {
+                "desc": "계정 로그아웃",
+                "mixins": ["bases.Account"],
+                "fields": [
+                    ["PlayTime", "number", "플레이 시간 (초)", True]
+                ]
+            }
+        }
+    }
+    events = _build_events(data)
+    assert {
+        'Logout': [
+            ['',
+            {
+                'desc': '계정 로그아웃',
+                'fields': {
+                    'DateTime': [
+                        ['',
+                        {
+                            'type': 'datetime',
+                            'desc': '이벤트 일시'
+                        }
+                        ]
+                    ],
+                    'AcntId': [
+                        ['',
+                        {
+                            'type': 'integer',
+                            'desc': '계정 ID',
+                            'minimum': 0
+                        }
+                        ]
+                    ],
+                    'PlayTime': [
+                        ['',
+                        {
+                            'type': 'number',
+                            'desc': '플레이 시간 (초)',
+                            'option': True
+                        }
+                        ]
+                    ]
+                }
+            }
+            ]
+        ]
+    } == events
+
+    data = {
+        "domain": {
+            "name": "bcom",
+            "desc": "위대한 회사"
+        },
+        "types": {
+            "Id": {
+                "type": "integer",
+                "desc": "Id 타입",
+                "minimum": 0
+            }
+        },
+        "bases": {
+            "Account": {
+                "desc": "계정 정보",
+                "fields": [
+                    ["AcntId", "types.Id", "계정 ID"]
+                ]
+            }
+        },
+        "events": {
+            "Logout": {
+                "desc": "계정 로그아웃",
+                "mixins": ["bases.Account"],
+                "fields": [
+                    {
+                        "name": "PlayTime",
+                        "type": "number",
+                        "desc": "플레이 시간 (초)",
+                        "option": True
+                    }
+                ]
+            }
+        }
+    }
+    events = _build_events(data)
+    assert {
+        'Logout': [
+            ['',
+            {
+                'desc': '계정 로그아웃',
+                'fields': {
+                    'DateTime': [
+                        ['',
+                        {
+                            'type': 'datetime',
+                            'desc': '이벤트 일시'
+                        }
+                        ]
+                    ],
+                    'AcntId': [
+                        ['',
+                        {
+                            'type': 'integer',
+                            'desc': '계정 ID',
+                            'minimum': 0
+                        }
+                        ]
+                    ],
+                    'PlayTime': [
+                        ['',
+                        {
+                            'type': 'number',
+                            'desc': '플레이 시간 (초)',
+                            'option': True
+                        }
+                        ]
+                    ]
+                }
+            }
+            ]
+        ]
+    } == events
+
     data1 = {
         "domain": {
             "name": "bcom",
@@ -396,39 +598,47 @@ def test_events(clear):
             }
         }
     }
-    # _data2 = copy.deepcopy(data2)
-    # events = _build_events(data2)
-    # assert _data2 == data2
-    # assert {
-    #     'AcntLogin': [
-    #         [
-    #             '',
-    #             {
-    #             'desc': 'ACME 계정 로그인',
-    #             'fields': {
-    #                 'BcomAcntId': [
-    #                     ['bcom',
-    #                     {
-    #                         'type': 'integer',
-    #                         'desc': 'BCOM 계정 ID',
-    #                         'minimum': 0
-    #                     }
-    #                     ]
-    #                 ],
-    #                 'AcmeAcntId': [
-    #                     ['',
-    #                     {
-    #                         'type': 'integer',
-    #                         'desc': 'ACME 계정 ID',
-    #                         'minimum': 0
-    #                     }
-    #                     ]
-    #                 ]
-    #                 }
-    #             }
-    #         ]
-    #     ]
-    # } == events
+    _data2 = copy.deepcopy(data2)
+    events = _build_events(data2)
+    assert _data2 == data2
+    assert {
+        'AcntLogin': [
+            [
+                '',
+                {
+                'desc': 'ACME 계정 로그인',
+                'fields': {
+                    'DateTime': [
+                        ['',
+                        {
+                            'type': 'datetime',
+                            'desc': '이벤트 일시'
+                        }
+                        ]
+                    ],
+                    'BcomAcntId': [
+                        ['bcom',
+                        {
+                            'type': 'integer',
+                            'desc': 'BCOM 계정 ID',
+                            'minimum': 0
+                        }
+                        ]
+                    ],
+                    'AcmeAcntId': [
+                        ['',
+                        {
+                            'type': 'integer',
+                            'desc': 'ACME 계정 ID',
+                            'minimum': 0
+                        }
+                        ]
+                    ]
+                    }
+                }
+            ]
+        ]
+    } == events
 
     data3 = {
         "domain": {
@@ -459,6 +669,14 @@ def test_events(clear):
                 {
                 'desc': 'ACME 계정 로그인',
                 'fields': {
+                    'DateTime': [
+                        ['',
+                        {
+                            'type': 'datetime',
+                            'desc': '이벤트 일시'
+                        }
+                        ]
+                    ],
                     'BcomAcntId': [
                         ['acme.bcom',
                         {
@@ -486,6 +704,14 @@ def test_events(clear):
             {
                 'desc': 'FOO 캐릭터 로그인',
                 'fields': {
+                    'DateTime': [
+                        ['',
+                        {
+                            'type': 'datetime',
+                            'desc': '이벤트 일시'
+                        }
+                        ]
+                    ],
                     'BcomAcntId': [
                         ['acme.bcom',
                         {
@@ -518,3 +744,112 @@ def test_events(clear):
             ]
         ]
     } == events
+
+
+def test_excpt():
+    data = {
+        "domain": {
+            "name": "bcom",
+            "desc": "위대한 회사"
+        },
+        "types": {
+            "Id": {
+                "type": "integer",
+                "desc": "Id 타입",
+                "minimum": 0
+            }
+        },
+        "bases": {
+            "Account": {
+                "desc": "BCOM 계정 정보",
+                "fields": [
+                    ["BcomAcntId", "types.Id", "BCOM 계정 ID"]
+                ]
+            },
+        },
+        "events": {
+            "Account": {
+                "desc": "BCOM 계정 정보",
+                "fields": [
+                    ["BcomAcntId", "types.Id", "BCOM 계정 ID"]
+                ]
+            }
+        }
+    }
+    with pytest.raises(Exception, match="duplicated in the bases & events"):
+        _build_events(data)
+
+    data = {
+        "domain": {
+            "name": "bcom",
+            "desc": "위대한 회사"
+        },
+        "types": {
+            "Id": {
+                "type": "integer",
+                "desc": "Id 타입",
+                "minimum": 0
+            }
+        },
+        "bases": {
+            "Account": {
+                "desc": "BCOM 계정 정보",
+                "mixins": ["asdf"],
+                "fields": [
+                    ["BcomAcntId", "types.Id", "BCOM 계정 ID"]
+                ]
+            },
+        }
+    }
+    with pytest.raises(Exception, match='Illegal mixin path'):
+        _build_events(data)
+
+    data = {
+        "domain": {
+            "name": "bcom",
+            "desc": "위대한 회사"
+        },
+        "types": {
+            "Id": {
+                "type": "integer",
+                "desc": "Id 타입",
+                "minimum": 0
+            }
+        },
+        "bases": {
+            "Account": {
+                "desc": "BCOM 계정 정보",
+                "mixins": ["asdf.asdf"],
+                "fields": [
+                    ["BcomAcntId", "types.Id", "BCOM 계정 ID"]
+                ]
+            },
+        }
+    }
+    with pytest.raises(Exception, match='Illegal mixin type'):
+        _build_events(data)
+
+    data = {
+        "domain": {
+            "name": "bcom",
+            "desc": "위대한 회사"
+        },
+        "types": {
+            "Id": {
+                "type": "integer",
+                "desc": "Id 타입",
+                "minimum": 0
+            }
+        },
+        "bases": {
+            "Account": {
+                "desc": "BCOM 계정 정보",
+                "mixins": ["bases.asdf"],
+                "fields": [
+                    ["BcomAcntId", "types.Id", "BCOM 계정 ID"]
+                ]
+            },
+        }
+    }
+    with pytest.raises(Exception, match="not find mixin 'asdf' in bases"):
+        _build_events(data)
