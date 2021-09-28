@@ -307,6 +307,19 @@ Description : 계정 로그아웃
 '''
     assert ans in out
 
+    res = runner.invoke(show, ['-c'])
+    assert res.exit_code == 0
+    out = res.output
+    ans = '''Type : types.Id
+Description : Id 타입
++------------+---------------+------------+
+| BaseType   | Description   | Restrict   |
+|------------+---------------+------------|
+| integer    | Id 타입       | 0 이상     |
++------------+---------------+------------+
+'''
+    assert ans in out
+
 
 def test_schema(clear):
     sel_lab("foo")

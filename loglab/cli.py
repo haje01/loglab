@@ -41,8 +41,8 @@ def version():
 @global_options
 @click.option('-c', '--custom-type', is_flag=True,
               help="커스텀 타입 그대로 출력")
-@click.option('-f', '--filter')
-def show(labfile, custom_type, filter):
+@click.option('-n', '--name')
+def show(labfile, custom_type, name):
     """로그 구조 출력."""
     labfile = find_labfile(labfile)
     data = verify_labfile(labfile)
@@ -51,9 +51,9 @@ def show(labfile, custom_type, filter):
     except FileNotFoundError as e:
         print(f"Error: 가져올 파일 '{e}' 을 찾을 수 없습니다. 먼저 fetch 하세요.")
         sys.exit(1)
-    if filter is not None:
-        filter = re.compile(filter)
-    print(text_from_labfile(data, custom_type, filter))
+    if name is not None:
+        name = re.compile(name)
+    print(text_from_labfile(data, custom_type, name))
 
 
 @cli.command()
