@@ -41,7 +41,7 @@ def write_log(fname, body):
 
 
 def write_lab(fname, body):
-    """임시 랩파일 생성."""
+    """임시 랩 파일 생성."""
     test_reset()
     if not fname.endswith('.lab.json'):
         path = fname + '.lab.json'

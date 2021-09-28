@@ -24,13 +24,27 @@ def _get_dmp(domain):
     return f'{domain}.' if len(domain) > 0 else ''
 
 
-def _write_custom_types(dom, out):
-    out.write('\n')
+def _write_custom_types(dom, out, afilter):
+    # 출력할 것이 있는지 확인
+    cnt = 0
+    for tname, tlst in dom['types'].items():
+        td = tlst[-1]
+        dmp = _get_dmp(td[0])
+        qtname = f'{dmp}types.{tname}'
+        if afilter is None or afilter.search(qtname) is not None:
+            cnt += 1
+    if cnt > 0:
+        out.write('\n')
+
     for tname, tlst in dom['types'].items():
         td = tlst[-1]
         dmp = _get_dmp(td[0])
         tdef = td[1]
-        out.write(f"Type : {dmp}types.{tname}\n")
+        qtname = f'{dmp}types.{tname}'
+        if afilter is not None and afilter.search(qtname) is None:
+            continue
+
+        out.write(f"Type : {qtname}\n")
         out.write(f"Description : {tdef['desc']}\n")
         rstr = explain_rstr(tdef)
         df = pd.DataFrame(dict(BaseType=[tdef['type']],
@@ -42,13 +56,17 @@ def _write_custom_types(dom, out):
         out.write('\n')
 
 
-def _write_events(name, data, out):
+def _write_events(name, data, out, afilter):
     headers = ['Field', 'Type', 'Description', 'Optional', 'Restrict']
 
-    out.write('\n')
     dmp = _get_dmp(data[0])
     edef = data[1]
-    out.write(f"Event : {dmp}{name}\n")
+    qname = f'{dmp}{name}'
+    if afilter is not None and afilter.search(qname) is None:
+        return
+
+    out.write('\n')
+    out.write(f"Event : {qname}\n")
     out.write(f"Description : {edef['desc']}\n")
 
     rows = []
@@ -66,7 +84,8 @@ def _write_events(name, data, out):
     out.write('\n')
 
 
-def text_from_labfile(data, cus_type, out=None, domain=None, host=None):
+def text_from_labfile(data, cus_type, afilter, out=None, domain=None,
+                      host=None):
     """랩 파일에서 텍스트 문서 생성.
 
     Args:
@@ -90,12 +109,12 @@ def text_from_labfile(data, cus_type, out=None, domain=None, host=None):
 
     # 커스텀 타입
     if 'types' in dom and cus_type:
-        _write_custom_types(dom, out)
+        _write_custom_types(dom, out, afilter)
 
     # 각 이벤트별로
     for ename, elst in dom.events.items():
         edata = elst[-1]
-        _write_events(ename, edata, out)
+        _write_events(ename, edata, out, afilter)
 
     return out.getvalue()
 

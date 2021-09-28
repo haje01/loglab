@@ -1,4 +1,4 @@
-"""랩파일 Document Object Model."""
+"""랩 파일 Document Object Model."""
 import copy
 from collections import defaultdict
 from json.encoder import py_encode_basestring
