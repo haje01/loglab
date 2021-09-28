@@ -51,7 +51,7 @@ LogLab의 설치를 위해서는 최소 Python 3.6 이상이 필요하다. 설�
 LogLab 의 홈페이지는 https://github.com/haje01/loglab 이다. 다음과 같이 설치하자.
 
 ```
-$ git checkout https://github.com/haje01/loglab
+$ git clone https://github.com/haje01/loglab
 $ pip install -e .
 ```
 

@@ -220,14 +220,14 @@ def _build_events(data, _dnames=None, _types=None, _bases=None, _events=None,
         _events = defaultdict(list)
     if _dnames is None:
         _dnames = []
-
     data = copy.deepcopy(data)
 
     if '_imported_' in data:
         # 수입된 것이 있으면 그것도 빌드
         for idata in data['_imported_']:
             dname = idata['domain']['name']
-            _build_events(idata, _dnames + [dname], _types, _bases, _events)
+            _build_events(idata, _dnames + [dname], _types, _bases, _events,
+                          cus_type=cus_type)
 
     if 'types' in data:
         _build_types(data, _dnames, _types)
@@ -242,7 +242,7 @@ def _build_events(data, _dnames=None, _types=None, _bases=None, _events=None,
     nedata = {}
     for ename, edata in data['events'].items():
         path = '.'.join(_dnames)
-        ndata = _flat_fields(edata, _types, _dnames, True)
+        ndata = _flat_fields(edata, _types, _dnames, True, cus_type=cus_type)
         nedata[ename] = ndata
         _events[ename].append([path, ndata])
 

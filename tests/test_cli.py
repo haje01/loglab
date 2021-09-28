@@ -201,6 +201,30 @@ Description : 캐릭터의 아이템 습득
 +------------+----------+--------------------+--------------------+'''
     assert ans in out
 
+    res = runner.invoke(show, ['-c'])
+    assert res.exit_code == 0
+    out = res.output
+    ans = '''Type : types.Id
+Description : Id 타입
++------------+---------------+------------+
+| BaseType   | Description   | Restrict   |
+|------------+---------------+------------|
+| integer    | Id 타입       | 0 이상     |
++------------+---------------+------------+
+
+Event : Login
+Description : 계정 로그인
++----------+----------+-------------------+------------------------+
+| Field    | Type     | Description       | Restrict               |
+|----------+----------+-------------------+------------------------|
+| DateTime | datetime | 이벤트 일시       |                        |
+| ServerNo | integer  | 서버 번호         | 1 이상 100 미만        |
+| AcntId   | types.Id | 계정 ID           |                        |
+| Platform | string   | 디바이스의 플랫폼 | ['ios', 'aos'] 중 하나 |
++----------+----------+-------------------+------------------------+
+'''
+    assert ans in out
+
 
 def test_imp_show(clear):
     """외부 랩 파일 가져온 경우 show."""
@@ -243,6 +267,37 @@ Description : 계정 로그아웃
 +----------+----------+------------------+------------+-----------------+
 '''
     assert ans in res.output
+
+    res = runner.invoke(show, ['-c'])
+    assert res.exit_code == 0
+    out = res.output
+    ans = '''
+Domain : boo
+Description : 최고의 PC 온라인 게임
+
+Event : Login
+Description : 계정 로그인
++----------+---------------+---------------+---------------------------------+
+| Field    | Type          | Description   | Restrict                        |
+|----------+---------------+---------------+---------------------------------|
+| DateTime | datetime      | 이벤트 일시   |                                 |
+| ServerNo | integer       | 서버 번호     | 1 이상 100 미만                 |
+| AcntId   | acme.types.Id | 계정 ID       |                                 |
+| Platform | string        | PC의 플랫폼   | ['win', 'mac', 'linux'] 중 하나 |
++----------+---------------+---------------+---------------------------------+
+
+Event : acme.Logout
+Description : 계정 로그아웃
++----------+---------------+------------------+------------+-----------------+
+| Field    | Type          | Description      | Optional   | Restrict        |
+|----------+---------------+------------------+------------+-----------------|
+| DateTime | datetime      | 이벤트 일시      |            |                 |
+| ServerNo | integer       | 서버 번호        |            | 1 이상 100 미만 |
+| AcntId   | acme.types.Id | 계정 ID          |            |                 |
+| PlayTime | number        | 플레이 시간 (초) | True       |                 |
++----------+---------------+------------------+------------+-----------------+
+'''
+    assert ans in out
 
 
 def test_schema(clear):
