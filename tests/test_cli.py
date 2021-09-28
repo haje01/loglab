@@ -310,7 +310,8 @@ Description : 계정 로그아웃
     res = runner.invoke(show, ['-c'])
     assert res.exit_code == 0
     out = res.output
-    ans = '''Type : types.Id
+    ans = '''
+Type : acme.types.Id
 Description : Id 타입
 +------------+---------------+------------+
 | BaseType   | Description   | Restrict   |
