@@ -38,8 +38,9 @@ def version():
 
 @cli.command()
 @global_options
-@click.option('-d', '--domain', is_flag=True, help="도메인 이름 표시")
-def show(labfile, domain):
+@click.option('-c', '--custom-type', is_flag=True,
+              help="커스텀 타입을 이용해 출력")
+def show(labfile, custom_type):
     """로그 구조 출력."""
     labfile = find_labfile(labfile)
     data = verify_labfile(labfile)
@@ -48,7 +49,7 @@ def show(labfile, domain):
     except FileNotFoundError as e:
         print(f"Error: 가져올 파일 '{e}' 을 찾을 수 없습니다. 먼저 fetch 하세요.")
         sys.exit(1)
-    print(text_from_labfile(data, prefix_dm=domain))
+    print(text_from_labfile(data, custom_type))
 
 
 @cli.command()

@@ -55,7 +55,7 @@ def _resolve_type(tname, _types):
     raise Exception(f"Can not find '{tname}' in type data")
 
 
-def _flat_fields(data, _types, _dnames, for_event=False):
+def _flat_fields(data, _types, _dnames, for_event=False, cus_type=False):
     """베이스 또는 이벤트가 참조하는 필드를 평탄화."""
     if 'fields' not in data:
         return data
@@ -92,7 +92,7 @@ def _flat_fields(data, _types, _dnames, for_event=False):
             if tname not in BUILTIN_TYPES:
                 tname = f'{path}.{tname}' if len(path) > 0 else tname
 
-            if 'types' in tname:
+            if 'types' in tname and not cus_type:
                 tdata = _resolve_type(tname, _types)
                 tdata['desc'] = f[2]
             else:
@@ -173,7 +173,8 @@ def _find_mixin(path, _bases, _events):
 #     if type(data[0]) is dict:
 
 
-def _build_bases(data, _dnames=None, _types=None, _bases=None):
+def _build_bases(data, _dnames=None, _types=None, _bases=None, cus_type=False):
+    """베이스 요소 빌드."""
     if _types is None:
         _types = defaultdict(list)
     if _bases is None:
@@ -186,7 +187,7 @@ def _build_bases(data, _dnames=None, _types=None, _bases=None):
     if '_imported_' in data:
         for idata in data['_imported_']:
             dname = idata['domain']['name']
-            _build_bases(idata, _dnames + [dname], _types, _bases)
+            _build_bases(idata, _dnames + [dname], _types, _bases, cus_type)
 
     if 'types' in data:
         _build_types(data, _dnames, _types)
@@ -198,7 +199,7 @@ def _build_bases(data, _dnames=None, _types=None, _bases=None):
     nbdata = {}
     for bname, bdata in data['bases'].items():
         path = '.'.join(_dnames)
-        ndata = _flat_fields(bdata, _types, _dnames)
+        ndata = _flat_fields(bdata, _types, _dnames, cus_type=cus_type)
         nbdata[bname] = ndata
         _bases[bname].append([path, ndata])
 
@@ -208,7 +209,9 @@ def _build_bases(data, _dnames=None, _types=None, _bases=None):
     return _bases
 
 
-def _build_events(data, _dnames=None, _types=None, _bases=None, _events=None):
+def _build_events(data, _dnames=None, _types=None, _bases=None, _events=None,
+                  cus_type=False):
+    """이벤트 및 관련 요소들 빌드."""
     if _types is None:
         _types = defaultdict(list)
     if _bases is None:
@@ -221,6 +224,7 @@ def _build_events(data, _dnames=None, _types=None, _bases=None, _events=None):
     data = copy.deepcopy(data)
 
     if '_imported_' in data:
+        # 수입된 것이 있으면 그것도 빌드
         for idata in data['_imported_']:
             dname = idata['domain']['name']
             _build_events(idata, _dnames + [dname], _types, _bases, _events)
@@ -229,7 +233,7 @@ def _build_events(data, _dnames=None, _types=None, _bases=None, _events=None):
         _build_types(data, _dnames, _types)
 
     if 'bases' in data:
-        _build_bases(data, _dnames, _types, _bases)
+        _build_bases(data, _dnames, _types, _bases, cus_type)
 
     if 'events' not in data:
         return _events
@@ -248,11 +252,12 @@ def _build_events(data, _dnames=None, _types=None, _bases=None, _events=None):
     return _events
 
 
-def build_dom(data):
+def build_dom(data, cus_type=False):
     """DOM 을 만듦.
 
     Args:
         data (dict): lab 파일 데이터
+        cus_type (bool): 커스텀 타입 유지 여부. 기본 False
 
     """
     domain = _build_domain(data)
@@ -260,6 +265,6 @@ def build_dom(data):
     types = defaultdict(list)
     bases = defaultdict(list)
     events = defaultdict(list)
-    _build_events(data, None, types, bases, events)
+    _build_events(data, None, types, bases, events, cus_type)
     return AttrDict(dict(domain=domain, types=types, bases=bases,
                     events=events))
