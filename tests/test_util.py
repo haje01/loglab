@@ -12,7 +12,7 @@ def clear():
 
 def test_download(clear):
     edir = request_imp_dir()
-    assert '.loglab/import' in edir
+    assert '.loglab/import' in edir.replace('\\', '/')
     path = os.path.join(edir, 'foo.lab.json')
     download(
         'https://raw.githubusercontent.com/haje01/loglab/master/tests/files/foo.lab.json',

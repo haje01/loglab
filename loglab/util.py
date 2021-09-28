@@ -119,7 +119,7 @@ def load_file_from(path):
             return f.read()
     else:
         # 로컬 파일
-        with open(path, 'rt') as f:
+        with open(path, 'rt', encoding='utf8') as f:
             return f.read()
 
 

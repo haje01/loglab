@@ -36,7 +36,7 @@ def sel_lab(labfile):
 
 def write_log(fname, body):
     """임시 로그 생성."""
-    with open(fname, 'wt') as f:
+    with open(fname, 'wt', encoding='utf8') as f:
         f.write(body)
 
 
@@ -45,7 +45,7 @@ def write_lab(fname, body):
     test_reset()
     if not fname.endswith('.lab.json'):
         path = fname + '.lab.json'
-    with open(path, 'wt') as f:
+    with open(path, 'wt', encoding='utf8') as f:
         f.write(body)
 
 
@@ -216,8 +216,7 @@ def test_imp_show(clear):
     assert res.exit_code == 0
 
     res = runner.invoke(show)
-    ans = '''[랩 파일 : /mnt/e/works/loglab/tests/boo.lab.json]
-
+    ans = '''
 Domain : boo
 Description : 최고의 PC 온라인 게임
 
@@ -257,7 +256,7 @@ def test_schema(clear):
     assert "foo.flow.schema.json 에 플로우 스키마 저장" in out
 
     # 로그 스키마 체크
-    with open(".loglab/temp/foo.log.schema.json", 'rt') as f:
+    with open(".loglab/temp/foo.log.schema.json", 'rt', encoding='utf8') as f:
         body = f.read()
         data = json.loads(body)
         scm = AttrDict(data)
@@ -387,7 +386,7 @@ def test_imp_schema(clear):
     assert "boo.flow.schema.json 에 플로우 스키마 저장" in out
 
     # 로그 스키마 체크
-    with open(".loglab/temp/boo.log.schema.json", 'rt') as f:
+    with open(".loglab/temp/boo.log.schema.json", 'rt', encoding='utf8') as f:
         body = f.read()
         data = json.loads(body)
         scm = AttrDict(data)

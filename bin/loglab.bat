@@ -1,3 +1,3 @@
 @echo off
-title swak
-python "%~dp0\swak" %*
+title loglab
+python "%~dp0\loglab" %*

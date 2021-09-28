@@ -69,7 +69,7 @@ def schema(labfile):
     log_scm_path = os.path.join(tmp_dir, prj_name + ".log.schema.json")
 
     print(f"'{log_scm_path} 에 로그 스키마 저장.")
-    with open(log_scm_path, 'wt') as f:
+    with open(log_scm_path, 'wt', encoding='utf8') as f:
         try:
             scm = log_schema_from_labfile(data)
             f.write(scm)
@@ -81,7 +81,7 @@ def schema(labfile):
 
     flow_scm_path = os.path.join(tmp_dir, prj_name + ".flow.schema.json")
     print(f"'{flow_scm_path} 에 플로우 스키마 저장.")
-    with open(flow_scm_path, 'wt') as f:
+    with open(flow_scm_path, 'wt', encoding='utf8') as f:
         f.write(flow_schema_from_labfile(labfile, data))
 
 
