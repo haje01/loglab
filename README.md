@@ -42,6 +42,9 @@ LogLab(로그랩) 은 다양한 서비스를 위한 로그를 설계하고 활�
   - [공용 랩 파일을 통한 로그 표준화](#공용-랩-파일을-통한-로그-표준화)
     - [외부 랩 파일 가져오기](#외부-랩-파일-가져오기)
     - [복잡한 랩 파일 필터링하기](#복잡한-랩-파일-필터링하기)
+  - [실행파일 빌드와 배포](#실행파일-빌드와-배포)
+  - [PyInstaller 설치](#pyinstaller-설치)
+  - [빌드](#빌드)
   - [로그랩을 활용하는 다양한 방법](#로그랩을-활용하는-다양한-방법)
     - [레가시 로그 정리용](#레가시-로그-정리용)
 
@@ -1690,6 +1693,37 @@ Description : Id 타입
 | integer    | Id 타입       | 0 이상     |
 +------------+---------------+------------+
 ```
+
+## 실행파일 빌드와 배포
+
+인터넷 접근이 자유롭지 않은 환경에서 설치를 위해서는 실행파일 형태가 편하다. PyInstaller 를 통해 `loglab` 을 실행 파일로 빌드할 수 있다.
+
+## PyInstaller 설치
+
+[PyInstaller](http://www.pyinstaller.org) 홈페이지를 참고하여 PyInstaller 를 설치하자.
+
+> PyEnv를 사용하는 경우 빌드시 동적 라이브러리를 찾지 못해 에러가 나올 수 있다. 이때는 macOS의 경우 `--enable-framework` 옵션으로 파이썬을 빌드하여 설치해야 한다. 자세한 것은 [이 글](https://github.com/pyenv/pyenv/issues/443)을 참고하자. 리눅스의 경우 `--enable-shared` 옵션으로 빌드한다.
+
+> 윈도우에서 파이썬 3.5를 사용할 때 "ImportError: DLL load failed" 에러가 나오는 경우 [Microsoft Visual C++ 2010 Redistributable Package](https://www.microsoft.com/en-us/download/confirmation.aspx?id=5555)를 설치하자.
+
+## 빌드
+
+빌드는 로그랩 설치 디렉토리에서 다음과 같이 한다.
+
+```
+tools\build.bat
+```
+
+리눅스/macOS에서는 다음과 같이 빌드한다.
+
+```
+./tools/build.sh
+```
+
+정상적으로 빌드가 되면, `dist/` 디렉토리 아래 `loglab.exe` (윈도우) 또는 `loglab` (리눅스/macOS) 실행 파일이 만들어진다. 이것을 배포하면 된다.
+
+> PyInstaller는 파이썬 3.x에서 실행 파일의 버전 정보 설정에 문제가 있다. 이 [페이지](https://github.com/pyinstaller/pyinstaller/issues/1347)를 참고하자.
+
 
 ## 로그랩을 활용하는 다양한 방법
 
