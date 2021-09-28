@@ -50,7 +50,7 @@ def test_types():
             "name": "acme",
             "desc": "위대한 게임 회사"
         },
-        "import": [data1]
+        "_imported_": [data1]
     }
     types = _build_types(data2)
     assert {
@@ -70,7 +70,7 @@ def test_types():
             "name": "foo",
             "desc": "위대한 게임"
         },
-        "import": [data2],
+        "_imported_": [data2],
     }
     types = _build_types(data3)
     assert {
@@ -207,7 +207,7 @@ def test_bases():
             "name": "acme",
             "desc": "위대한 게임 회사"
         },
-        "import": [data1],
+        "_imported_": [data1],
         "bases": {
             "Account": {
                 "desc": "ACME 계정 정보",
@@ -276,7 +276,7 @@ def test_bases():
             "name": "foo",
             "desc": "위대한 게임"
         },
-        "import": [data2],
+        "_imported_": [data2],
         "bases": {
             "Character": {
                 "desc": "FOO 캐릭터 정보",
@@ -581,7 +581,7 @@ def test_events():
             "name": "acme",
             "desc": "위대한 게임 회사"
         },
-        "import": [data1],
+        "_imported_": [data1],
         "bases": {
             "Account": {
                 "desc": "ACME 계정 정보",
@@ -645,7 +645,7 @@ def test_events():
             "name": "foo",
             "desc": "위대한 게임"
         },
-        "import": [data2],
+        "_imported_": [data2],
         "bases": {
             "Character": {
                 "desc": "FOO 캐릭터 정보",

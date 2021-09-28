@@ -5,6 +5,8 @@ from json.encoder import py_encode_basestring
 
 import pandas as pd
 
+from loglab.util import BUILTIN_TYPES, AttrDict
+
 
 def _build_domain(data):
     if 'domain' not in data:
@@ -19,8 +21,8 @@ def _build_types(data, _dnames=None, _types=None):
     if _dnames is None:
         _dnames = []
 
-    if 'import' in data:
-        for idata in data['import']:
+    if '_imported_' in data:
+        for idata in data['_imported_']:
             dname = idata['domain']['name']
             _build_types(idata, _dnames + [dname], _types)
 
@@ -53,20 +55,21 @@ def _resolve_type(tname, _types):
     raise Exception(f"Can not find '{tname}' in type data")
 
 
-def _norm_fields(data, _types, _dnames, for_event=False):
+def _flat_fields(data, _types, _dnames, for_event=False):
+    """베이스 또는 이벤트가 참조하는 필드를 평탄화."""
     if 'fields' not in data:
         return data
 
     data = copy.deepcopy(data)
 
-    def _is_norm(fdata):
+    def _is_flat(fdata):
         if type(fdata) is not defaultdict:
             return False
         if len(fdata) == 0:
             return True
         return type(list(fdata.values())[0]) is list
 
-    if not _is_norm(data['fields']):
+    if not _is_flat(data['fields']):
         fields = defaultdict(list)
         if for_event:
             tdata = dict(type='datetime', desc='이벤트 일시')
@@ -85,7 +88,10 @@ def _norm_fields(data, _types, _dnames, for_event=False):
                     f.append(f['option'])
                     del rst['option']
 
-            tname = f'{path}.{f[1]}' if len(path) > 0 else f[1]
+            tname = f[1]
+            if tname not in BUILTIN_TYPES:
+                tname = f'{path}.{tname}' if len(path) > 0 else tname
+
             if 'types' in tname:
                 tdata = _resolve_type(tname, _types)
                 tdata['desc'] = f[2]
@@ -131,7 +137,8 @@ def _resolve_mixins(name, _dnames, _bases, _events=None, for_event=False):
             continue
         # mixins first
         for mf, mds in mdata[1]['fields'].items():
-            fields[mf].append(mds[-1])
+            if mf != 'DateTime' or mf not in fields:
+                fields[mf].append(mds[-1])
         # then fields
         if 'fields' in data:
             for k, v in data['fields'].items():
@@ -160,6 +167,12 @@ def _find_mixin(path, _bases, _events):
     raise Exception(f"Can not find minxin path {path}")
 
 
+# def _resolve_import(data):
+#     if len(data) == 0 or type(data[0]) is dict:
+#         return
+#     if type(data[0]) is dict:
+
+
 def _build_bases(data, _dnames=None, _types=None, _bases=None):
     if _types is None:
         _types = defaultdict(list)
@@ -170,8 +183,8 @@ def _build_bases(data, _dnames=None, _types=None, _bases=None):
 
     data = copy.deepcopy(data)
 
-    if 'import' in data:
-        for idata in data['import']:
+    if '_imported_' in data:
+        for idata in data['_imported_']:
             dname = idata['domain']['name']
             _build_bases(idata, _dnames + [dname], _types, _bases)
 
@@ -185,7 +198,7 @@ def _build_bases(data, _dnames=None, _types=None, _bases=None):
     nbdata = {}
     for bname, bdata in data['bases'].items():
         path = '.'.join(_dnames)
-        ndata = _norm_fields(bdata, _types, _dnames)
+        ndata = _flat_fields(bdata, _types, _dnames)
         nbdata[bname] = ndata
         _bases[bname].append([path, ndata])
 
@@ -207,8 +220,8 @@ def _build_events(data, _dnames=None, _types=None, _bases=None, _events=None):
 
     data = copy.deepcopy(data)
 
-    if 'import' in data:
-        for idata in data['import']:
+    if '_imported_' in data:
+        for idata in data['_imported_']:
             dname = idata['domain']['name']
             _build_events(idata, _dnames + [dname], _types, _bases, _events)
 
@@ -225,7 +238,7 @@ def _build_events(data, _dnames=None, _types=None, _bases=None, _events=None):
     nedata = {}
     for ename, edata in data['events'].items():
         path = '.'.join(_dnames)
-        ndata = _norm_fields(edata, _types, _dnames, True)
+        ndata = _flat_fields(edata, _types, _dnames, True)
         nedata[ename] = ndata
         _events[ename].append([path, ndata])
 
@@ -248,4 +261,5 @@ def build_dom(data):
     bases = defaultdict(list)
     events = defaultdict(list)
     _build_events(data, None, types, bases, events)
-    return dict(domain=domain, types=types, bases=bases, events=events)
+    return AttrDict(dict(domain=domain, types=types, bases=bases,
+                    events=events))

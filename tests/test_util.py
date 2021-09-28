@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from loglab.util import download, request_ext_dir, test_reset
+from loglab.util import download, request_imp_dir, test_reset
 
 
 @pytest.fixture
@@ -11,8 +11,8 @@ def clear():
 
 
 def test_download(clear):
-    edir = request_ext_dir()
-    assert '.loglab/extern' in edir
+    edir = request_imp_dir()
+    assert '.loglab/import' in edir
     path = os.path.join(edir, 'foo.lab.json')
     download(
         'https://raw.githubusercontent.com/haje01/loglab/master/tests/files/foo.lab.json',

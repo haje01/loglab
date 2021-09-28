@@ -8,7 +8,7 @@ from click.testing import CliRunner
 
 from loglab.cli import cli, version, show, schema, verify, fetch
 from loglab.version import VERSION
-from loglab.util import AttrDict, request_ext_dir, test_reset
+from loglab.util import AttrDict, request_imp_dir, test_reset
 
 
 CWD = os.path.dirname(__file__)
@@ -216,63 +216,33 @@ def test_imp_show(clear):
     assert res.exit_code == 0
 
     res = runner.invoke(show)
-    import pdb; pdb.set_trace()
     ans = '''[랩 파일 : /mnt/e/works/loglab/tests/boo.lab.json]
-
-Domain : acme
-Description : 최고의 게임 회사
-
-Type : acme.types.Id
-Description : Id 타입
-+------------+---------------+------------+
-| BaseType   | Description   | Restrict   |
-|------------+---------------+------------|
-| integer    | Id 타입       | 0 이상     |
-+------------+---------------+------------+
-
-Event : acme.Login
-Description : 계정 로그인
-+---------------+----------+-------------------+------------------------+
-| Field         | Type     | Description       | Restrict               |
-|---------------+----------+-------------------+------------------------|
-| DateTime      | datetime | 이벤트 일시       |                        |
-| acme.ServerNo | integer  | 서버 번호         | 1 이상 100 미만        |
-| acme.AcntId   | types.Id | 계정 ID           |                        |
-| acme.Platform | string   | 디바이스의 플랫폼 | ['ios', 'aos'] 중 하나 |
-+---------------+----------+-------------------+------------------------+
-
-Event : acme.Logout
-Description : 계정 로그인
-+---------------+----------+------------------+------------+-----------------+
-| Field         | Type     | Description      | Optional   | Restrict        |
-|---------------+----------+------------------+------------+-----------------|
-| DateTime      | datetime | 이벤트 일시      |            |
-    |
-| acme.ServerNo | integer  | 서버 번호        |            | 1 이상 100  미만 |
-| acme.AcntId   | types.Id | 계정 ID          |            |
-    |
-| acme.PlayTime | number   | 플레이 시간 (초) | true       |
-    |
-+---------------+----------+------------------+------------+-----------------+
 
 Domain : boo
 Description : 최고의 PC 온라인 게임
 
 Event : Login
-Description : 로그인
-+---------------+----------+-------------------+---------------------------------+
-| Field         | Type     | Description       | Restrict
-        |
-|---------------+----------+-------------------+---------------------------------|
-| DateTime      | datetime | 이벤트 일시       |
-        |
-| acme.ServerNo | integer  | 서버 번호         | 1 이상 100 미만
-        |
-| acme.AcntId   | types.Id | 계정 ID           |
-        |
-| acme.Platform | string   | 디바이스의 플랫폼 | ['ios', 'aos'] 중 하나          |
-| Platform      | string   | PC의 플랫폼       | ['win', 'mac', 'linux'] 중 하나 |
-+---------------+----------+-------------------+---------------------------------+'''
+Description : 계정 로그인
++----------+----------+---------------+---------------------------------+
+| Field    | Type     | Description   | Restrict                        |
+|----------+----------+---------------+---------------------------------|
+| DateTime | datetime | 이벤트 일시   |                                 |
+| ServerNo | integer  | 서버 번호     | 1 이상 100 미만                 |
+| AcntId   | integer  | 계정 ID       | 0 이상                          |
+| Platform | string   | PC의 플랫폼   | ['win', 'mac', 'linux'] 중 하나 |
++----------+----------+---------------+---------------------------------+
+
+Event : acme.Logout
+Description : 계정 로그인
++----------+----------+------------------+------------+-----------------+
+| Field    | Type     | Description      | Optional   | Restrict        |
+|----------+----------+------------------+------------+-----------------|
+| DateTime | datetime | 이벤트 일시      |            |                 |
+| ServerNo | integer  | 서버 번호        |            | 1 이상 100 미만 |
+| AcntId   | integer  | 계정 ID          |            | 0 이상          |
+| PlayTime | number   | 플레이 시간 (초) | True       |                 |
++----------+----------+------------------+------------+-----------------+
+'''
     assert ans in res.output
 
 
@@ -315,7 +285,7 @@ def test_schema(clear):
     assert defs.Login.properties.ServerNo == ans
 
     # string enum
-    ans =  {
+    ans = {
         "type": "string",
         "description": "디바이스의 플랫폼",
         "enum": ["ios", "aos"]
@@ -333,6 +303,8 @@ def test_schema(clear):
     # required
     ans = ["DateTime", "ServerNo", "AcntId", "Platform"]
     assert defs.Login.required == ans
+    ans = ["DateTime", "ServerNo", "AcntId"]
+    assert defs.Logout.required == ans
 
 
 def test_verify(clear):
@@ -472,6 +444,6 @@ def test_fetch(clear):
     url = 'https://raw.githubusercontent.com/haje01/loglab/master/tests/files/foo.lab.json'
     res = runner.invoke(fetch, [url])
     assert res.exit_code == 0
-    edir = request_ext_dir()
+    edir = request_imp_dir()
     path = os.path.join(edir, 'foo.lab.json')
     assert os.path.isfile(path)

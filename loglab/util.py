@@ -17,7 +17,8 @@ from requests import get
 LOGLAB_HOME = Path(os.path.dirname(os.path.abspath(__file__))).parent.absolute()
 RESULT_DIR = '.loglab'
 TEMP_DIR = os.path.join(RESULT_DIR, 'temp')
-EXTERN_DIR = os.path.join(RESULT_DIR, 'extern')
+IMPORT_DIR = os.path.join(RESULT_DIR, 'import')
+BUILTIN_TYPES = ('string', 'integer', 'number', 'boolean', 'datetime')
 
 class AttrDict(dict):
     """dict 키를 속성처럼 접근하는 헬퍼."""
@@ -128,33 +129,6 @@ def _init_fields():
     return fields
 
 
-# def _fields_from_mixins(root, mixins, dmp):
-#     """mixins 엔터티에서 필드 정보 얻기.
-
-#     재귀적으로 올라가며 처리.
-
-#     Args:
-#         root (dict): 랩 파일 데이터
-#         mixins (list): 믹스인 엔터티 이름 리스트
-#         dmp (str): 도메인 접두어
-
-#     Returns:
-#         dict: 필드 정보
-#     """
-#     fields = _init_fields()
-#     for mi in mixins:
-#         _root = root
-#         elms = mi.split('.')
-#         if len(elms) > 2:
-#             dmp = '.'.join(elms[:-2])
-#             _root = root['_extern_'][dmp]
-#             elms = elms[-2:]
-#         parent, entity = elms
-#         _fields = fields_from_entity(_root, _root[parent][entity], dmp)
-#         fields.update(_fields)
-#     return fields
-
-
 def explain_rstr(f):
     """제약을 설명으로 변환."""
     exps = []
@@ -228,48 +202,48 @@ def explain_rstr(f):
     return '\n'.join(exps)
 
 
-def fields_from_entity(root, entity, dmp, field_cb=None):
-    """랩 파일의 엔터티에서 필드 정보 얻기.
+# def fields_from_entity(root, entity, dmp, field_cb=None):
+#     """랩 파일의 엔터티에서 필드 정보 얻기.
 
-    Args:
-        root (dict): 랩 파일 데이터
-        entity (dict): 엔터티 데이터
-        dmp (str): 도메인 접두어
-        field_cb (function): 필드값 변환 함수
+#     Args:
+#         root (dict): 랩 파일 데이터
+#         entity (dict): 엔터티 데이터
+#         dmp (str): 도메인 접두어
+#         field_cb (function): 필드값 변환 함수
 
-    """
-    def _parse_field(f):
-        """사전형 필드 정보 파싱."""
-        opt = f['option'] if 'option' in f else None
-        exrstr = explain_rstr(f)
-        name = f['name']
-        atype = f['type']
-        desc = f['desc']
-        # 제약만 남기기
-        rstr = copy.deepcopy(f)
-        del rstr['name']
-        del rstr['type']
-        del rstr['desc']
-        return [name, atype, desc, opt, exrstr, rstr]
+#     """
+#     def _parse_field(f):
+#         """사전형 필드 정보 파싱."""
+#         opt = f['option'] if 'option' in f else None
+#         exrstr = explain_rstr(f)
+#         name = f['name']
+#         atype = f['type']
+#         desc = f['desc']
+#         # 제약만 남기기
+#         rstr = copy.deepcopy(f)
+#         del rstr['name']
+#         del rstr['type']
+#         del rstr['desc']
+#         return [name, atype, desc, opt, exrstr, rstr]
 
-    fields = _init_fields()
-    # mixin 이 있으면 그것의 필드를 가져옴
-    if 'mixins' in entity:
-        _fields = _fields_from_mixins(root, entity['mixins'], domain)
-        fields.update(_fields)
+#     fields = _init_fields()
+#     # mixin 이 있으면 그것의 필드를 가져옴
+#     if 'mixins' in entity:
+#         _fields = _fields_from_mixins(root, entity['mixins'], domain)
+#         fields.update(_fields)
 
-    # 엔터티 자체 필드 반영
-    if 'fields' in entity:
-        for f in entity['fields']:
-            # 사전형 필드 정보 파싱
-            if type(f) is dict:
-                f = _parse_field(f)
-            fname = f'{domain}.{f[0]}' if domain is not None else f[0]
-            if field_cb is not None:
-                fields[fname] = field_cb(f[1:])
-            else:
-                fields[fname] = f[1:]
-    return fields
+#     # 엔터티 자체 필드 반영
+#     if 'fields' in entity:
+#         for f in entity['fields']:
+#             # 사전형 필드 정보 파싱
+#             if type(f) is dict:
+#                 f = _parse_field(f)
+#             fname = f'{domain}.{f[0]}' if domain is not None else f[0]
+#             if field_cb is not None:
+#                 fields[fname] = field_cb(f[1:])
+#             else:
+#                 fields[fname] = f[1:]
+#     return fields
 
 
 def request_tmp_dir(labfile=None):
@@ -284,8 +258,8 @@ def request_tmp_dir(labfile=None):
     return _request_dir(labfile, TEMP_DIR)
 
 
-def request_ext_dir(labfile=None):
-    """랩 파일이 있는 경로에서 임시 파일용 디렉토리를 확보.
+def request_imp_dir(labfile=None):
+    """랩 파일이 있는 경로에서 가져오기 파일용 디렉토리를 확보.
 
     랩 파일 경로가 없으면 현제 디렉토리를 이용
 
@@ -293,7 +267,7 @@ def request_ext_dir(labfile=None):
         labfile (string): 랩 파일 경로
 
     """
-    return _request_dir(labfile, EXTERN_DIR)
+    return _request_dir(labfile, IMPORT_DIR)
 
 
 def _request_dir(labfile, subdir):
@@ -335,6 +309,6 @@ def test_reset():
         os.remove(f)
     for f in glob("*.txt"):
         os.remove(f)
-    if os.path.isdir('.loglab'):
+    if os.path.isdir(RESULT_DIR):
         # 결과 디렉토리 삭제
-        rmtree(".loglab")
+        rmtree(RESULT_DIR)

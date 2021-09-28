@@ -9,7 +9,7 @@
     ],
     "events": {
         "Login": {
-          "desc": "로그인",
+          "desc": "계정 로그인",
           "mixins": ["acme.events.Login"],
           "fields": [
               {

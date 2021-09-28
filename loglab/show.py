@@ -6,7 +6,7 @@ from tabulate import tabulate
 from jinja2 import Environment, FileSystemLoader
 
 from loglab.dom import build_dom
-from loglab.util import fields_from_entity, explain_rstr, LOGLAB_HOME
+from loglab.util import explain_rstr, LOGLAB_HOME
 
 
 def _jsonify(vals):
@@ -79,38 +79,6 @@ def text_from_labfile(root, out=None, domain=None, prefix_dm=False, host=None):
     """
     if out is None:
         out = StringIO()
-
-    # # 가져온 랩 파일 먼저
-    # if '_extern_' in root:
-    #     for k, v in root['_extern_'].items():
-    #         text_from_labfile(v, out, k, prefix_dm=prefix_dm,
-    #                           host=root)
-
-    # dmp = ''
-    # if domain is not None and prefix_dm:
-    #     dmp = f'{domain}.'
-
-    # # 도메인
-    # if 'domain' in root:
-    #     out.write('\n')
-    #     out.write(f"Domain : {root['domain']['name']}\n")
-    #     if 'desc' in root['domain']:
-    #         out.write("Description : {}\n".format(root['domain']['desc']))
-
-    # # 커스텀 타입
-    # if 'types' in root:
-    #     _write_custom_types(root, out, prefix_dm, dmp, host)
-
-    # if 'events' not in root:
-    #     return out.getvalue()
-
-    # # 각 이벤트별로
-    # for ename, ebody in root['events'].items():
-    #     # 호스트에서 재정의된 이벤트는 출력 않음
-    #     if host is not None and 'events' in host:
-    #         if ename in host['events']:
-    #             continue
-    #     _write_events(root, out, domain, prefix_dm, dmp, ename, ebody, host)
 
     dom = build_dom(root)
 

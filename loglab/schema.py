@@ -9,8 +9,9 @@ from jsonschema import validate, ValidationError
 from jinja2 import Environment, FileSystemLoader
 from requests.api import request
 
+from loglab.dom import build_dom
 from loglab.util import AttrDict, load_file_from, LOGLAB_HOME,\
-    fields_from_entity, request_ext_dir
+    request_imp_dir
 
 
 def verify_labfile(lab_path, scm_path=None, err_exit=True):
@@ -44,45 +45,44 @@ def verify_labfile(lab_path, scm_path=None, err_exit=True):
         return lab
 
 
-def handle_import(labfile, lab):
+def handle_import(labfile, labjs):
     """랩 파일이 참고하는 외부 랩 파일 가져오기.
 
     Args:
         labfile (str): 랩파일 경로
-        lab (dict): 랩 데이터
+        labjs (dict): 랩 데이터
 
     """
-    if 'import' not in lab:
-        return lab
+    if 'import' not in labjs:
+        return labjs
 
-    if '_extern_' not in lab:
-        lab['_extern_'] = {}
+    if '_imported_' not in labjs:
+        labjs['_imported_'] = []
 
-    for imp in lab['import']:
-        edir = request_ext_dir(labfile)
-        path = os.path.join(edir, imp[0])
-        dm = imp[1]
+    for imp in labjs['import']:
+        idir = request_imp_dir(labfile)
+        path = os.path.join(idir, imp[0])
         if not os.path.isfile(path):
             raise FileNotFoundError(path)
 
         with open(path, 'rt') as f:
             body = f.read()
             data = json.loads(body)
-            lab['_extern_'][dm] = AttrDict(data)
+            labjs['_imported_'].append(AttrDict(data))
 
 
-def log_schema_from_labfile(lab):
+def log_schema_from_labfile(data):
     """랩 데이터에서 로그용 JSON 스키마 생성.
 
     Args:
-        lab (dict): 랩 데이터
+        data (dict): 랩 데이터
 
     """
     def _resolve_type(typ, v, domain):
         elms = typ.split('.')
         assert len(elms) == 2, f"잘못된 형식의 타입입니다: {typ}"
         tname = elms[1]
-        types = lab['types'] if domain == '' else lab['_extern_'][domain]['types']
+        types = data['types'] if domain == '' else data['_imported_'][domain]['types']
         assert tname in types.keys(), \
             f"정의되지 않은 타입입니다: {typ}"
         tdef = types[tname]
@@ -91,52 +91,55 @@ def log_schema_from_labfile(lab):
         v = [tdef['type'], v[1], v[2], None, tdef]
         return v
 
-    lab = AttrDict(lab)
+    dom = build_dom(data)
     events = []
     items = []
-    for ename, ebody in lab.events.items():
+    for ename, elst in dom.events.items():
+        edata = AttrDict(elst[-1][1])
         item = f'{{"$ref": "#/$defs/{ename}"}}'
         items.append(item)
-        fields = fields_from_entity(lab, ebody, None)
+        fields = edata.fields
         reqs = []
         props = [f'"Event": {{"const": "{ename}"}}']
         for k, v in fields.items():
+            v = v[-1]
             elms = k.split('.')
-            fdm = '.'.join(elms[:-1])
+            # fdm = '.'.join(elms[:-1])
             fnm = elms[-1]
-            typ = v[0]
+            typ = v[1]['type']
+            desc = v[1]['desc']
             if typ == "datetime":
                 prop = f"""
                 "{fnm}": {{
                     "type": "string",
-                    "description": "{v[1]}",
+                    "description": "{desc}",
                     "pattern": "^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\\\\.[0-9]+)?(([Zz])|([\\\\+|\\\\-]([01][0-9]|2[0-3]):[0-5][0-9]))$"
                 }}"""
             else:
-                if 'types' in typ:
-                    v = _resolve_type(typ, v, fdm)
+                # if 'types' in typ:
+                #     v = _resolve_type(typ, v, fdm)
                 finfo = {
                     "type": typ,
-                    "description": v[1]
+                    "description": desc
                 }
-                if len(v) == 5:
-                    for rk, rv in v[4].items():
-                        # 객체형 나열값 처리
-                        if rk == 'enum' and len(rv) > 0 and type(rv[0]) is list:
-                            rv = [k[0] for k in rv]
-                        finfo[rk] = rv
+                for rk, rv in v[1].items():
+                    if rk in ('type', 'desc'):
+                        continue
+                    if rk == 'enum' and len(rv) > 0 and type(rv[0]) is list:
+                        rv = [r[0] for r in rv]
+                    finfo[rk] = rv
                 body = json.dumps(finfo, ensure_ascii=False)
                 prop = f"""
                 "{fnm}": {body}"""
-            if len(v) <= 2 or v[2] in (False, None):
+            if 'option' not in v[1] or v[1]['option'] == False:
                 rf = f'"{fnm}"'
                 if rf not in reqs:
                     reqs.append(f'"{fnm}"')
             props.append(prop)
         props = ",".join(props)
         reqs = ", ".join(reqs)
-        fields = f"""
-        """
+        # fields = f"""
+        # """
         ebody = f"""
             "type": "object",
             "properties": {{
@@ -152,8 +155,8 @@ def log_schema_from_labfile(lab):
     return f'''
 {{
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "title": "{lab.domain.name}",
-    "description": "{lab.domain.desc}",
+    "title": "{dom.domain.name}",
+    "description": "{dom.domain.desc}",
     "type": "array",
     "$defs": {{
         {events}
@@ -167,12 +170,12 @@ def log_schema_from_labfile(lab):
     '''
 
 
-def flow_schema_from_labfile(labfile, lab):
+def flow_schema_from_labfile(labfile, data):
     """랩 데이터 에서 플로우 JSON 스키마 생성.
 
     Args:
         labfile (str): 랩 파일 경로
-        lab (dict): 랩 데이터
+        data (dict): 랩 데이터
 
     """
     def _collect(fields, group):
@@ -184,16 +187,16 @@ def flow_schema_from_labfile(labfile, lab):
                     else:
                         fields.add(field[0])
 
-    def _collect_all_fields(lab):
+    def _collect_all_fields(data):
         fields = set()
-        if 'bases' in lab:
-            _collect(fields, lab['bases'])
-        if 'events' in lab:
-            _collect(fields, lab['events'])
+        if 'bases' in data:
+            _collect(fields, data['bases'])
+        if 'events' in data:
+            _collect(fields, data['events'])
         return fields
 
-    events = list(lab['events'].keys())
-    fields = _collect_all_fields(lab)
+    events = list(data['events'].keys())
+    fields = _collect_all_fields(data)
     tmpl_path = os.path.join(LOGLAB_HOME, "template")
     loader = FileSystemLoader(tmpl_path)
     env = Environment(loader=loader)

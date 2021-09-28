@@ -1423,7 +1423,7 @@ $ loglab fetch https://raw.githubusercontent.com/haje01/loglab/master/tests/file
 
 > 실제로는 `https://www.acmegames.com/loglab/acme.lab.json` 식으로 형식을 갖춘 URL 에서 받을 수 있도록 하자.
 
-페치로 받은 랩 파일은 작업 디렉토리 아래 `.loglab/extern` 디렉토리에 URL 경로의 마지막 요소와 같은 파일 이름으로 받아진다. 위 예에서는 `.loglab/extern/acme.lab.json` 로 저장된다.
+페치로 받은 랩 파일은 작업 디렉토리 아래 `.loglab/import` 디렉토리에 URL 경로의 마지막 요소와 같은 파일 이름으로 받아진다. 위 예에서는 `.loglab/import/acme.lab.json` 로 저장된다.
 
 > `fetch` 는 편의를 위한 명령이다. 다른 방식으로 받은 파일을 직접 복사해 사용해도 괜찮다.
 
@@ -1435,33 +1435,26 @@ $ loglab fetch https://raw.githubusercontent.com/haje01/loglab/master/tests/file
     "name": "boo",
     "desc": "최고의 PC 온라인 게임"
   },
-  "import": [
-    ["acme.lab.json", "acme"]
+  "import": ["acme.lab.json"]
   ]
 }
 ```
 
-`import` 리스트에 가져올 외부 랩 파일을 `[받은파일_이름, 도메인_이름]` 형식의 리스트로 기술한다.
+`import` 리스트에 가져올 외부 랩 파일명을 기술한다.
 
 > 하나 이상의 외부 랩 파일을 가져올 수 있으며, 같은 베이스나 필드는 믹스인의 경우와 마찬가지로 나중에 나오는 것이 우선한다.
 
 외부 랩 파일에서 선언한 모든 커스텀 타입, 베이스와 이벤트는 이 랩 파일에서 직접 선언한 것과 같은 효과를 같는다.
 
-`show` 를 해보면 가져온 외부 랩 파일의 이벤트에 도메인 이름 `acme` 가 접두어로 붙어 출력되는 것을 알 수 있다.
+`show` 를 해보면 도메인 이름은 `boo` 이고, 가져온 외부 랩 파일의 모든 이벤트에 원래 도메인 이름 `acme` 가 접두어로 붙어 `acme.Login`, `acme.Logout` 식으로 출력되는 것을 알 수 있다.
 
 
 ```
 $ loglab show
-Domain : acme
-Description : 최고의 게임 회사
+[랩 파일 : /mnt/e/works/loglab/tests/boo.lab.json]
 
-Type : acme.types.Id
-Description : Id 타입
-+------------+---------------+------------+
-| BaseType   | Description   | Restrict   |
-|------------+---------------+------------|
-| integer    | Id 타입       | 0 이상     |
-+------------+---------------+------------+
+Domain : boo
+Description : 최고의 PC 온라인 게임
 
 Event : acme.Login
 Description : 계정 로그인
@@ -1470,7 +1463,7 @@ Description : 계정 로그인
 |----------+----------+-------------------+------------------------|
 | DateTime | datetime | 이벤트 일시       |                        |
 | ServerNo | integer  | 서버 번호         | 1 이상 100 미만        |
-| AcntId   | types.Id | 계정 ID           |                        |
+| AcntId   | integer  | 계정 ID           | 0 이상                 |
 | Platform | string   | 디바이스의 플랫폼 | ['ios', 'aos'] 중 하나 |
 +----------+----------+-------------------+------------------------+
 
@@ -1481,12 +1474,12 @@ Description : 계정 로그인
 |----------+----------+------------------+------------+-----------------|
 | DateTime | datetime | 이벤트 일시      |            |                 |
 | ServerNo | integer  | 서버 번호        |            | 1 이상 100 미만 |
-| AcntId   | types.Id | 계정 ID          |            |                 |
-| PlayTime | number   | 플레이 시간 (초) | true       |                 |
+| AcntId   | integer  | 계정 ID          |            | 0 이상          |
+| PlayTime | number   | 플레이 시간 (초) | True       |                 |
 +----------+----------+------------------+------------+-----------------+
 ```
 
-만약 외부 랩 파일 내용에 변경이나 추가할 필요가 없다면 이대로 사용하면 되겠지만, 대부분 서비스에 맞게 수정이나 확장이 필요할 것이다. `acme` 에서 정의된 로그인 이벤트의 `Platform` 를 PC 온라인 서비스에 맞게 다음처럼 변경해보자.
+만약 외부 랩 파일 내용에 변경이나 추가할 필요가 없다면 이대로 사용하면 되겠지만, 대부분 서비스에 맞게 수정/확장이 필요할 것이다. `acme` 에서 정의된 `Login` 이벤트의 `Platform` 를 PC 온라인 서비스에 맞게 다음처럼 변경해보자.
 
 ```js
 {
@@ -1495,9 +1488,7 @@ Description : 계정 로그인
     "name": "boo",
     "desc": "최고의 PC 온라인 게임"
   },
-  "import": [
-    ["acme.lab.json", "acme"]
-  ],
+  "import": ["acme.lab.json"],
   "events": {
     "Login": {
       "desc": "로그인",
@@ -1517,11 +1508,11 @@ Description : 계정 로그인
 }
 ```
 
-`acme` 의 `Login` 이벤트를 믹스인한 새로운 `Login` 을 만들고, `Platform` 필드의 나열값을 재정의 하고 있다. `show` 를 해보면,
+`acme` 의 `Login` 이벤트를 믹스인하여 새로운 `Login` 을 만들고, `Platform` 필드의 나열값을 재정의 하고 있다. `show` 를 해보면,
 
 ```
 $ loglab show
-# ...
+[랩 파일 : /mnt/e/works/loglab/tests/boo.lab.json]
 
 Domain : boo
 Description : 최고의 PC 온라인 게임
@@ -1533,12 +1524,23 @@ Description : 로그인
 |----------+----------+---------------+---------------------------------|
 | DateTime | datetime | 이벤트 일시   |                                 |
 | ServerNo | integer  | 서버 번호     | 1 이상 100 미만                 |
-| AcntId   | types.Id | 계정 ID       |                                 |
+| AcntId   | integer  | 계정 ID       | 0 이상                          |
 | Platform | string   | PC의 플랫폼   | ['win', 'mac', 'linux'] 중 하나 |
 +----------+----------+---------------+---------------------------------+
+
+Event : acme.Logout
+Description : 계정 로그인
++----------+----------+------------------+------------+-----------------+
+| Field    | Type     | Description      | Optional   | Restrict        |
+|----------+----------+------------------+------------+-----------------|
+| DateTime | datetime | 이벤트 일시      |            |                 |
+| ServerNo | integer  | 서버 번호        |            | 1 이상 100 미만 |
+| AcntId   | integer  | 계정 ID          |            | 0 이상          |
+| PlayTime | number   | 플레이 시간 (초) | True       |                 |
++----------+----------+------------------+------------+-----------------+
 ```
 
-앞의 예처럼 `acme` 의 이벤트들이 먼저 나온후, `boo` 에서 새로 정의한 `Login` 이벤트가 출력된다. `Platform` 필드의 나열값이 바뀐 것을 확인할 수 있다.
+재정의된 `Login` 이벤트는 `acme.` 접두어가 빠져있으며, `Platform` 필드의 나열값이 바뀐 것을 알 수 있다.
 
 ## 로그랩을 활용하는 다양한 방법
 

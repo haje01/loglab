@@ -9,7 +9,7 @@ from loglab.show import text_from_labfile
 from loglab.schema import verify_labfile, log_schema_from_labfile,\
     flow_schema_from_labfile, verify_logfile, handle_import
 from loglab.util import find_labfile, find_log_schema, request_tmp_dir,\
-    request_ext_dir, download
+    request_imp_dir, download
 from loglab.version import VERSION
 
 
@@ -42,13 +42,13 @@ def version():
 def show(labfile, domain):
     """로그 구조 출력."""
     labfile = find_labfile(labfile)
-    labjs = verify_labfile(labfile)
+    data = verify_labfile(labfile)
     try:
-        handle_import(labfile, labjs)
+        handle_import(labfile, data)
     except FileNotFoundError as e:
         print(f"Error: 가져올 파일 '{e}' 을 찾을 수 없습니다. 먼저 fetch 하세요.")
         sys.exit(1)
-    print(text_from_labfile(labjs, prefix_dm=domain))
+    print(text_from_labfile(data, prefix_dm=domain))
 
 
 @cli.command()
@@ -56,21 +56,21 @@ def show(labfile, domain):
 def schema(labfile):
     """로그 및 플로우 파일용 스키마 생성."""
     labfile = find_labfile(labfile)
-    labjs = verify_labfile(labfile)
+    data = verify_labfile(labfile)
     try:
-        handle_import(labfile, labjs)
+        handle_import(labfile, data)
     except FileNotFoundError as e:
         print(f"Error: 가져올 파일 '{e}' 을 찾을 수 없습니다. 먼저 fetch 하세요.")
         sys.exit(1)
 
     tmp_dir = request_tmp_dir(labfile)
-    prj_name = labjs['domain']['name']
+    prj_name = data['domain']['name']
     log_scm_path = os.path.join(tmp_dir, prj_name + ".log.schema.json")
 
     print(f"'{log_scm_path} 에 로그 스키마 저장.")
     with open(log_scm_path, 'wt') as f:
         try:
-            scm = log_schema_from_labfile(labjs)
+            scm = log_schema_from_labfile(data)
             f.write(scm)
             json.loads(scm)
         except json.decoder.JSONDecodeError as e:
@@ -81,7 +81,7 @@ def schema(labfile):
     flow_scm_path = os.path.join(tmp_dir, prj_name + ".flow.schema.json")
     print(f"'{flow_scm_path} 에 플로우 스키마 저장.")
     with open(flow_scm_path, 'wt') as f:
-        f.write(flow_schema_from_labfile(labfile, labjs))
+        f.write(flow_schema_from_labfile(labfile, data))
 
 
 @cli.command()
@@ -91,8 +91,8 @@ def schema(labfile):
 def verify(labfile, logfile, schema):
     """생성된 로그 파일 검증."""
     labfile = find_labfile(labfile)
-    labjs = verify_labfile(labfile)
-    schema = find_log_schema(labfile, labjs, schema)
+    data = verify_labfile(labfile)
+    schema = find_log_schema(labfile, data, schema)
     if schema is None:
         print("Error: 로그 스키마를 찾을 수 없습니다. schema 명령으로 생성하거나, "
               "스키마의 경로를 옵션으로 지정하세요.")
@@ -106,7 +106,7 @@ def verify(labfile, logfile, schema):
 @click.option('-o', '--output', help="저장할 파일명")
 def fetch(url, output):
     """외부 랩 파일 다운로드."""
-    edir = request_ext_dir()
+    edir = request_imp_dir()
     if output is None:
         output = url.split('/')[-1]
     if not output.endswith('.lab.json'):
