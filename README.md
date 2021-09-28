@@ -1490,7 +1490,7 @@ $ loglab fetch https://raw.githubusercontent.com/haje01/loglab/master/tests/file
 }
 ```
 
-`import` 리스트에 가져올 외부 랩 파일명을 기술한다.
+`import` 리스트에 가져올 외부 랩 파일을 기술한다.
 
 > 하나 이상의 외부 랩 파일을 가져올 수 있으며, 같은 베이스나 필드는 믹스인의 경우와 마찬가지로 나중에 나오는 것이 우선한다.
 
@@ -1562,7 +1562,7 @@ Description : 계정 로그인
 
 ```
 $ loglab show
-[랩 파일 : /mnt/e/works/loglab/tests/boo.lab.json]
+# ...
 
 Domain : boo
 Description : 최고의 PC 온라인 게임
@@ -1591,6 +1591,51 @@ Description : 계정 로그인
 ```
 
 재정의된 `Login` 이벤트는 `acme.` 접두어가 빠져있으며, `Platform` 필드의 나열값이 바뀐 것을 알 수 있다.
+
+커스텀 타입을 그대로 출력하면 아래와 같다.
+
+```
+$ loglab show -c
+# ...
+
+Domain : boo
+Description : 최고의 PC 온라인 게임
+
+Type : acme.types.Id
+Description : Id 타입
++------------+---------------+------------+
+| BaseType   | Description   | Restrict   |
+|------------+---------------+------------|
+| integer    | Id 타입       | 0 이상     |
++------------+---------------+------------+
+
+Event : Login
+Description : 계정 로그인
++----------+---------------+---------------+---------------------------------+
+| Field    | Type          | Description   | Restrict                        |
+|----------+---------------+---------------+---------------------------------|
+| DateTime | datetime      | 이벤트 일시   |                                 |
+| ServerNo | integer       | 서버 번호     | 1 이상 100 미만                 |
+| AcntId   | acme.types.Id | 계정 ID       |                                 |
+| Platform | string        | PC의 플랫폼   | ['win', 'mac', 'linux'] 중 하나 |
++----------+---------------+---------------+---------------------------------+
+
+Event : acme.Logout
+Description : 계정 로그아웃
++----------+---------------+------------------+------------+-----------------+
+| Field    | Type          | Description      | Optional   | Restrict        |
+|----------+---------------+------------------+------------+-----------------|
+| DateTime | datetime      | 이벤트 일시      |            |                 |
+| ServerNo | integer       | 서버 번호        |            | 1 이상 100 미만 |
+| AcntId   | acme.types.Id | 계정 ID          |            |                 |
+| PlayTime | number        | 플레이 시간 (초) | True       |                 |
++----------+---------------+------------------+------------+-----------------+
+```
+
+먼저 외부 랩 파일에서 정의된 `acme.types.Id` 타입이 나오고, 각 이벤트에서 이것을 사용하는 필드들을 확인할 수 있다.
+
+> 외부 랩 파일에서 어떤 타입들이 정의되고 사용되는지 이해하면, 그 외부 랩 파일의 설계를 더 잘 이해하고 활용할 수 있다.
+
 
 ## 로그랩을 활용하는 다양한 방법
 

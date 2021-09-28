@@ -66,11 +66,11 @@ def _write_events(name, data, out):
     out.write('\n')
 
 
-def text_from_labfile(root, cus_type, out=None, domain=None, host=None):
+def text_from_labfile(data, cus_type, out=None, domain=None, host=None):
     """랩 파일에서 텍스트 문서 생성.
 
     Args:
-        root (dict): 랩 데이터
+        data (dict): 랩 데이터
         cus_type (bool): 커스텀 타입 출력 여부. 기본 False
         out (StringIO): 문자열 IO
         domain (string): 도메인 이름
@@ -80,20 +80,20 @@ def text_from_labfile(root, cus_type, out=None, domain=None, host=None):
     if out is None:
         out = StringIO()
 
-    dom = build_dom(root, cus_type)
+    dom = build_dom(data, cus_type)
 
     # 도메인
     out.write('\n')
-    out.write(f"Domain : {dom['domain']['name']}\n")
-    if 'desc' in dom['domain']:
-        out.write("Description : {}\n".format(dom['domain']['desc']))
+    out.write(f"Domain : {dom.domain.name}\n")
+    if 'desc' in dom.domain:
+        out.write("Description : {}\n".format(dom.domain.desc))
 
     # 커스텀 타입
-    if 'types' in root and cus_type:
+    if 'types' in dom and cus_type:
         _write_custom_types(dom, out)
 
     # 각 이벤트별로
-    for ename, elst in dom['events'].items():
+    for ename, elst in dom.events.items():
         edata = elst[-1]
         _write_events(ename, edata, out)
 
