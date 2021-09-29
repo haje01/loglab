@@ -28,7 +28,6 @@ setup(
     install_requires=[
         'click',
         "jsonschema",
-        'pyyaml',
         'jinja2',
         'tabulate[widechars]',
         'requests'
@@ -38,7 +37,6 @@ setup(
             'pytest',
             'coverage',
             'pyinstaller',
-            'tox'
         ],
     },
     classifiers=[
