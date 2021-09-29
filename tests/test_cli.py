@@ -95,7 +95,17 @@ def test_show():
     assert res.exit_code == 0
     out = res.output
     ans = '''Domain : foo
-Description : 위대한 모바일 게임'''
+Description : 위대한 모바일 게임
+
+Event : Login
+Description : 계정 로그인
++----------+----------+---------------+
+| Field    | Type     | Description   |
+|----------+----------+---------------|
+| DateTime | datetime | 이벤트 일시   |
+| AcntId   | integer  | 계정 ID       |
++----------+----------+---------------+
+'''
     assert ans in out
 
     sel_lab("foo")
