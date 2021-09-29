@@ -1,2 +1,1 @@
-pyinstaller loglab/cli.py --name loglab --icon image/loglab.ico --noconfirm
-coverage run --source loglab --parallel-mode --module pytest tests
+pyinstaller loglab/cli.py --name loglab --icon image/loglab.ico --onefile --noconfirm
