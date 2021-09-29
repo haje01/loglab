@@ -24,14 +24,14 @@ setup(
     python_requires='>=3.6',
     packages=['loglab'],
     scripts=SCRIPTS,
-    license=['MIT License'],
+    license='MIT License',
     install_requires=[
         'click',
         "jsonschema",
         'pyyaml',
         'jinja2',
         'pandas',
-        'tabulate',
+        'tabulate[widechars]',
         'requests'
     ],
     extras_require={
@@ -39,12 +39,12 @@ setup(
             'pytest',
             'coverage',
             'pyinstaller',
-            'tox',
+            'tox'
         ],
     },
     classifiers=[
         'License :: OSI Approved :: MIT License',
         'Intended Audience :: Developers',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.6'
     ]
 )

@@ -13,7 +13,6 @@ from loglab.util import find_labfile, find_log_schema, request_tmp_dir,\
     request_imp_dir, download
 from loglab.version import VERSION
 
-
 _global_options = [
     click.option('--labfile', '-l', 'labfile',
                  help='사용할 랩 파일의 위치를 명시적으로 지정'),
