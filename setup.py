@@ -30,8 +30,7 @@ setup(
         "jsonschema",
         'pyyaml',
         'jinja2',
-        'pandas',
-        'tabulate',
+        'tabulate[widechars]',
         'requests'
     ],
     extras_require={
