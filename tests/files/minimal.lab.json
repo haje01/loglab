@@ -3,5 +3,13 @@
 	"domain": {
 		"name": "foo",
 		"desc": "위대한 모바일 게임"
-	}
+	},
+    "events": {
+        "Login": {
+            "desc": "계정 로그인",
+            "fields": [
+                ["AcntId", "integer", "계정 ID"]
+            ]
+        }
+    }
 }

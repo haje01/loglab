@@ -75,6 +75,7 @@ def _write_events(name, data, out, namef):
         dmp = _get_dmp(fdata[0])
         fdef = fdata[1]
         rstr = explain_rstr(fdef)
+        rstr = None if len(rstr) == 0 else rstr
         opt = fdef['option'] if 'option' in fdef else None
         rows.append([k, fdef['type'], fdef['desc'], opt, rstr])
     df = pd.DataFrame(rows, columns=headers).set_index('Field')

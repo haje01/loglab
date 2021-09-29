@@ -1676,7 +1676,7 @@ Description : 캐릭터 로그아웃
 +----------+----------+---------------+-----------------+
 ```
 
-다음과 같이 타입만 볼 수도 있다.
+다음과 같이 하면 이름에 `types` 가 들어가는 요소들, 즉 타입들만 볼 수 있다.
 
 ```
 $ loglab show -c -n types
@@ -1711,13 +1711,13 @@ Description : Id 타입
 빌드는 로그랩 설치 디렉토리에서 다음과 같이 한다.
 
 ```
-tools\build.bat
+> tools\build.bat
 ```
 
 리눅스/macOS에서는 다음과 같이 빌드한다.
 
 ```
-./tools/build.sh
+$ sh tools/build.sh
 ```
 
 정상적으로 빌드가 되면, `dist/` 디렉토리 아래 `loglab.exe` (윈도우) 또는 `loglab` (리눅스/macOS) 실행 파일이 만들어진다. 이것을 배포하면 된다.
