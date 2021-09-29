@@ -28,7 +28,7 @@ def verify_labfile(lab_path, scm_path=None, err_exit=True):
     """
     if scm_path is None:
         scm_path = os.path.join(LOGLAB_HOME,
-                                'schema/lab.schema.json')
+                                'schema', 'lab.schema.json')
 
     try:
         schema = load_file_from(scm_path)
