@@ -3,8 +3,6 @@ import copy
 from collections import defaultdict
 from json.encoder import py_encode_basestring
 
-import pandas as pd
-
 from loglab.util import BUILTIN_TYPES, AttrDict
 
 
