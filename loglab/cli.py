@@ -42,7 +42,7 @@ def version():
               help="커스텀 타입 그대로 출력")
 @click.option('-n', '--name')
 def show(labfile, custom_type, name):
-    """로그 구조 출력."""
+    """로그 구성 요소 출력."""
     labfile = find_labfile(labfile)
     data = verify_labfile(labfile)
     try:

@@ -103,7 +103,6 @@ Description : 계정 로그인
 | Field    | Type     | Description   |
 |----------+----------+---------------|
 | DateTime | datetime | 이벤트 일시   |
-| AcntId   | integer  | 계정 ID       |
 +----------+----------+---------------+
 '''
     assert ans in out

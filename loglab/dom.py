@@ -56,9 +56,9 @@ def _resolve_type(tname, _types):
 def _flat_fields(data, _types, _dnames, for_event=False, use_ctype=False):
     """베이스 또는 이벤트가 참조하는 필드를 평탄화."""
     if 'fields' not in data:
-        return data
-
-    data = copy.deepcopy(data)
+        data['fields'] = {}
+    else:
+        data = copy.deepcopy(data)
 
     def _is_flat(fdata):
         if type(fdata) is not defaultdict:
@@ -236,7 +236,7 @@ def _build_events(data, _dnames=None, _types=None, _bases=None, _events=None,
     if 'events' not in data:
         return _events
 
-    # normalize fields
+    # flatten fields
     nedata = {}
     for ename, edata in data['events'].items():
         path = '.'.join(_dnames)

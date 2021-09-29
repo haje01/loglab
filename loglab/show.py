@@ -62,7 +62,6 @@ def _write_custom_types(dom, out, namef):
 
 def _write_table(edef, out):
     headers = ['Field', 'Type', 'Description']
-
     fields = []
     types = []
     descs = []
@@ -70,7 +69,6 @@ def _write_table(edef, out):
     rstrs = []
     for k, v in edef['fields'].items():
         fdata = v[-1]
-        dmp = _get_dmp(fdata[0])
         fdef = fdata[1]
         rstr = explain_rstr(fdef)
         opt = fdef['option'] if 'option' in fdef else None
@@ -129,7 +127,6 @@ def text_from_labfile(data, cus_type, namef, out=None, domain=None,
         out = StringIO()
 
     dom = build_dom(data, cus_type)
-
     # 도메인
     out.write('\n')
     out.write(f"Domain : {dom.domain.name}\n")
