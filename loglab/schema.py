@@ -28,7 +28,7 @@ def verify_labfile(lab_path, scm_path=None, err_exit=True):
     """
     if scm_path is None:
         scm_path = os.path.join(LOGLAB_HOME,
-                                'schema/lab.schema.json')
+                                'schema', 'lab.schema.json')
 
     try:
         schema = load_file_from(scm_path)
@@ -37,7 +37,7 @@ def verify_labfile(lab_path, scm_path=None, err_exit=True):
         lab = json.loads(body)
         validate(lab, schema=schema)
     except Exception as e:
-        print("Error: 랩 파일 에러")
+        print("Error: 랩 파일 검증 에러")
         print(str(e))
         if err_exit:
             sys.exit(1)
