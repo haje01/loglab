@@ -1,7 +1,7 @@
 """유틸리티 모음."""
 import os
 import sys
-import copy
+import re
 from glob import glob
 from pathlib import Path
 from urllib.request import urlopen
@@ -312,3 +312,14 @@ def test_reset():
     if os.path.isdir(RESULT_DIR):
         # 결과 디렉토리 삭제
         rmtree(RESULT_DIR)
+
+
+def absdir_for_html(adir):
+    """HTML 용 로컬 디렉토리 절대 경로."""
+    match = re.search(r'^/mnt/([a-z])/(.+)$', str(adir))
+    if match is not None:
+        drv, rdir = match.groups()
+        drv = drv.upper()
+        return f'file:///{drv}:/{rdir}'
+
+    return adir

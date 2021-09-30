@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title> {{ domain.name }} - LogLab Document </title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  font-family: "Lato", sans-serif;
+}
+
+.sidebar {
+  height: 100%;
+  width: 250px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.3s;
+  padding-top: 100px;
+}
+
+.sidebar a {
+  text-decoration: none;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidebar-menu {
+  padding: 8px 8px 8px 30px;
+  font-size: 20px;
+  color: #ddd;
+}
+
+.sidebar-item {
+  padding: 8px 8px 8px 43px;
+  font-size: 14px;
+  color: #818181;
+}
+
+.sidebar a:hover {
+  color: #f1f1f1;
+}
+
+.sidebar a:visited {
+    color: lightgreen
+}
+
+.sidebar .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 30px;
+  margin-left: 50px;
+}
+
+.openbtn {
+  font-size: 15px;
+  cursor: pointer;
+  background-color: #111;
+  color: white;
+  padding: 7px 12px;
+  border: none;
+}
+
+.closed:before {
+    content: "☰ "
+}
+
+.hidden {
+    display: none !important
+}
+
+.openbtn:hover {
+  background-color: #444;
+}
+
+#main {
+  margin-left: 250px;
+  transition: margin-left .1s;
+  padding: 16px;
+}
+
+.table-div {
+    padding: 7px 10px 15px 20px
+}
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 5px 7px 5px 7px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+  .sidebar {padding-top: 15px;}
+  .sidebar a {font-size: 18px;}
+}
+</style>
+</head>
+<body>
+
+<div id="mySidebar" class="sidebar">
+  <a href="javascript:void(0)" class="sidebar-menu" id="sidebar-type" onclick="toggleItems('type')">Types</a>
+  {% for i in dom.types.keys() %}
+    <a href="#" class="sidebar-item type">{{ i }}</a>
+  {% endfor %}
+  <a href="javascript:void(0)" class="sidebar-menu" id="sidebar-base" onclick="toggleItems('base')">Bases</a>
+  {% for i in dom.bases.keys() %}
+    <a href="#" class="sidebar-item base">{{ i }}</a>
+  {% endfor %}
+  <a href="javascript:void(0)" class="sidebar-menu" id="sidebar-event"  onclick="toggleItems('event')">Events</a>
+  {% for i in dom.events.keys() %}
+    <a href="#" class="sidebar-item event">{{ i }}</a>
+  {% endfor %}
+
+</div>
+
+<div id="main">
+  <button class="openbtn" onclick="toggleNav()">☰</button>
+  <h1>{{ domain.name }} - {{ domain.desc }}</h1>
+
+  <div class="event-div">
+    {% for key, data in dom.events.items() %}
+    <div class="table-div">
+        <p>Event: <b>{{ key }}</b></p>
+        <p>Description: {{ data[-1][1].desc }}</p>
+        {{ events[key] }}
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+
+<script>
+function toggleNav() {
+    var nav = document.getElementById('mySidebar');
+    var main = document.getElementById('main');
+    if (nav.classList.contains('hidden')) {
+        nav.style.width = "250px";
+        main.style.marginLeft = "250px";
+        nav.classList.remove('hidden')
+    } else {
+        nav.style.width = "0";
+        main.style.marginLeft = "0";
+        nav.classList.add('hidden')
+    }
+}
+
+function toggleItems(tname) {
+  for (let el of document.getElementsByClassName(tname)) {
+      if (el.classList.contains('hidden')) {
+          document.getElementById('sidebar-'.concat(tname)).classList.remove('closed')
+          el.classList.remove('hidden');
+      } else {
+          document.getElementById('sidebar-'.concat(tname)).classList.add('closed')
+          el.classList.add('hidden');
+      }
+  }
+}
+
+</script>
+
+</body>
+</html>

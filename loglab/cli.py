@@ -6,7 +6,7 @@ import re
 
 import click
 
-from loglab.show import text_from_labfile
+from loglab.doc import text_from_labfile, html_from_labfile
 from loglab.schema import verify_labfile, log_schema_from_labfile,\
     flow_schema_from_labfile, verify_logfile, handle_import
 from loglab.util import find_labfile, find_log_schema, request_tmp_dir,\
@@ -57,6 +57,29 @@ def show(labfile, custom_type, name):
 
 @cli.command()
 @global_options
+@click.option('-o', '--output')
+def html(labfile, output):
+    """HTML 문서 출력."""
+    labfile = find_labfile(labfile)
+    data = verify_labfile(labfile)
+    try:
+        handle_import(labfile, data)
+    except FileNotFoundError as e:
+        print(f"Error: 가져올 파일 '{e}' 을 찾을 수 없습니다. 먼저 fetch 하세요.")
+        sys.exit(1)
+
+    domain = data['domain']
+    kwargs = dict(
+        domain=domain
+    )
+    doc = html_from_labfile(data, kwargs)
+    if output is None:
+        output = f"{domain['name']}.html"
+    print(f"'{output}' 에 HTML 문서 저장.")
+    with open(output, "wt", encoding='utf8') as f:
+        f.write(doc)
+
+
 def schema(labfile):
     """로그 및 플로우 파일용 스키마 생성."""
     labfile = find_labfile(labfile)

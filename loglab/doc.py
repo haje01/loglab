@@ -1,11 +1,12 @@
 """랩 파일에서 출력용 문서 생성."""
+import os
 from io import StringIO
 
 from tabulate import tabulate
 from jinja2 import Environment, FileSystemLoader
 
 from loglab.dom import build_dom
-from loglab.util import explain_rstr, LOGLAB_HOME
+from loglab.util import explain_rstr, LOGLAB_HOME, absdir_for_html
 
 
 def _jsonify(vals):
@@ -97,6 +98,52 @@ def _write_table(edef, out):
     out.write('\n')
 
 
+def _html_table(edef):
+    out = StringIO()
+
+    headers = ['Field', 'Type', 'Description']
+    fields = []
+    types = []
+    descs = []
+    opts = []
+    rstrs = []
+    for k, v in edef['fields'].items():
+        fdata = v[-1]
+        fdef = fdata[1]
+        rstr = explain_rstr(fdef)
+        opt = fdef['option'] if 'option' in fdef else None
+        fields.append(k)
+        types.append(fdef['type'])
+        descs.append(fdef['desc'])
+        opts.append(opt)
+        rstrs.append(rstr)
+
+    # 사용할 헤더만 검사
+    if sum([1 for o in opts if o is not None]) > 0:
+        headers.append('Optional')
+    if sum([1 for r in rstrs if r != '']) > 0:
+        headers.append('Restrict')
+
+    out.write('<table>\n')
+    out.write('<tr>\n')
+    for h in headers:
+        out.write(f'<th>{h}</th>\n')
+    out.write('</tr>\n')
+
+    for i, f in enumerate(fields):
+        out.write('<tr>\n')
+        out.write(f'<td>{f}</td>\n')
+        out.write(f'<td>{types[i]}</td>\n')
+        out.write(f'<td>{descs[i]}</td>\n')
+        if 'Optional' in headers:
+            out.write(f'<td>{opts[i]}</td>\n')
+        if 'Restrict' in headers:
+            out.write(f'<td>{rstrs[i]}</td>\n')
+        out.write('</tr>\n')
+    out.write('</table>\n')
+    return out.getvalue()
+
+
 def _write_events(name, data, out, namef):
     dmp = _get_dmp(data[0])
     edef = data[1]
@@ -110,8 +157,7 @@ def _write_events(name, data, out, namef):
     _write_table(edef, out)
 
 
-def text_from_labfile(data, cus_type, namef, out=None, domain=None,
-                      host=None):
+def text_from_labfile(data, cus_type, namef, out=None):
     """랩 파일에서 텍스트 문서 생성.
 
     Args:
@@ -145,17 +191,28 @@ def text_from_labfile(data, cus_type, namef, out=None, domain=None,
     return out.getvalue()
 
 
-def html_from_labfile(root, out=None, ns=None):
+def html_from_labfile(data, kwargs):
     """랩 파일에서 HTML 파일 생성.
 
     Args:
-        root (dict): 랩 파일 데이터
-        out (StringIO): 문자열 IO
-        domain (string): 도메인 이름
+        data (dict): 랩 파일 데이터
+        kwargs (dict): 템플릿 렌더링시 사용하는 인자
 
+    Returns:
+        str: 결과 HTML
     """
-    tmpl_path = os.path.join(LOGLAB_HOME, "template")
-    loader = FileSystemLoader(tmpl_path)
+    dom = build_dom(data, False)
+    assert type(kwargs) is dict
+    home_dir = absdir_for_html(LOGLAB_HOME)
+    kwargs['ext_dir'] = os.path.join(home_dir, 'extern')
+
+    events = {}
+    for key, data in dom.events.items():
+        events[key] = _html_table(data[-1][1])
+    kwargs['events'] = events
+
+    tmpl_dir = os.path.join(LOGLAB_HOME, "template")
+    loader = FileSystemLoader(tmpl_dir)
     env = Environment(loader=loader)
-    tmpl = env.get_template("tmpl_doc.html")
-    return tmpl.render(labfile=labfile, events=events, fields=fields)
+    tmpl = env.get_template("tmpl_doc.html.jinja")
+    return tmpl.render(dom=dom, **kwargs)
