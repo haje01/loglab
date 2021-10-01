@@ -5,7 +5,7 @@
         "desc": "최고의 PC 온라인 게임"
     },
     "import": [
-        ["acme.lab.json", "acme"]
+        ["acme.lab.json", "ac"]
     ],
     "events": {
         "Login": {

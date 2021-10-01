@@ -95,6 +95,10 @@ $ loglab version
 
 ```js
 {
+  "domain": {
+    "name": "foo",
+    "desc": "최고의 모바일 게임"
+  },
   "events": {
     "Login": {
       "desc": "계정 로그인"
@@ -103,10 +107,15 @@ $ loglab version
 }
 ```
 
-로그랩에서는 로깅의 대상이 되는 각 사건을 **이벤트(event)** 라고 한다. 각 이벤트에는 관련된 하나 이상의 **필드(field)** 를 기술할 수 있는데, 위 예에서는 아직 필드 정보는 없다.
+랩 파일에 첫 번째로 나오는 `domain` 요소는 랩 파일의 **도메인(Domain) 정보**를 기술하는데 사용한다. 도메인 요소는 랩 파일이 어떤 서비스를 위한 것인가에 대한 정보를 담는다.
 
-랩 파일의 `events` 항목 아래에 다양한 이벤트 요소를 기술할 수 있다. 예제는 계정 로그인 이벤트를 위한 `Login` 요소를 만들었다. 그 아래의 `desc` 요소는 이벤트에 대한 설명을 위한 것이다.
+위 예처럼 `domain` 항목 아래 도메인 이름 및 설명을 입력하면 되는데, 도메인 이름은 나중에 해당 랩 파일을 식별하는 용도로 사용되기에, 알파벳 소문자와 숫자, 그리고 밑줄 문자 `_` 만을 사용해 **식별 가능한 범위에서 간략하게 기술**한다.
 
+> 예제에서 처럼 랩 파일의 이름과 도메인 이름을 같게 하는 것을 추천한다.
+
+로그랩에서는 로깅의 대상이 되는 각 사건을 **이벤트(event)** 라고 하는데, 위 랩  파일에서 두 번째로 나오는 `events` 요소에 하나 이상ㅇ의 이벤트 요소를 기술할 수 있다. 예에서 계정 로그인 이벤트를 위한 `Login` 요소를 만들었다. 그 아래의 `desc` 요소는 이벤트에 대한 설명을 위한 것이다.
+
+각 이벤트에는 관련된 하나 이상의 **필드(field)** 를 기술할 수 있는데, 예에서는 아직 필드 정보는 없다.
 
 이제 작업 디텍토리에서 `loglab` 의 `show` 명령을 사용해보자.
 
@@ -115,6 +124,9 @@ $ loglab version
 ```
 $ loglab show
 [랩 파일 : /home/ubuntu/loglab_test/foo.lab.json]
+
+Domain : foo
+Description : 최고의 모바일 게임
 
 Event : Login
 Description : 계정 로그인
@@ -125,9 +137,9 @@ Description : 계정 로그인
 +----------+----------+---------------+
 ```
 
-첫 번째 줄의 `[랩 파일: ... ]` 부분에서 `loglab` 이 어떤 랩 파일을 이용하는지 확인할 수 있다.
+`show` 명령은 랩 파일의 내용을 참고해 로그의 구성 요소들을 텍스트 형식으로 출력한다. 출력 첫 번째 줄의 `[랩 파일: ... ]` 부분에서 `loglab` 이 어떤 랩 파일을 이용하는지 확인할 수 있으며, 이어서 랩 파일에 기술된 도메인 정보, 이벤트 이름과 설명 그리고 필드 정보가 출력되는 것을 확인할 수 있다.
 
-`show` 명령은 랩 파일의 내용을 참고해 로그의 구성 요소들을 텍스트 형식으로 출력한다. 출력에서 랩 파일에 기술된 이벤트 이름, 설명 그리고 필드 정보가 출력되는 것을 확인할 수 있다.
+> 이렇게 랩 파일이 있는 디렉토리를 *로그랩 작업 디렉토리* 로 부르겠다. 여기에는 하나 이상의 랩 파일이 있을 수 있고, 나중에 설명할 명령을 통해 `.loglab` 디렉토리에 작업 결과가
 
 그런데, 아직 `Login` 이벤트에는 아무런 필드를 명시하지 않았음에도 `DateTime` 이라는 필드가 보인다. 이것은 모든 로그에 이벤트 발생 일시는 꼭 필요하기에 *로그랩에서 자동으로 생성* 해준 것이다.
 
@@ -168,21 +180,6 @@ Options:
 ```js
 {
   "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
-  "events": {
-    "Login": {
-      "desc": "계정 로그인."
-    }
-  }
-}
-```
-
-사용하는 에디터가 VS Code 처럼 JSON 스키마를 지원한다면, 인텔리센스 기능의 가이드를 받을 수 있다.
-
-추가적으로, 랩 파일의 **도메인(Domain) 정보**를 추가하면 도움이 된다. 도메인은 랩 파일이 어떤 서비스를 위한 것인가에 대한 정보를 담는다. 다음처럼 `domain` 항목 아래 도메인 이름 및 설명을 입력한다.
-
-```js
-{
-  "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
   "domain": {
     "name": "foo",
     "desc": "최고의 모바일 게임"
@@ -195,28 +192,10 @@ Options:
 }
 ```
 
-도메인 이름은 알파벳 소문자와 숫자, 그리고 밑줄 문자 `_` 를 사용해서 기술한다.
+사용하는 에디터가 VS Code 처럼 JSON 스키마를 지원한다면, 인텔리센스 기능의 가이드를 받을 수 있다.
 
 > 입력 과정에서 스키마가 잘 동작한다면 아래와 같은 가이드를 볼 수 있을 것이다.
 > ![스키마 가이드](image/guide.png)
-
-도메인 정보 추가 후 다시 `show` 명령을 실행하면 아래와 같이 도메인 정보도 출력된다.
-
-```
-$ loglab show
-[랩 파일 : /home/ubuntu/loglab_test/foo.lab.json]
-
-Domain : foo
-Description : 최고의 모바일 게임
-
-Event : Login
-Description : 계정 로그인
-+----------+----------+---------------+
-| Field    | Type     | Description   |
-|----------+----------+---------------|
-| DateTime | datetime | 이벤트 일시   |
-+----------+----------+---------------+
-```
 
 ## 필드의 추가
 
@@ -1470,7 +1449,7 @@ $ loglab verify fakelog.txt
 
 ### 외부 랩 파일 가져오기
 
-먼저 사용할 외부 랩 파일을 로컬로 다운로드 받아야 하는데, `loglab` 의 `fetch` 명령을 통해 할 수 있다. 다음과 같이 수행한다.
+먼저 사용할 외부 랩 파일을 로컬로 다운로드 받아야 하는데, `loglab` 의 `fetch` 명령을 통해 할 수 있다. 예로 로그랩 github 저장소에서 테스트용 랩 파일을 다음과 같이 받을 수 있다.
 
 ```
 $ loglab fetch https://raw.githubusercontent.com/haje01/loglab/master/tests/files/acme.lab.json
@@ -1478,9 +1457,9 @@ $ loglab fetch https://raw.githubusercontent.com/haje01/loglab/master/tests/file
 
 > 실제로는 `https://www.acmegames.com/loglab/acme.lab.json` 식으로 형식을 갖춘 URL 에서 받을 수 있도록 하자.
 
-페치로 받은 랩 파일은 작업 디렉토리 아래 `.loglab/import` 디렉토리에 URL 경로의 마지막 요소와 같은 파일 이름으로 받아진다. 위 예에서는 `.loglab/import/acme.lab.json` 로 저장된다.
+받은 랩 파일은 작업 디렉토리 아래 `.loglab/import` 디렉토리에 URL 경로의 마지막 요소와 같은 파일 이름으로 받아진다. 위 예에서는 `.loglab/import/acme.lab.json` 로 저장된다.
 
-> `fetch` 는 편의를 위한 명령이다. 다른 방식으로 받은 파일을 직접 복사해 사용해도 괜찮다.
+`fetch` 는 편의를 위한 명령이다. 다른 방식으로 받은 파일을 동일한 위치에 복사해 넣고 사용해도 괜찮다. 특히 인터넷이 안되는 환경에서는 미리 받아둔 파일을 복사해서 사용하자.
 
 이제 다음과 같은 내용으로 `boo.lab.json` 을 만든다.
 
@@ -1491,7 +1470,6 @@ $ loglab fetch https://raw.githubusercontent.com/haje01/loglab/master/tests/file
     "desc": "최고의 PC 온라인 게임"
   },
   "import": ["acme.lab.json"]
-  ]
 }
 ```
 

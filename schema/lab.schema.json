@@ -17,17 +17,8 @@
         "import-body": {
             "object": "array",
             "items": {
-                "type": "array",
-                "items": [
-                    {
-                        "type": "string",
-                        "pattern": "[a-zA-Z0-9_]+.lab.json"
-                    },
-                    {
-                        "type": "string",
-                        "pattern": "[a-zA-Z0-9_]+"
-                    }
-                ]
+                "type": "string",
+                "pattern": "[a-zA-Z0-9_]+.lab.json"
             }
         },
         "dict-field-body": {
@@ -263,7 +254,7 @@
                 "name": {
                     "description": "도메인 이름",
                     "type": "string",
-                    "pattern": "^[a-z0-9_]+$"
+                    "pattern": "^[a-z0-9_-]+$"
                 },
                 "desc": {
                     "description": "도메인 설명",
