@@ -1,6 +1,6 @@
 # LogLab
 
-![logo_image](image/loglab.png)
+![logo_image](image/loglab.png){: width="100" height="100"}
 
 LogLab(로그랩) 은 다양한 서비스를 위한 로그를 설계하고 활용하기 위한 툴이다. 다음과 같은 기능을 가지고 있다.
 
