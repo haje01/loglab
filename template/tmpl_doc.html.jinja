@@ -24,13 +24,18 @@ body {
 .sidebar a {
   text-decoration: none;
   display: block;
+  color: yellow;
   transition: 0.3s;
 }
 
 .sidebar-menu {
   padding: 8px 8px 8px 30px;
   font-size: 20px;
-  color: #ddd;
+  color: #ddd !important;
+}
+
+.sidebar-menu a:visited {
+  color: #ddd !important;
 }
 
 .sidebar-item {
@@ -112,17 +117,15 @@ tr:nth-child(even) {
 <body>
 
 <div id="mySidebar" class="sidebar">
-  <a href="javascript:void(0)" class="sidebar-menu" id="sidebar-type" onclick="toggleItems('type')">Types</a>
-  {% for i in dom.types.keys() %}
-    <a href="#" class="sidebar-item type">{{ i }}</a>
-  {% endfor %}
-  <a href="javascript:void(0)" class="sidebar-menu" id="sidebar-base" onclick="toggleItems('base')">Bases</a>
-  {% for i in dom.bases.keys() %}
-    <a href="#" class="sidebar-item base">{{ i }}</a>
-  {% endfor %}
+  {% if types is defined %}
+    <a href="javascript:void(0)" class="sidebar-menu" id="sidebar-type" onclick="toggleItems('type')">Types</a>
+    {% for i in dom.types.keys() %}
+        <a href="#" class="sidebar-item type">{{ i }}</a>
+    {% endfor %}
+  {% endif %}
   <a href="javascript:void(0)" class="sidebar-menu" id="sidebar-event"  onclick="toggleItems('event')">Events</a>
   {% for i in dom.events.keys() %}
-    <a href="#" class="sidebar-item event">{{ i }}</a>
+    <a href="#event-{{ i }}" class="sidebar-item event">{{ i }}</a>
   {% endfor %}
 
 </div>
@@ -131,12 +134,24 @@ tr:nth-child(even) {
   <button class="openbtn" onclick="toggleNav()">☰</button>
   <h1>{{ domain.name }} - {{ domain.desc }}</h1>
 
+  {% if types is defined %}
+    <div class="type-div">
+        {% for key in dom.types.keys() %}
+        <div class="table-div" id="type-{{ key }}">
+            <p>Type: <b>{{ types[loop.index0][0] }}</b></p>
+            <p>Description: {{ types[loop.index0][1] }}</p>
+            {{ types[loop.index0][2] }}
+        </div>
+        {% endfor %}
+    </div>
+  {% endif %}
+
   <div class="event-div">
-    {% for key, data in dom.events.items() %}
-    <div class="table-div">
-        <p>Event: <b>{{ key }}</b></p>
-        <p>Description: {{ data[-1][1].desc }}</p>
-        {{ events[key] }}
+    {% for key in dom.events.keys() %}
+    <div class="table-div" id="event-{{ key }}">
+        <p>Event: <b>{{ events[loop.index0][0] }}</b></p>
+        <p>Description: {{ events[loop.index0][1] }}</p>
+        {{ events[loop.index0][2] }}
     </div>
     {% endfor %}
   </div>

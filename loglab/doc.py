@@ -98,53 +98,7 @@ def _write_table(edef, out):
     out.write('\n')
 
 
-def _html_table(edef):
-    out = StringIO()
-
-    headers = ['Field', 'Type', 'Description']
-    fields = []
-    types = []
-    descs = []
-    opts = []
-    rstrs = []
-    for k, v in edef['fields'].items():
-        fdata = v[-1]
-        fdef = fdata[1]
-        rstr = explain_rstr(fdef)
-        opt = fdef['option'] if 'option' in fdef else None
-        fields.append(k)
-        types.append(fdef['type'])
-        descs.append(fdef['desc'])
-        opts.append(opt)
-        rstrs.append(rstr)
-
-    # 사용할 헤더만 검사
-    if sum([1 for o in opts if o is not None]) > 0:
-        headers.append('Optional')
-    if sum([1 for r in rstrs if r != '']) > 0:
-        headers.append('Restrict')
-
-    out.write('<table>\n')
-    out.write('<tr>\n')
-    for h in headers:
-        out.write(f'<th>{h}</th>\n')
-    out.write('</tr>\n')
-
-    for i, f in enumerate(fields):
-        out.write('<tr>\n')
-        out.write(f'<td>{f}</td>\n')
-        out.write(f'<td>{types[i]}</td>\n')
-        out.write(f'<td>{descs[i]}</td>\n')
-        if 'Optional' in headers:
-            out.write(f'<td>{opts[i]}</td>\n')
-        if 'Restrict' in headers:
-            out.write(f'<td>{rstrs[i]}</td>\n')
-        out.write('</tr>\n')
-    out.write('</table>\n')
-    return out.getvalue()
-
-
-def _write_events(name, data, out, namef):
+def _write_event(name, data, out, namef):
     dmp = _get_dmp(data[0])
     edef = data[1]
     qname = f'{dmp}{name}'
@@ -186,30 +140,126 @@ def text_from_labfile(data, cus_type, namef, out=None):
     # 각 이벤트별로
     for ename, elst in dom.events.items():
         edata = elst[-1]
-        _write_events(ename, edata, out, namef)
+        _write_event(ename, edata, out, namef)
 
     return out.getvalue()
 
 
-def html_from_labfile(data, kwargs):
+def _html_types(dom):
+
+    def _html_type_table(tdef):
+        out = StringIO()
+        headers = ['BaseType', 'Description']
+        row = [tdef['type'], tdef['desc']]
+        rstr = explain_rstr(tdef)
+        if rstr != '':
+            headers.append('Restrict')
+            row.append(rstr)
+
+        out.write('<table>')
+        out.write("<tr>")
+        for header in headers:
+            out.write(f'<th>{header}</th>')
+        out.write("</tr>")
+        out.write("<tr>")
+        for col in row:
+            out.write(f'<td>{col}</td>')
+        out.write("</tr>")
+        out.write('</table>')
+        return out.getvalue()
+
+    types = []
+    for tname, tlst in dom['types'].items():
+        td = tlst[-1]
+        dmp = _get_dmp(td[0])
+        tdef = td[1]
+        qtname = f'{dmp}types.{tname}'
+        table = _html_type_table(tdef)
+        types.append([qtname, tdef['desc'], table])
+    return types
+
+
+def _html_events(dom):
+
+    def _html_event_table(edef):
+        out = StringIO()
+
+        headers = ['Field', 'Type', 'Description']
+        fields = []
+        types = []
+        descs = []
+        opts = []
+        rstrs = []
+        for k, v in edef['fields'].items():
+            fdata = v[-1]
+            fdef = fdata[1]
+            rstr = explain_rstr(fdef, '<br>')
+            opt = fdef['option'] if 'option' in fdef else None
+            fields.append(k)
+            types.append(fdef['type'])
+            descs.append(fdef['desc'])
+            opts.append(opt)
+            rstrs.append(rstr)
+
+        # 사용할 헤더만 검사
+        if sum([1 for o in opts if o is not None]) > 0:
+            headers.append('Optional')
+        if sum([1 for r in rstrs if r != '']) > 0:
+            headers.append('Restrict')
+
+        out.write('<table>\n')
+        out.write('<tr>\n')
+        for h in headers:
+            out.write(f'<th>{h}</th>\n')
+        out.write('</tr>\n')
+
+        for i, f in enumerate(fields):
+            out.write('<tr>\n')
+            out.write(f'<td>{f}</td>\n')
+            out.write(f'<td>{types[i]}</td>\n')
+            out.write(f'<td>{descs[i]}</td>\n')
+            if 'Optional' in headers:
+                out.write(f'<td>{opt}</td>\n')
+            if 'Restrict' in headers:
+                out.write(f'<td>{rstrs[i]}</td>\n')
+            out.write('</tr>\n')
+        out.write('</table>\n')
+        return out.getvalue()
+
+    events = []
+    for name, data in dom.events.items():
+        edata = data[-1]
+        dmp = _get_dmp(edata[0])
+        edef = edata[1]
+        qname = f'{dmp}{name}'
+        table = _html_event_table(edef)
+        events.append([qname, edef['desc'], table])
+    return events
+
+
+def html_from_labfile(data, kwargs, cus_type):
     """랩 파일에서 HTML 파일 생성.
 
     Args:
         data (dict): 랩 파일 데이터
         kwargs (dict): 템플릿 렌더링시 사용하는 인자
+        cus_type (bool): 커스텀 타입 출력 여부. 기본 False
 
     Returns:
         str: 결과 HTML
     """
-    dom = build_dom(data, False)
+    dom = build_dom(data, cus_type)
     assert type(kwargs) is dict
     home_dir = absdir_for_html(LOGLAB_HOME)
     kwargs['ext_dir'] = os.path.join(home_dir, 'extern')
 
-    events = {}
-    for key, data in dom.events.items():
-        events[key] = _html_table(data[-1][1])
-    kwargs['events'] = events
+    # custom types
+    if 'types' in dom and cus_type:
+        types = _html_types(dom)
+        kwargs['types'] = types
+
+    # events
+    kwargs['events'] = _html_events(dom)
 
     tmpl_dir = os.path.join(LOGLAB_HOME, "template")
     loader = FileSystemLoader(tmpl_dir)

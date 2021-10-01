@@ -57,8 +57,10 @@ def show(labfile, custom_type, name):
 
 @cli.command()
 @global_options
+@click.option('-c', '--custom-type', is_flag=True,
+              help="커스텀 타입 그대로 출력")
 @click.option('-o', '--output')
-def html(labfile, output):
+def html(labfile,  custom_type, output):
     """HTML 문서 출력."""
     labfile = find_labfile(labfile)
     data = verify_labfile(labfile)
@@ -72,7 +74,7 @@ def html(labfile, output):
     kwargs = dict(
         domain=domain
     )
-    doc = html_from_labfile(data, kwargs)
+    doc = html_from_labfile(data, kwargs, custom_type)
     if output is None:
         output = f"{domain['name']}.html"
     print(f"'{output}' 에 HTML 문서 저장.")

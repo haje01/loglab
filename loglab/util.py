@@ -129,7 +129,7 @@ def _init_fields():
     return fields
 
 
-def explain_rstr(f):
+def explain_rstr(f, line_dlm='\n'):
     """제약을 설명으로 변환."""
     exps = []
     atype = f['type']
@@ -149,7 +149,7 @@ def explain_rstr(f):
                 expl = []
                 for d in enum:
                     expl.append(f"{d[0]}: {d[1]}")
-                enum = '\n'.join(expl)
+                enum = line_dlm.join(expl)
             else:
                 enum = f'{enum} 중 하나'
 
@@ -199,7 +199,7 @@ def explain_rstr(f):
             exps.append(f"정규식 {ptrn} 매칭")
         if fmt is not None:
             exps.append(f"{fmt} 형식")
-    return '\n'.join(exps)
+    return line_dlm.join(exps)
 
 
 # def fields_from_entity(root, entity, dmp, field_cb=None):
