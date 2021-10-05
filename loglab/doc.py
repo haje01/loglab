@@ -15,8 +15,8 @@ from loglab.util import explain_rstr, LOGLAB_HOME, absdir_for_html
 SCR_WIDTH = shutil.get_terminal_size((80, 20)).columns
 T_DESC_WIDTH = int(SCR_WIDTH * 0.35)
 T_RSTR_WIDTH = int(SCR_WIDTH * 0.35)
-E_DESC_WIDTH = int(SCR_WIDTH * 0.25)
-E_RSTR_WIDTH = int(SCR_WIDTH * 0.17)
+E_DESC_WIDTH = int(SCR_WIDTH * 0.2)
+E_RSTR_WIDTH = int(SCR_WIDTH * 0.2)
 
 
 def _jsonify(vals):
@@ -250,11 +250,12 @@ def _html_events(dom):
             out.write(f'<td style="text-align: center">{types[i]}</td>\n')
             out.write(f'<td>{descs[i]}</td>\n')
             if 'Optional' in headers:
+                opt = '옵션' if opts[i] else ''
                 out.write(f'<td style="text-align: center">{opt}</td>\n')
             if 'Restrict' in headers:
                 style = ''
                 if 'Restrict' in header:
-                    style = ' style="word-wrap: break-word; width: 20%"'
+                    style = ' style="word-wrap: break-word; width: 25%"'
                 out.write(f'<td{style}>{rstrs[i]}</td>\n')
             out.write('</tr>\n')
         out.write('</table>\n')
