@@ -134,7 +134,8 @@ def _write_event(name, data, out, namef, keep_text):
         return
 
     out.write('\n')
-    out.write(f"Event : {qname}\n")
+    opt = ' (옵션)' if 'option' in edef and edef['option'] else ''
+    out.write(f"Event : {qname}{opt}\n")
     out.write(f"Description : {edef['desc']}\n")
     _write_table(edef, out, keep_text)
 
@@ -266,7 +267,8 @@ def _html_events(dom):
         edata = data[-1]
         dmp = _get_dmp(edata[0])
         edef = edata[1]
-        qname = f'{dmp}{name}'
+        opt = ' (옵션)' if 'option' in edef and edef['option'] else ''
+        qname = f'{dmp}{name}{opt}'
         table = _html_event_table(edef)
         events.append([qname, edef['desc'], table])
     return events

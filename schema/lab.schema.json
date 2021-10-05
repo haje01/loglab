@@ -277,7 +277,17 @@
         },
         "events": {
             "description": "기본 엔터티",
-            "$ref": "#/$defs/entity-body"
+            "anyOf": [
+                {"$ref": "#/$defs/entity-body"},
+                {
+                    "items": {
+                        "option": {
+                            "type": "boolean",
+                            "description": "옵션 여부"
+                        }
+                   }
+                }
+            ]
         }
     },
     "additionalProperties": false

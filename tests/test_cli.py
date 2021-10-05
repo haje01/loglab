@@ -166,7 +166,7 @@ Description : 캐릭터 로그아웃
 +----------+----------+------------------+------------+-----------------+'''
     assert ans in out
 
-    ans = '''Event : MonsterDropItem
+    ans = '''Event : MonsterDropItem (옵션)
 Description : 몬스터가 아이템을 떨어뜨림
 +------------+----------+--------------------+--------------------+
 | Field      | Type     | Description        | Restrict           |

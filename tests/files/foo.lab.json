@@ -116,7 +116,8 @@
 		},
 		"MonsterDropItem": {
 			"desc": "몬스터가 아이템을 떨어뜨림",
-			"mixins": ["bases.Monster", "bases.Position", "bases.Item"]
+			"mixins": ["bases.Monster", "bases.Position", "bases.Item"],
+            "option": true
 		},
 		"GetItem": {
 			"desc": "캐릭터의 아이템 습득",
