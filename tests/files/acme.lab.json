@@ -4,6 +4,7 @@
 		"name": "acme",
 		"desc": "최고의 게임 회사"
 	},
+    "import": ["bcom.lab.json"],
     "types": {
         "Id": {
             "type": "integer",
@@ -26,7 +27,7 @@
 		},
 		"Account": {
 			"desc": "계정 정보",
-			"mixins": ["bases.Server"],
+			"mixins": ["bcom.bases.BcomAcnt", "bases.Server"],
 			"fields": [
                 ["AcntId", "types.Id", "계정 ID"]
 			]
