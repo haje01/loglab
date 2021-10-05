@@ -4,9 +4,7 @@
         "name": "boo",
         "desc": "최고의 PC 온라인 게임"
     },
-    "import": [
-        ["acme.lab.json", "ac"]
-    ],
+    "import": ["acme.lab.json"],
     "events": {
         "Login": {
           "desc": "계정 로그인",

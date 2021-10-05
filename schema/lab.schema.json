@@ -64,7 +64,7 @@
                                     {"type": "string"},
                                     {
                                         "type": "array",
-                                        "items": [
+                                        "prefixItems": [
                                             {"type": "string"},
                                             {"type": "string"}
                                         ]
@@ -121,7 +121,7 @@
                                     {"type": "integer"},
                                     {
                                         "type": "array",
-                                        "items": [
+                                        "prefixItems": [
                                             {"type": "integer"},
                                             {"type": "string"}
                                         ]
@@ -162,7 +162,7 @@
                                     {"type": "number"},
                                     {
                                         "type": "array",
-                                        "items": [
+                                        "prefixItems": [
                                             {"type": "number"},
                                             {"type": "string"}
                                         ]
@@ -181,7 +181,7 @@
                 "anyOf": [
                     {
                         "type": "array",
-                        "items": [
+                        "prefixItems": [
                             {"type": "string"},
                             {"$ref": "#/$defs/ref-type-body"},
                             {"type": "string"},

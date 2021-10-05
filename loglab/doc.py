@@ -9,6 +9,10 @@ from loglab.dom import build_dom
 from loglab.util import explain_rstr, LOGLAB_HOME, absdir_for_html
 
 
+DESC_WIDTH = 20
+RSTR_WIDTH = 20
+
+
 def _jsonify(vals):
     """문서 출력을 위해 파이썬 값을 JSON 형태로."""
     _vals = []
@@ -26,12 +30,14 @@ def _get_dmp(domain):
 
 def _write_type_table(tdef, out):
     headers = ['BaseType', 'Description']
+    widths = ['None', DESC_WIDTH]
     row = [tdef['type'], tdef['desc']]
     rstr = explain_rstr(tdef)
     if rstr != '':
         headers.append('Restrict')
+        widths.append(RSTR_WIDTH)
         row.append(rstr)
-    tbl = tabulate([row], headers, tablefmt='psql')
+    tbl = tabulate([row], headers, tablefmt='psql') #, maxcolwidths=widths)
     out.write(tbl)
     out.write('\n')
 
@@ -63,6 +69,7 @@ def _write_custom_types(dom, out, namef):
 
 def _write_table(edef, out):
     headers = ['Field', 'Type', 'Description']
+    widths = [None, None, DESC_WIDTH]
     fields = []
     types = []
     descs = []
@@ -82,8 +89,10 @@ def _write_table(edef, out):
     # 사용할 헤더만 검사
     if sum([1 for o in opts if o is not None]) > 0:
         headers.append('Optional')
+        widths.append(None)
     if sum([1 for r in rstrs if r != '']) > 0:
         headers.append('Restrict')
+        widths.append(RSTR_WIDTH)
 
     rows = []
     for i, f in enumerate(fields):
@@ -93,7 +102,7 @@ def _write_table(edef, out):
         if 'Restrict' in headers:
             row.append(rstrs[i])
         rows.append(row)
-    tbl = tabulate(rows, headers=headers, tablefmt='psql')
+    tbl = tabulate(rows, headers=headers, tablefmt='psql') #, maxcolwidths=widths)
     out.write(tbl)
     out.write('\n')
 

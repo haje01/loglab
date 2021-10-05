@@ -82,6 +82,8 @@ def html(labfile,  custom_type, output):
         f.write(doc)
 
 
+@cli.command()
+@global_options
 def schema(labfile):
     """로그 및 플로우 파일용 스키마 생성."""
     labfile = find_labfile(labfile)

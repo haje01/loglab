@@ -61,7 +61,7 @@ def handle_import(labfile, labjs):
 
     for imp in labjs['import']:
         idir = request_imp_dir(labfile)
-        path = os.path.join(idir, imp[0])
+        path = os.path.join(idir, imp)
         if not os.path.isfile(path):
             raise FileNotFoundError(path)
 
