@@ -457,7 +457,6 @@ def test_imp_schema(clear):
     sel_lab("boo")
     runner = CliRunner()
     res = runner.invoke(schema)
-    assert res.exit_code == 1
     assert "먼저 fetch 하세요" in res.output
 
     url = 'https://raw.githubusercontent.com/haje01/loglab/master/tests/files/acme.lab.json'

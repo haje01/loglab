@@ -68,6 +68,8 @@ def handle_import(labfile, labjs):
         with open(path, 'rt', encoding='utf8') as f:
             body = f.read()
             data = json.loads(body)
+            if 'import' in data:
+                handle_import(labfile, data)
             labjs['_imported_'].append(AttrDict(data))
 
 
