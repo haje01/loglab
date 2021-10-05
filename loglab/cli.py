@@ -40,8 +40,10 @@ def version():
 @global_options
 @click.option('-c', '--custom-type', is_flag=True,
               help="커스텀 타입 그대로 출력")
-@click.option('-n', '--name')
-def show(labfile, custom_type, name):
+@click.option('-n', '--name', help="출력할 요소 이름 패턴")
+@click.option('-k', '--keep-text', is_flag=True, default=False,
+              help="긴 문자열 필링 않음")
+def show(labfile, custom_type, name, keep_text):
     """로그 구성 요소 출력."""
     labfile = find_labfile(labfile)
     data = verify_labfile(labfile)
@@ -52,7 +54,7 @@ def show(labfile, custom_type, name):
         sys.exit(1)
     if name is not None:
         name = re.compile(name)
-    print(text_from_labfile(data, custom_type, name))
+    print(text_from_labfile(data, custom_type, name, keep_text))
 
 
 @cli.command()

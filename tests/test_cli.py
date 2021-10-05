@@ -108,7 +108,7 @@ Description : 계정 로그인
     assert ans in out
 
     sel_lab("foo")
-    res = runner.invoke(show)
+    res = runner.invoke(show, ['-k'])
     assert res.exit_code == 0
     out = res.output
 
@@ -210,7 +210,7 @@ Description : 캐릭터의 아이템 습득
 +------------+----------+--------------------+--------------------+'''
     assert ans in out
 
-    res = runner.invoke(show, ['-c'])
+    res = runner.invoke(show, ['-c', '-k'])
     assert res.exit_code == 0
     out = res.output
     ans = '''Type : types.Id
@@ -248,7 +248,7 @@ def test_imp_show(clear):
     res = runner.invoke(fetch, [url])
     assert res.exit_code == 0
 
-    res = runner.invoke(show)
+    res = runner.invoke(show, ['-k'])
     ans = '''
 Domain : boo
 Description : 최고의 PC 온라인 게임
@@ -277,7 +277,7 @@ Description : 계정 로그아웃
 '''
     assert ans in res.output
 
-    res = runner.invoke(show, ['-c'])
+    res = runner.invoke(show, ['-c', '-k'])
     assert res.exit_code == 0
     out = res.output
     ans = '''

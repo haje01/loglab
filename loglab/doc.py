@@ -1,16 +1,22 @@
 """랩 파일에서 출력용 문서 생성."""
 import os
 from io import StringIO
+import textwrap
+import shutil
 
 from tabulate import tabulate
 from jinja2 import Environment, FileSystemLoader
+from wcwidth import wcswidth
 
 from loglab.dom import build_dom
 from loglab.util import explain_rstr, LOGLAB_HOME, absdir_for_html
 
 
-DESC_WIDTH = 20
-RSTR_WIDTH = 20
+SCR_WIDTH = shutil.get_terminal_size((80, 20)).columns
+T_DESC_WIDTH = int(SCR_WIDTH * 0.35)
+T_RSTR_WIDTH = int(SCR_WIDTH * 0.35)
+E_DESC_WIDTH = int(SCR_WIDTH * 0.25)
+E_RSTR_WIDTH = int(SCR_WIDTH * 0.17)
 
 
 def _jsonify(vals):
@@ -28,21 +34,29 @@ def _get_dmp(domain):
     return f'{domain}.' if len(domain) > 0 else ''
 
 
-def _write_type_table(tdef, out):
+def _write_type_table(tdef, out, keep_text):
+
     headers = ['BaseType', 'Description']
-    widths = ['None', DESC_WIDTH]
-    row = [tdef['type'], tdef['desc']]
+    desc = tdef['desc']
+    w_desc = wcswidth(desc)
+    if not keep_text and w_desc >= T_DESC_WIDTH:
+        desc = textwrap.fill(desc, width=T_DESC_WIDTH)
+    row = [tdef['type'], desc]
     rstr = explain_rstr(tdef)
+    w_rstr = wcswidth(rstr)
+
     if rstr != '':
         headers.append('Restrict')
-        widths.append(RSTR_WIDTH)
+        if not keep_text and w_rstr >= T_RSTR_WIDTH:
+            rstr = textwrap.fill(rstr, width=T_RSTR_WIDTH)
         row.append(rstr)
-    tbl = tabulate([row], headers, tablefmt='psql') #, maxcolwidths=widths)
+
+    tbl = tabulate([row], headers, tablefmt='psql')
     out.write(tbl)
     out.write('\n')
 
 
-def _write_custom_types(dom, out, namef):
+def _write_custom_types(dom, out, namef, keep_text):
     # 출력할 것이 있는지 확인
     cnt = 0
     for tname, tlst in dom['types'].items():
@@ -64,17 +78,17 @@ def _write_custom_types(dom, out, namef):
 
         out.write(f"Type : {qtname}\n")
         out.write(f"Description : {tdef['desc']}\n")
-        _write_type_table(tdef, out)
+        _write_type_table(tdef, out, keep_text)
 
 
-def _write_table(edef, out):
+def _write_table(edef, out, keep_text):
     headers = ['Field', 'Type', 'Description']
-    widths = [None, None, DESC_WIDTH]
     fields = []
     types = []
     descs = []
     opts = []
     rstrs = []
+
     for k, v in edef['fields'].items():
         fdata = v[-1]
         fdef = fdata[1]
@@ -82,17 +96,22 @@ def _write_table(edef, out):
         opt = fdef['option'] if 'option' in fdef else None
         fields.append(k)
         types.append(fdef['type'])
-        descs.append(fdef['desc'])
+        desc = fdef['desc']
+        w_desc = wcswidth(desc)
+        w_rstr = wcswidth(rstr)
+        if not keep_text and w_desc >= E_DESC_WIDTH:
+            desc = textwrap.fill(desc, width=E_DESC_WIDTH)
+        descs.append(desc)
         opts.append(opt)
+        if not keep_text and w_rstr >= E_RSTR_WIDTH:
+            rstr = textwrap.fill(rstr, width=E_RSTR_WIDTH)
         rstrs.append(rstr)
 
     # 사용할 헤더만 검사
     if sum([1 for o in opts if o is not None]) > 0:
         headers.append('Optional')
-        widths.append(None)
     if sum([1 for r in rstrs if r != '']) > 0:
         headers.append('Restrict')
-        widths.append(RSTR_WIDTH)
 
     rows = []
     for i, f in enumerate(fields):
@@ -102,12 +121,12 @@ def _write_table(edef, out):
         if 'Restrict' in headers:
             row.append(rstrs[i])
         rows.append(row)
-    tbl = tabulate(rows, headers=headers, tablefmt='psql') #, maxcolwidths=widths)
+    tbl = tabulate(rows, headers=headers, tablefmt='psql')
     out.write(tbl)
     out.write('\n')
 
 
-def _write_event(name, data, out, namef):
+def _write_event(name, data, out, namef, keep_text):
     dmp = _get_dmp(data[0])
     edef = data[1]
     qname = f'{dmp}{name}'
@@ -117,10 +136,10 @@ def _write_event(name, data, out, namef):
     out.write('\n')
     out.write(f"Event : {qname}\n")
     out.write(f"Description : {edef['desc']}\n")
-    _write_table(edef, out)
+    _write_table(edef, out, keep_text)
 
 
-def text_from_labfile(data, cus_type, namef, out=None):
+def text_from_labfile(data, cus_type, namef, keep_text, out=None):
     """랩 파일에서 텍스트 문서 생성.
 
     Args:
@@ -144,12 +163,12 @@ def text_from_labfile(data, cus_type, namef, out=None):
 
     # 커스텀 타입
     if 'types' in dom and cus_type:
-        _write_custom_types(dom, out, namef)
+        _write_custom_types(dom, out, namef, keep_text)
 
     # 각 이벤트별로
     for ename, elst in dom.events.items():
         edata = elst[-1]
-        _write_event(ename, edata, out, namef)
+        _write_event(ename, edata, out, namef, keep_text)
 
     return out.getvalue()
 
@@ -168,11 +187,14 @@ def _html_types(dom):
         out.write('<table>')
         out.write("<tr>")
         for header in headers:
-            out.write(f'<th>{header}</th>')
+            out.write(f'<th">{header}</th>')
         out.write("</tr>")
         out.write("<tr>")
-        for col in row:
-            out.write(f'<td>{col}</td>')
+        for i, col in enumerate(row):
+            style = ''
+            if i == 2:
+                style = ' style="word-wrap: break-word; max-width: 30%"'
+            out.write(f'<td{style}>{col}</td>')
         out.write("</tr>")
         out.write('</table>')
         return out.getvalue()
@@ -218,19 +240,22 @@ def _html_events(dom):
 
         out.write('<table>\n')
         out.write('<tr>\n')
-        for h in headers:
-            out.write(f'<th>{h}</th>\n')
+        for header in headers:
+            out.write(f'<th>{header}</th>\n')
         out.write('</tr>\n')
 
         for i, f in enumerate(fields):
             out.write('<tr>\n')
             out.write(f'<td>{f}</td>\n')
-            out.write(f'<td>{types[i]}</td>\n')
+            out.write(f'<td style="text-align: center">{types[i]}</td>\n')
             out.write(f'<td>{descs[i]}</td>\n')
             if 'Optional' in headers:
-                out.write(f'<td>{opt}</td>\n')
+                out.write(f'<td style="text-align: center">{opt}</td>\n')
             if 'Restrict' in headers:
-                out.write(f'<td>{rstrs[i]}</td>\n')
+                style = ''
+                if 'Restrict' in header:
+                    style = ' style="word-wrap: break-word; width: 20%"'
+                out.write(f'<td{style}>{rstrs[i]}</td>\n')
             out.write('</tr>\n')
         out.write('</table>\n')
         return out.getvalue()
