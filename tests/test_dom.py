@@ -775,8 +775,6 @@ def test_excpt():
             }
         }
     }
-    with pytest.raises(Exception, match="duplicated in the bases & events"):
-        _build_events(data)
 
     data = {
         "domain": {

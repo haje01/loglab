@@ -30,23 +30,31 @@
             "desc": "네트워크 ID",
             "enum": ["wifi", "2G", "3G", "4G", "5G"]
         },
-        "IpType": {
+        "ipType": {
             "type": "string",
             "desc": "IP 주소 타입",
             "enum": ["IPv4", "IPv6", "Unknown"]
         },
-        "Ip": {
+        "ip": {
             "type": "string",
-            "desc": "IP4 주소",
-            "pattern": "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"
+            "desc": "IP 주소"
+        },
+        "questStatus": {
+            "desc": "퀘스트 상태",
+            "type": "integer",
+            "enum": [
+                [0, "수락"],
+                [1, "시작"],
+                [2, "종료"]
+            ]
         }
     },
     "bases": {
         "Ip": {
             "desc": "IP 정보",
             "fields": [
-                ["ClientIpType", "types.IpType", "클라이언트 IP 타입"],
-                ["ClientIp", "types.Ip", "클라이언트 IP (IPv4 또는 IPv6 형식, ClientIpType 에 맞게)"]
+                ["ClientIpType", "types.ipType", "클라이언트 IP 타입"],
+                ["ClientIp", "types.ip", "클라이언트 IP (ClientIpType 에 맞게)"]
             ]
         },
         "Device": {
@@ -63,7 +71,7 @@
                 ["Network", "types.networkId", "네트워크 ID", true],
                 ["ScreenWidth", "types.unsigned", "디바이스 화면 너비", true],
                 ["ScreenHeight", "types.unsigned", "디바이스 화면 높이", true],
-                ["ScreenDensity", "number", "디바이스 화소 밀드", true],
+                ["ScreenDensity", "number", "디바이스 화소 밀도", true],
                 ["CpuInfo", "string", "디바이스 CPU 정보 ('종류|클럭|코어수' 형식)", true],
                 ["Memory", "types.unsigned", "디바이스 메모리 (MB)", true],
                 ["GraphicsApi", "string", "디바이스 그래픽 API 정보", true],
@@ -77,37 +85,156 @@
                 ["ZoneId", "types.unsignedId", "게임 서버가 속하는 구역 ID. 없는 경우 0"]
             ]
         },
+        "Account": {
+            "desc": "게임 계정 정보",
+            "fields": [
+                ["AcntId", "types.stringId", "게임 계정 ID"]
+            ]
+        },
+        "ServerAccount": {
+            "desc": "게임 서버와 계정 정보",
+            "mixins": ["bases.GameServer", "bases.Account"]
+        },
         "Character": {
             "desc": "캐릭터 정보",
-            "mixins": ["bases.GameServer"],
+            "mixins": ["bases.ServerAccount"],
             "fields": [
                 ["CharId", "types.stringId", "캐릭터 ID"],
-                ["CharName", "string", "캐릭터 이름"]
+                ["CharName", "string", "캐릭터 이름"],
+                ["CharLevel", "types.unsigned", "캐릭터 레벨"]
+            ]
+        }, 
+        "Location": {
+            "desc": "맵상 위치",
+            "fields": [
+                ["MapCd", "types.unsigned", "맵 코드"],
+                ["PosX", "number", "맵상 X 위치"],
+                ["PosY", "number", "맵상 Y 위치"],
+                ["PosZ", "number", "맵상 Z 위치"]
+            ]
+        },
+        "Item": {
+            "desc": "아이템 정보",
+            "fields": [
+                ["ItemCd", "types.unsigned", "아이템 종류 코드"],
+                ["ItemId", "types.stringId", "아이템 개체 ID"]
+            ]
+        },
+        "ItemChange": {
+            "desc": "아이템 변화 정보",
+            "mixins": ["bases.Character", "bases.Item"],
+            "fields": [
+                ["Change", "integer",  "아이템 수 변화량 (+는 증가/-는 감소)"],
+                ["Total", "types.unsigned",  "변화후 아이템 수"],
+                ["ReasonCd", "types.unsigned",  "아이템 변화 원인 코드"]
+            ]
+        },
+        "Money": {
+            "desc": "돈 정보",
+            "fields": [
+                ["MoneyCd", "types.unsigned", "돈 종류 코드"]
+            ]
+        },
+        "MoneyChange": {
+            "desc": "돈 변화 정보",
+            "mixins": ["bases.Character", "bases.Money"],
+            "fields": [
+                ["Change", "integer",  "돈 변화량 (+는 증가/-는 감소)"],
+                ["Total", "types.unsigned",  "변화후 돈"],
+                ["ReasonCd", "types.unsigned",  "돈 변화 원인 코드"]
+            ]
+        },
+        "ExpChange": {
+            "desc": "경험치 변화 정보",
+            "mixins": ["bases.Character"],
+            "fields": [
+                ["Change", "integer",  "경험치 변화량 (+는 증가/-는 감소)"],
+                ["Total", "types.unsigned",  "변화후 경험치"],
+                ["ReasonCd", "types.unsigned",  "경험치 변화 원인 코드"]
+            ]
+        },
+        "LevelChange": {
+            "desc": "레벨 변화 정보",
+            "mixins": ["bases.Character"],
+            "fields": [
+                ["Change", "integer",  "레벨 변화량 (+는 증가/-는 감소)"],
+                ["ReasonCd", "types.unsigned",  "레벨 변화 원인 코드"]
+            ]
+        },
+        "QuestChange": {
+            "desc": "퀘스트 변화 정보",
+            "mixins": ["bases.Character"],
+            "fields": [
+                ["QuestCd", "types.unsigned", "퀘스트 종류 코드"],
+                ["QuestId", "types.unsigned", "퀘스트 개체 ID", true],
+                ["Status", "types.questStatus",  "퀘스트 상태 변화"]
             ]
         }
     },
     "events": {
         "AcntRegister": {
             "desc": "계정 등록",
-            "mixins": ["webzen.bases.WebzenAcnt", "bases.Device"],
-            "fields": [
-                ["AcntId", "types.stringId", "계정 ID"]
-            ]
+            "mixins": ["webzen.bases.WebzenAcnt", "bases.Account", "bases.Device"]
         },
         "CharCreate": {
             "desc": "캐릭터 생성",
-            "mixins": ["bases.Character"],
+            "mixins": ["bases.ServerAccount", "bases.Character"],
             "fields": [
                 ["CharIndex", "types.unsigned", "해당 캐릭터가 계정의 몇 번째 인지 (시작 1)"]
             ]
         },
+        "CharDelete": {
+            "desc": "캐릭터 삭제",
+            "mixins": ["bases.ServerAccount", "bases.Character"],
+            "fields": [
+                ["CharLevel", "types.unsigned", "캐릭터 레벨"]
+            ]
+        },
         "AcntLogin": {
             "desc": "계정 로그인",
-            "mixins": ["bases.Device"]
+            "mixins": ["webzen.bases.WebzenAcnt", "bases.ServerAccount", "bases.Device"],
+            "fields": [
+                ["VipLevel", "types.unsigned", "VIP 레벨"]
+            ]
         },
         "AcntLogout": {
             "desc": "계정 로그아웃",
-            "mixins": ["bases.Device"]
+            "mixins": ["bases.ServerAccount", "bases.Ip"],
+            "fields": [
+				["PlayTime", "number", "플레이 시간 (초)", true],
+                ["VipLevel", "types.unsigned", "VIP 레벨"]
+            ]
+        },
+        "CharLogin": {
+            "desc": "캐릭터 로그인",
+            "mixins": ["bases.Character"]
+        },
+        "CharLogout": {
+            "desc": "캐릭터 로그아웃",
+            "mixins": ["bases.Character"],
+            "fields": [
+				["PlayTime", "number", "플레이 시간 (초)", true]
+            ]
+        },
+        "ItemChange": {
+            "desc": "플레이 중 아이템 변화",
+            "mixins": ["bases.ItemChange", "bases.Location"]
+        },
+        "MoneyChange": {
+            "desc": "플레이 중 돈 변화",
+            "mixins": ["bases.MoneyChange", "bases.Location"]
+        },
+        "ExpChange": {
+            "desc": "플레이 중 경험치 변화",
+            "mixins": ["bases.ExpChange", "bases.Location"]
+        },
+        "LevelChange": {
+            "desc": "플레이 중 레벨 변화",
+            "mixins": ["bases.LevelChange", "bases.Location"]
+        },
+        "QuestChange": {
+            "desc": "퀘스트 변화",
+            "mixins": ["bases.QuestChange"]
         }
     }
 }

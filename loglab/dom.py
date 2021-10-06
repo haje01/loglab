@@ -1,9 +1,8 @@
 """랩 파일 Document Object Model."""
 import copy
-from collections import defaultdict
 from json.encoder import py_encode_basestring
 
-from loglab.util import BUILTIN_TYPES, AttrDict
+from loglab.util import BUILTIN_TYPES, AttrDict, DefaultOrderedDict
 
 
 def _build_domain(data):
@@ -14,7 +13,7 @@ def _build_domain(data):
 
 def _build_types(data, _dnames=None, _types=None):
     if _types is None:
-        _types = defaultdict(list)
+        _types = DefaultOrderedDict(list)
 
     if _dnames is None:
         _dnames = []
@@ -61,14 +60,14 @@ def _flat_fields(data, _types, _dnames, for_event=False, use_ctype=False):
         data = copy.deepcopy(data)
 
     def _is_flat(fdata):
-        if type(fdata) is not defaultdict:
+        if type(fdata) is not DefaultOrderedDict:
             return False
         if len(fdata) == 0:
             return True
         return type(list(fdata.values())[0]) is list
 
     if not _is_flat(data['fields']):
-        fields = defaultdict(list)
+        fields = DefaultOrderedDict(list)
         if for_event:
             tdata = dict(type='datetime', desc='이벤트 일시')
             fields['DateTime'].append(['', tdata])
@@ -83,6 +82,7 @@ def _flat_fields(data, _types, _dnames, for_event=False, use_ctype=False):
                 del rst['desc']
                 f = [f['name'], f['type'], f['desc']]
                 if 'option' in f:
+                    import pdb; pdb.set_trace();
                     f.append(f['option'])
                     del rst['option']
 
@@ -95,8 +95,8 @@ def _flat_fields(data, _types, _dnames, for_event=False, use_ctype=False):
                 tdata['desc'] = f[2]
             else:
                 tdata = dict(type=tname, desc=f[2])
-                if len(f) > 3:
-                    tdata['option'] = f[3]
+            if len(f) > 3:
+                tdata['option'] = f[3]
 
             if len(rst) > 0:
                 for k, v in rst.items():
@@ -112,36 +112,37 @@ def _resolve_mixins(name, _dnames, _bases, _events=None, for_event=False):
     pevent = name in _events if _events is not None else False
     if not pbase and not pevent:
         raise Exception("Can not find mixin {name} in both bases and events.")
-    if pbase and pevent:
-        raise Exception(f"Since the name '{name}' is duplicated in the bases "
-                        "& events, It is ambiguous to select.")
+    # if pbase and pevent:
+    #     raise Exception(f"Since the name '{name}' is duplicated in the bases "
+    #                     "& events, It is ambiguous to select.")
     if _events is None and pevent:
         raise Exception("You can not mixin an event for a base.")
 
-    _refer = _bases if pbase else _events
+    _refer = _bases if _events is None else _events
     data = _refer[name][-1][1]
     if 'mixins' not in data:
         return data
 
-    fields = defaultdict(list)
+    fields = DefaultOrderedDict(list)
     if for_event:
         tdata = dict(type='datetime', desc='이벤트 일시')
         fields['DateTime'].append(['', tdata])
 
+    # mixin fields first
     for mpath in data['mixins']:
         mpath = '.'.join(_dnames + [mpath])
         mname, mdata = _find_mixin(mpath, _bases, _events)
         if 'fields' not in mdata[1]:
             continue
-        # mixins first
         for mf, mds in mdata[1]['fields'].items():
             if mf != 'DateTime' or mf not in fields:
                 fields[mf].append(mds[-1])
-        # then fields
-        if 'fields' in data:
-            for k, v in data['fields'].items():
-                if k != 'DateTime' or k not in fields:
-                    fields[k].append(v[-1])
+
+    # then own fields
+    if 'fields' in data:
+        for k, v in data['fields'].items():
+            if k != 'DateTime' or k not in fields:
+                fields[k].append(v[-1])
 
     data['fields'] = fields
     del data['mixins']
@@ -174,9 +175,9 @@ def _find_mixin(path, _bases, _events):
 def _build_bases(data, _dnames=None, _types=None, _bases=None, use_ctype=False):
     """베이스 요소 빌드."""
     if _types is None:
-        _types = defaultdict(list)
+        _types = DefaultOrderedDict(list)
     if _bases is None:
-        _bases = defaultdict(list)
+        _bases = DefaultOrderedDict(list)
     if _dnames is None:
         _dnames = []
 
@@ -211,11 +212,11 @@ def _build_events(data, _dnames=None, _types=None, _bases=None, _events=None,
                   use_ctype=False):
     """이벤트 및 관련 요소들 빌드."""
     if _types is None:
-        _types = defaultdict(list)
+        _types = DefaultOrderedDict(list)
     if _bases is None:
-        _bases = defaultdict(list)
+        _bases = DefaultOrderedDict(list)
     if _events is None:
-        _events = defaultdict(list)
+        _events = DefaultOrderedDict(list)
     if _dnames is None:
         _dnames = []
     data = copy.deepcopy(data)
@@ -260,9 +261,9 @@ def build_dom(data, use_ctype=False):
     """
     domain = _build_domain(data)
 
-    types = defaultdict(list)
-    bases = defaultdict(list)
-    events = defaultdict(list)
+    types = DefaultOrderedDict(list)
+    bases = DefaultOrderedDict(list)
+    events = DefaultOrderedDict(list)
     _build_events(data, None, types, bases, events, use_ctype)
     return AttrDict(dict(domain=domain, types=types, bases=bases,
                     events=events))

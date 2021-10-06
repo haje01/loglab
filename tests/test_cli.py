@@ -246,8 +246,8 @@ Description : 계정 로그인
 |------------+----------+---------------+---------------------------------|
 | DateTime   | datetime | 이벤트 일시   |                                 |
 | BcomAcntId | integer  | BCOM 계정 ID  | 0 이상                          |
-| AcntId     | integer  | 계정 ID       | 0 이상                          |
 | ServerNo   | integer  | 서버 번호     | 1 이상 100 미만                 |
+| AcntId     | integer  | 계정 ID       | 0 이상                          |
 | Platform   | string   | PC의 플랫폼   | ['win', 'mac', 'linux'] 중 하나 |
 +------------+----------+---------------+---------------------------------+
 
@@ -258,8 +258,8 @@ Description : 계정 로그아웃
 |------------+----------+------------------+------------+-----------------|
 | DateTime   | datetime | 이벤트 일시      |            |                 |
 | BcomAcntId | integer  | BCOM 계정 ID     |            | 0 이상          |
-| AcntId     | integer  | 계정 ID          |            | 0 이상          |
 | ServerNo   | integer  | 서버 번호        |            | 1 이상 100 미만 |
+| AcntId     | integer  | 계정 ID          |            | 0 이상          |
 | PlayTime   | number   | 플레이 시간 (초) | True       |                 |
 +------------+----------+------------------+------------+-----------------+
 '''
@@ -287,8 +287,8 @@ Description : 계정 로그인
 |------------+--------------------+---------------+---------------------------------|
 | DateTime   | datetime           | 이벤트 일시   |                                 |
 | BcomAcntId | acme.bcom.types.Id | BCOM 계정 ID  |                                 |
-| AcntId     | acme.types.Id      | 계정 ID       |                                 |
 | ServerNo   | integer            | 서버 번호     | 1 이상 100 미만                 |
+| AcntId     | acme.types.Id      | 계정 ID       |                                 |
 | Platform   | string             | PC의 플랫폼   | ['win', 'mac', 'linux'] 중 하나 |
 +------------+--------------------+---------------+---------------------------------+
 
@@ -299,8 +299,8 @@ Description : 계정 로그아웃
 |------------+--------------------+------------------+------------+-----------------|
 | DateTime   | datetime           | 이벤트 일시      |            |                 |
 | BcomAcntId | acme.bcom.types.Id | BCOM 계정 ID     |            |                 |
-| AcntId     | acme.types.Id      | 계정 ID          |            |                 |
 | ServerNo   | integer            | 서버 번호        |            | 1 이상 100 미만 |
+| AcntId     | acme.types.Id      | 계정 ID          |            |                 |
 | PlayTime   | number             | 플레이 시간 (초) | True       |                 |
 +------------+--------------------+------------------+------------+-----------------+
 '''
@@ -501,7 +501,7 @@ def test_imp_schema(clear):
     assert defs.Login.properties.Platform == ans
 
     # required
-    ans = ['DateTime', 'BcomAcntId', 'AcntId', 'ServerNo', 'Platform']
+    ans = ['DateTime', 'BcomAcntId', 'ServerNo', 'AcntId', 'Platform']
     assert defs.Login.required == ans
 
 
