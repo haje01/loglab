@@ -2,6 +2,7 @@
 import os
 from shutil import copyfile
 import json
+from shutil import rmtree
 
 import pytest
 from click.testing import CliRunner
@@ -21,17 +22,11 @@ def clear():
 
 
 def copy_files(files):
-    # 대상 랩 파일 복사
+    # 테스트용  파일 복사
     for fn in files:
         path = os.path.join(FILE_DIR, fn)
         assert os.path.isfile(path)
         copyfile(path, fn)
-
-
-def sel_lab(labfile):
-    """랩 파일 선택."""
-    test_reset()
-    copy_files([labfile + ".lab.json"])
 
 
 def write_log(fname, body):
@@ -40,13 +35,13 @@ def write_log(fname, body):
         f.write(body)
 
 
-def write_lab(fname, body):
-    """임시 랩 파일 생성."""
-    test_reset()
-    if not fname.endswith('.lab.json'):
-        path = fname + '.lab.json'
-    with open(path, 'wt', encoding='utf8') as f:
-        f.write(body)
+# def write_lab(fname, body):
+#     """임시 랩 파일 생성."""
+#     test_reset()
+#     if not fname.endswith('.lab.json'):
+#         path = fname + '.lab.json'
+#     with open(path, 'wt', encoding='utf8') as f:
+#         f.write(body)
 
 
 def test_cli():
@@ -71,27 +66,27 @@ def test_version():
     assert res.output.strip() == VERSION
 
 
-def test_labfile(clear):
-    """랩 파일 찾기 테스트."""
+# def test_labfile():
+#     """랩 파일 찾기 테스트."""
+#     runner = CliRunner()
+
+#     # 랩 파일 없이
+#     res = runner.invoke(show)
+#     assert "랩 파일이 없습니다" in res.output
+#     assert res.exit_code == 1
+
+#     # 랩 파일 둘 이상
+#     copy_files(["minimal.lab.json", "foo.lab.json"])
+#     res = runner.invoke(show)
+#     assert '하나 이상' in res.output
+#     assert res.exit_code == 1
+
+
+def test_show(clear):
     runner = CliRunner()
 
-    # 랩 파일 없이
-    res = runner.invoke(show)
-    assert "랩 파일이 없습니다" in res.output
-    assert res.exit_code == 1
-
-    # 랩 파일 둘 이상
-    copy_files(["minimal.lab.json", "foo.lab.json"])
-    res = runner.invoke(show)
-    assert '하나 이상' in res.output
-    assert res.exit_code == 1
-
-
-def test_show():
-    runner = CliRunner()
-
-    sel_lab("minimal")
-    res = runner.invoke(show)
+    copy_files(['minimal.lab.json', 'foo.lab.json'])
+    res = runner.invoke(show, ['minimal.lab.json'])
     assert res.exit_code == 0
     out = res.output
     ans = '''Domain : foo
@@ -107,8 +102,7 @@ Description : 계정 로그인
 '''
     assert ans in out
 
-    sel_lab("foo")
-    res = runner.invoke(show, ['-k'])
+    res = runner.invoke(show, ['foo.lab.json', '-k'])
     assert res.exit_code == 0
     out = res.output
 
@@ -210,7 +204,7 @@ Description : 캐릭터의 아이템 습득
 +------------+----------+--------------------+--------------------+'''
     assert ans in out
 
-    res = runner.invoke(show, ['-c', '-k'])
+    res = runner.invoke(show, ['foo.lab.json', '-c', '-k'])
     assert res.exit_code == 0
     out = res.output
     ans = '''Type : types.Id
@@ -239,45 +233,39 @@ def test_imp_show(clear):
     """외부 랩 파일 가져온 경우 show."""
     runner = CliRunner()
 
-    sel_lab("boo")
-    res = runner.invoke(show)
-    assert res.exit_code == 1
-    assert "먼저 fetch 하세요" in res.output
-
-    url = 'https://raw.githubusercontent.com/haje01/loglab/master/tests/files/acme.lab.json'
-    res = runner.invoke(fetch, [url])
-    assert res.exit_code == 0
-
-    res = runner.invoke(show, ['-k'])
+    copy_files(['boo.lab.json', 'acme.lab.json', 'bcom.lab.json'])
+    res = runner.invoke(show, ['boo.lab.json', '-k'])
     ans = '''
 Domain : boo
 Description : 최고의 PC 온라인 게임
 
 Event : Login
 Description : 계정 로그인
-+----------+----------+---------------+---------------------------------+
-| Field    | Type     | Description   | Restrict                        |
-|----------+----------+---------------+---------------------------------|
-| DateTime | datetime | 이벤트 일시   |                                 |
-| ServerNo | integer  | 서버 번호     | 1 이상 100 미만                 |
-| AcntId   | integer  | 계정 ID       | 0 이상                          |
-| Platform | string   | PC의 플랫폼   | ['win', 'mac', 'linux'] 중 하나 |
-+----------+----------+---------------+---------------------------------+
++------------+----------+---------------+---------------------------------+
+| Field      | Type     | Description   | Restrict                        |
+|------------+----------+---------------+---------------------------------|
+| DateTime   | datetime | 이벤트 일시   |                                 |
+| BcomAcntId | integer  | BCOM 계정 ID  | 0 이상                          |
+| AcntId     | integer  | 계정 ID       | 0 이상                          |
+| ServerNo   | integer  | 서버 번호     | 1 이상 100 미만                 |
+| Platform   | string   | PC의 플랫폼   | ['win', 'mac', 'linux'] 중 하나 |
++------------+----------+---------------+---------------------------------+
 
 Event : acme.Logout
 Description : 계정 로그아웃
-+----------+----------+------------------+------------+-----------------+
-| Field    | Type     | Description      | Optional   | Restrict        |
-|----------+----------+------------------+------------+-----------------|
-| DateTime | datetime | 이벤트 일시      |            |                 |
-| ServerNo | integer  | 서버 번호        |            | 1 이상 100 미만 |
-| AcntId   | integer  | 계정 ID          |            | 0 이상          |
-| PlayTime | number   | 플레이 시간 (초) | True       |                 |
-+----------+----------+------------------+------------+-----------------+
++------------+----------+------------------+------------+-----------------+
+| Field      | Type     | Description      | Optional   | Restrict        |
+|------------+----------+------------------+------------+-----------------|
+| DateTime   | datetime | 이벤트 일시      |            |                 |
+| BcomAcntId | integer  | BCOM 계정 ID     |            | 0 이상          |
+| AcntId     | integer  | 계정 ID          |            | 0 이상          |
+| ServerNo   | integer  | 서버 번호        |            | 1 이상 100 미만 |
+| PlayTime   | number   | 플레이 시간 (초) | True       |                 |
++------------+----------+------------------+------------+-----------------+
 '''
     assert ans in res.output
 
-    res = runner.invoke(show, ['-c', '-k'])
+    res = runner.invoke(show, ['boo.lab.json', '-c', '-k'])
     assert res.exit_code == 0
     out = res.output
     ans = '''
@@ -294,29 +282,31 @@ Description : Id 타입
 
 Event : Login
 Description : 계정 로그인
-+----------+---------------+---------------+---------------------------------+
-| Field    | Type          | Description   | Restrict                        |
-|----------+---------------+---------------+---------------------------------|
-| DateTime | datetime      | 이벤트 일시   |                                 |
-| ServerNo | integer       | 서버 번호     | 1 이상 100 미만                 |
-| AcntId   | acme.types.Id | 계정 ID       |                                 |
-| Platform | string        | PC의 플랫폼   | ['win', 'mac', 'linux'] 중 하나 |
-+----------+---------------+---------------+---------------------------------+
++------------+--------------------+---------------+---------------------------------+
+| Field      | Type               | Description   | Restrict                        |
+|------------+--------------------+---------------+---------------------------------|
+| DateTime   | datetime           | 이벤트 일시   |                                 |
+| BcomAcntId | acme.bcom.types.Id | BCOM 계정 ID  |                                 |
+| AcntId     | acme.types.Id      | 계정 ID       |                                 |
+| ServerNo   | integer            | 서버 번호     | 1 이상 100 미만                 |
+| Platform   | string             | PC의 플랫폼   | ['win', 'mac', 'linux'] 중 하나 |
++------------+--------------------+---------------+---------------------------------+
 
 Event : acme.Logout
 Description : 계정 로그아웃
-+----------+---------------+------------------+------------+-----------------+
-| Field    | Type          | Description      | Optional   | Restrict        |
-|----------+---------------+------------------+------------+-----------------|
-| DateTime | datetime      | 이벤트 일시      |            |                 |
-| ServerNo | integer       | 서버 번호        |            | 1 이상 100 미만 |
-| AcntId   | acme.types.Id | 계정 ID          |            |                 |
-| PlayTime | number        | 플레이 시간 (초) | True       |                 |
-+----------+---------------+------------------+------------+-----------------+
++------------+--------------------+------------------+------------+-----------------+
+| Field      | Type               | Description      | Optional   | Restrict        |
+|------------+--------------------+------------------+------------+-----------------|
+| DateTime   | datetime           | 이벤트 일시      |            |                 |
+| BcomAcntId | acme.bcom.types.Id | BCOM 계정 ID     |            |                 |
+| AcntId     | acme.types.Id      | 계정 ID          |            |                 |
+| ServerNo   | integer            | 서버 번호        |            | 1 이상 100 미만 |
+| PlayTime   | number             | 플레이 시간 (초) | True       |                 |
++------------+--------------------+------------------+------------+-----------------+
 '''
     assert ans in out
 
-    res = runner.invoke(show, ['-c'])
+    res = runner.invoke(show, ['boo.lab.json', '-c'])
     assert res.exit_code == 0
     out = res.output
     ans = '''
@@ -332,9 +322,10 @@ Description : Id 타입
 
 
 def test_schema(clear):
-    sel_lab("foo")
     runner = CliRunner()
-    res = runner.invoke(schema)
+    copy_files(['foo.lab.json'])
+
+    res = runner.invoke(schema, 'foo.lab.json')
     assert res.exit_code == 0
     out = res.output
 
@@ -342,7 +333,7 @@ def test_schema(clear):
     assert "foo.flow.schema.json 에 플로우 스키마 저장" in out
 
     # 로그 스키마 체크
-    with open(".loglab/temp/foo.log.schema.json", 'rt', encoding='utf8') as f:
+    with open("foo.log.schema.json", 'rt', encoding='utf8') as f:
         body = f.read()
         data = json.loads(body)
         scm = AttrDict(data)
@@ -393,85 +384,88 @@ def test_schema(clear):
 
 
 def test_verify(clear):
-    sel_lab("foo")
+    copy_files(['foo.lab.json'])
+
+    labfile = 'foo.lab.json'
     fake_log = 'fakelog.txt'
+    scmfile = 'foo.log.schema.json'
+
+    args = [scmfile, fake_log]
     runner = CliRunner()
-    res = runner.invoke(verify, [fake_log])
-    assert res.exit_code == 1
-    assert '스키마를 찾을 수 없습니다' in res.output
-    res = runner.invoke(schema)
+    res = runner.invoke(verify, args)
+    assert res.exit_code == 2
+    assert "'fakelog.txt' does not exist." in res.output
 
     log = '{"DateTime": "2021-08-1dd20:20:39", "Event": "Login", "ServerNo": 1, "AcntId": 1000, "Platform": "ios"}'
     write_log('fakelog.txt', log)
-    res = runner.invoke(verify, [fake_log])
+    res = runner.invoke(verify, args)
+    assert res.exit_code == 1
+    assert "로그 스키마를 찾을 수 없습니다." in res.output
+
+    res = runner.invoke(schema, [labfile])
+    assert res.exit_code == 0
+    res = runner.invoke(verify, args)
     assert "does not match '^([0-9]+)" in res.output
 
     log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "Login", "ServerNo": 1, "AcntId": 1000}'
     write_log('fakelog.txt', log)
-    res = runner.invoke(verify, [fake_log])
+    res = runner.invoke(verify, args)
     assert "'Platform' is a required property" in res.output
 
     log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "Login", "ServerNo": 1, "AcntId": 1000, "Platform": "win"}'
     write_log('fakelog.txt', log)
-    res = runner.invoke(verify, [fake_log])
+    res = runner.invoke(verify, args)
     assert "'win' is not one of ['ios', 'aos']" in res.output
 
     log = '{"DateTime": "2021-08-13T20:21:01+09:00", "Event": "Logout", "ServerNo": 1, "AcntId": -1}'
     write_log('fakelog.txt', log)
-    res = runner.invoke(verify, [fake_log])
+    res = runner.invoke(verify, args)
     assert "-1 is less than the minimum of 0" in res.output
 
     log = '{"DateTime": "2021-08-13T20:21:01+09:00", "Event": "KillMonster", "ServerNo": 1, "AcntId": 1000, "CharId": 3, "MonTypeId": 3, "MonInstId": 3, "PosX": 0, "PosY": 0, "PosZ": 0}'
     write_log('fakelog.txt', log)
-    res = runner.invoke(verify, [fake_log])
+    res = runner.invoke(verify, args)
     assert "'MapId' is a required property" in res.output
 
     log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonTypeId": 3, "MonInstId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemTypeId": 3, "ItemInstId" 4}'
     write_log('fakelog.txt', log)
-    res = runner.invoke(verify, [fake_log])
+    res = runner.invoke(verify, args)
     assert "유효한 JSON 형식이 아닙니다" in res.output
 
     log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonTypeId": 3, "MonInstId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemTypeId": 3, "ItemInstId": 4, "ItemName": "Sword"}'
     write_log('fakelog.txt', log)
-    res = runner.invoke(verify, [fake_log])
+    res = runner.invoke(verify, args)
     assert "'Sword' does not match '^Itm.*'" in res.output
 
     log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonTypeId": 3, "MonInstId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemTypeId": 100, "ItemInstId": 4, "ItemName": "Sword"}'
     write_log('fakelog.txt', log)
-    res = runner.invoke(verify, [fake_log])
+    res = runner.invoke(verify, args)
     assert "100 is not one of [1, 2, 3]" in res.output
 
     log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonTypeId": 3, "MonInstId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemTypeId": 3, "ItemInstId": 4, "ItemName": "ItmSword"}'
     write_log('fakelog.txt', log)
-    res = runner.invoke(verify, [fake_log])
+    res = runner.invoke(verify, args)
     assert "'ItmSword' is too long" in res.output
 
     log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonTypeId": 3, "MonInstId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemTypeId": 3, "ItemInstId": 4, "ItemName": "ItmSwrd"}'
     write_log('fakelog.txt', log)
-    res = runner.invoke(verify, [fake_log])
+    res = runner.invoke(verify, args)
     assert res.exit_code == 0
 
 
 def test_imp_schema(clear):
     """외부 랩 파일 가져온 경우 schema."""
-    sel_lab("boo")
     runner = CliRunner()
-    res = runner.invoke(schema)
-    assert "먼저 fetch 하세요" in res.output
+    copy_files(['boo.lab.json', 'acme.lab.json', 'bcom.lab.json'])
 
-    url = 'https://raw.githubusercontent.com/haje01/loglab/master/tests/files/acme.lab.json'
-    res = runner.invoke(fetch, [url])
-    assert res.exit_code == 0
-    out = res.output
-
-    res = runner.invoke(schema)
+    res = runner.invoke(schema, ['boo.lab.json'])
     assert res.exit_code == 0
     out = res.output
     assert "boo.log.schema.json 에 로그 스키마 저장" in out
     assert "boo.flow.schema.json 에 플로우 스키마 저장" in out
 
     # 로그 스키마 체크
-    with open(".loglab/temp/boo.log.schema.json", 'rt', encoding='utf8') as f:
+    with open("boo.log.schema.json", 'rt', encoding='utf8') as f:
         body = f.read()
         data = json.loads(body)
         scm = AttrDict(data)
@@ -507,23 +501,33 @@ def test_imp_schema(clear):
     assert defs.Login.properties.Platform == ans
 
     # required
-    ans = ["DateTime", "ServerNo", "AcntId", "Platform"]
+    ans = ['DateTime', 'BcomAcntId', 'AcntId', 'ServerNo', 'Platform']
     assert defs.Login.required == ans
 
 
 def test_imp_verify(clear):
     """외부 랩 파일 가져온 경우 verify."""
-    sel_lab("boo")
+    copy_files(['boo.lab.json', 'acme.lab.json', 'bcom.lab.json'])
+
     fake_log = 'fakelog.txt'
+    log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "Login", "ServerNo": 1, "BcomAcntId": 100, "AcntId": 1000, "Platform": "ios"}'
+    write_log(fake_log, log)
 
     runner = CliRunner()
-    res = runner.invoke(verify, [fake_log])
+    res = runner.invoke(schema, ['boo.lab.json'])
+    assert res.exit_code == 0
+
+    res = runner.invoke(verify, ['boo.log.schema.json', fake_log])
     assert res.exit_code == 1
-    assert '스키마를 찾을 수 없습니다' in res.output
-    res = runner.invoke(schema)
+    assert "'ios' is not one of ['win', 'mac', 'linux']" in res.output
+
+    log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "Login", "ServerNo": 1, "BcomAcntId": 100, "AcntId": 1000, "Platform": "win"}'
+    write_log(fake_log, log)
+    res = runner.invoke(verify, ['boo.log.schema.json', fake_log])
+    assert res.exit_code == 0
 
 
-def test_fetch(clear):
+def test_fetch():
     runner = CliRunner()
     url = 'https://raw.githubusercontent.com/haje01/loglab/master/tests/files/foo.lab.json'
     res = runner.invoke(fetch, [url])

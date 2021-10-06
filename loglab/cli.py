@@ -13,17 +13,6 @@ from loglab.util import find_labfile, find_log_schema, request_tmp_dir,\
     request_imp_dir, download
 from loglab.version import VERSION
 
-_global_options = [
-    click.option('--labfile', '-l', 'labfile',
-                 help='사용할 랩 파일의 위치를 명시적으로 지정'),
-]
-
-
-def global_options(func):
-    for option in reversed(_global_options):
-        func = option(func)
-    return func
-
 
 @click.group()
 def cli():
@@ -37,7 +26,7 @@ def version():
 
 
 @cli.command()
-@global_options
+@click.argument('labfile', type=click.Path(exists=True))
 @click.option('-c', '--custom-type', is_flag=True,
               help="커스텀 타입 그대로 출력")
 @click.option('-n', '--name', help="출력할 요소 이름 패턴")
@@ -45,12 +34,12 @@ def version():
               help="긴 문자열 필링 않음")
 def show(labfile, custom_type, name, keep_text):
     """로그 구성 요소 출력."""
-    labfile = find_labfile(labfile)
+    # labfile = find_labfile(labfile)
     data = verify_labfile(labfile)
     try:
         handle_import(labfile, data)
     except FileNotFoundError as e:
-        print(f"Error: 가져올 파일 '{e}' 을 찾을 수 없습니다. 먼저 fetch 하세요.")
+        print(f"Error: 가져올 파일 '{e}' 을 찾을 수 없습니다.")
         sys.exit(1)
     if name is not None:
         name = re.compile(name)
@@ -58,18 +47,18 @@ def show(labfile, custom_type, name, keep_text):
 
 
 @cli.command()
-@global_options
+@click.argument('labfile', type=click.Path(exists=True))
 @click.option('-c', '--custom-type', is_flag=True,
               help="커스텀 타입 그대로 출력")
 @click.option('-o', '--output')
 def html(labfile,  custom_type, output):
     """HTML 문서 출력."""
-    labfile = find_labfile(labfile)
+    # labfile = find_labfile(labfile)
     data = verify_labfile(labfile)
     try:
         handle_import(labfile, data)
     except FileNotFoundError as e:
-        print(f"Error: 가져올 파일 '{e}' 을 찾을 수 없습니다. 먼저 fetch 하세요.")
+        print(f"Error: 가져올 파일 '{e}' 을 찾을 수 없습니다.")
         sys.exit(1)
 
     domain = data['domain']
@@ -85,7 +74,7 @@ def html(labfile,  custom_type, output):
 
 
 @cli.command()
-@global_options
+@click.argument('labfile', type=click.Path(exists=True))
 def schema(labfile):
     """로그 및 플로우 파일용 스키마 생성."""
     labfile = find_labfile(labfile)
@@ -93,14 +82,13 @@ def schema(labfile):
     try:
         handle_import(labfile, data)
     except FileNotFoundError as e:
-        print(f"Error: 가져올 파일 '{e}' 을 찾을 수 없습니다. 먼저 fetch 하세요.")
+        print(f"Error: 가져올 파일 '{e}' 을 찾을 수 없습니다.")
         sys.exit(1)
 
-    tmp_dir = request_tmp_dir(labfile)
-    prj_name = data['domain']['name']
-    log_scm_path = os.path.join(tmp_dir, prj_name + ".log.schema.json")
+    dname = data['domain']['name']
+    log_scm_path = f'{dname}.log.schema.json'
 
-    print(f"'{log_scm_path} 에 로그 스키마 저장.")
+    print(f"{log_scm_path} 에 로그 스키마 저장.")
     with open(log_scm_path, 'wt', encoding='utf8') as f:
         try:
             scm = log_schema_from_labfile(data)
@@ -111,22 +99,18 @@ def schema(labfile):
             print(e)
             sys.exit(1)
 
-    flow_scm_path = os.path.join(tmp_dir, prj_name + ".flow.schema.json")
-    print(f"'{flow_scm_path} 에 플로우 스키마 저장.")
+    flow_scm_path = f'{dname}.flow.schema.json'
+    print(f"{flow_scm_path} 에 플로우 스키마 저장.")
     with open(flow_scm_path, 'wt', encoding='utf8') as f:
         f.write(flow_schema_from_labfile(labfile, data))
 
 
 @cli.command()
-@global_options
-@click.argument('logfile')
-@click.option('-s', '--schema', help="로그 스키마 경로")
-def verify(labfile, logfile, schema):
+@click.argument('schema', type=click.Path())
+@click.argument('logfile', type=click.Path(exists=True))
+def verify(schema, logfile):
     """생성된 로그 파일 검증."""
-    labfile = find_labfile(labfile)
-    data = verify_labfile(labfile)
-    schema = find_log_schema(labfile, data, schema)
-    if schema is None:
+    if not os.path.isfile(schema):
         print("Error: 로그 스키마를 찾을 수 없습니다. schema 명령으로 생성하거나, "
               "스키마의 경로를 옵션으로 지정하세요.")
         sys.exit(1)
@@ -150,13 +134,12 @@ def fetch(url, output):
 
 
 @cli.command()
-@global_options
-def dummy(labfile):
+def dummy():
     """가짜 로그 생성."""
-    labfile = find_labfile(labfile)
+    # labfile = find_labfile(labfile)
     verify_labfile(labfile)
     click.echo("Generate Dummy Log Events")
 
 
 if __name__ == "__main__":
-    cli(obj={})
+    click(obj={})

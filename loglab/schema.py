@@ -60,12 +60,10 @@ def handle_import(labfile, labjs):
         labjs['_imported_'] = []
 
     for imp in labjs['import']:
-        idir = request_imp_dir(labfile)
-        path = os.path.join(idir, imp)
-        if not os.path.isfile(path):
-            raise FileNotFoundError(path)
+        if not os.path.isfile(imp):
+            raise FileNotFoundError(imp)
 
-        with open(path, 'rt', encoding='utf8') as f:
+        with open(imp, 'rt', encoding='utf8') as f:
             body = f.read()
             data = json.loads(body)
             if 'import' in data:
@@ -248,6 +246,7 @@ def verify_logfile(schema, logfile):
                 sys.exit(1)
 
             if 'Event' not in log or log['Event'] not in evt_scm:
+                import pdb; pdb.set_trace()
                 print("Error: 스키마에서 이벤트를 찾을 수 없습니다")
                 print(f"Line {lno}: {line}")
                 sys.exit(1)

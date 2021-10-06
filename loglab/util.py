@@ -9,7 +9,6 @@ from urllib.parse import urlparse
 from collections import OrderedDict
 from pathlib import Path
 from glob import glob
-from shutil import rmtree
 
 from requests import get
 
@@ -304,14 +303,15 @@ def test_reset():
     cwd = os.path.join(LOGLAB_HOME, 'tests')
     os.chdir(cwd)
 
-    # 기존 파일 삭제
-    for f in glob("*.lab.json"):
+    # 기존 결과 삭제
+    for f in glob("*.schema.json"):
         os.remove(f)
     for f in glob("*.txt"):
         os.remove(f)
-    if os.path.isdir(RESULT_DIR):
-        # 결과 디렉토리 삭제
-        rmtree(RESULT_DIR)
+    for f in glob("*.lab.json"):
+        os.remove(f)
+    for f in glob("*.html"):
+        os.remove(f)
 
 
 def absdir_for_html(adir):
