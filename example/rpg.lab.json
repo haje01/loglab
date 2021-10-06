@@ -1,0 +1,113 @@
+{
+    "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
+    "domain": {
+        "name": "rpg",
+        "desc": "MMORPG 게임"
+    },
+    "import": ["webzen.lab.json"],
+    "types": {
+        "stringId": {
+            "type": "string",
+            "desc": "문자열 ID"
+        },
+        "unsigned": {
+            "type": "integer",
+            "desc": "0 또는 양의 정수",
+            "minimum": 0
+        },
+        "unsignedId": {
+            "type": "integer",
+            "desc": "0 또는 양의 정수 ID",
+            "minimum": 0
+        },
+        "platformId": {
+            "type": "string",
+            "desc": "플랫폼 ID",
+            "enum": ["ios", "aos", "pc"]
+        },
+        "networkId": {
+            "type": "string",
+            "desc": "네트워크 ID",
+            "enum": ["wifi", "2G", "3G", "4G", "5G"]
+        },
+        "IpType": {
+            "type": "string",
+            "desc": "IP 주소 타입",
+            "enum": ["IPv4", "IPv6", "Unknown"]
+        },
+        "Ip": {
+            "type": "string",
+            "desc": "IP4 주소",
+            "pattern": "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"
+        }
+    },
+    "bases": {
+        "Ip": {
+            "desc": "IP 정보",
+            "fields": [
+                ["ClientIpType", "types.IpType", "클라이언트 IP 타입"],
+                ["ClientIp", "types.Ip", "클라이언트 IP (IPv4 또는 IPv6 형식, ClientIpType 에 맞게)"]
+            ]
+        },
+        "Device": {
+            "desc": "디바이스 정보",
+            "mixins": ["bases.Ip"],
+            "fields": [
+                ["AppId", "types.stringId", "앱 ID"],
+                ["ClientVer", "types.stringId", "클라이언트 앱 버전"],
+                ["DevicePlatId", "types.platformId", "디바이스 플랫폼 ID"],
+                ["DeviceOsVer", "string", "디바이스 OS 버전 정보"],
+                ["DeviceName", "string", "디바이스 이름"],
+                ["Channel", "string", "접속 채널(루트)"],
+                ["TelecomId", "types.stringId", "통신사 ID"],
+                ["Network", "types.networkId", "네트워크 ID", true],
+                ["ScreenWidth", "types.unsigned", "디바이스 화면 너비", true],
+                ["ScreenHeight", "types.unsigned", "디바이스 화면 높이", true],
+                ["ScreenDensity", "number", "디바이스 화소 밀드", true],
+                ["CpuInfo", "string", "디바이스 CPU 정보 ('종류|클럭|코어수' 형식)", true],
+                ["Memory", "types.unsigned", "디바이스 메모리 (MB)", true],
+                ["GraphicsApi", "string", "디바이스 그래픽 API 정보", true],
+                ["DeviceId", "string", "디바이스 ID", true]
+            ]
+        },
+        "GameServer": {
+            "desc": "게임 서버 정보",
+            "fields": [
+                ["GameSvrId", "types.stringId", "게임 서버 ID"],
+                ["ZoneId", "types.unsignedId", "게임 서버가 속하는 구역 ID. 없는 경우 0"]
+            ]
+        },
+        "Character": {
+            "desc": "캐릭터 정보",
+            "mixins": ["bases.GameServer"],
+            "fields": [
+                ["CharId", "types.stringId", "캐릭터 ID"],
+                ["CharName", "string", "캐릭터 이름"]
+            ]
+        }
+    },
+    "events": {
+        "AcntRegister": {
+            "desc": "계정 등록",
+            "mixins": ["webzen.bases.WebzenAcnt", "bases.Device"],
+            "fields": [
+                ["AcntId", "types.stringId", "계정 ID"]
+            ]
+        },
+        "CharCreate": {
+            "desc": "캐릭터 생성",
+            "mixins": ["bases.Character"],
+            "fields": [
+                ["CharIndex", "types.unsigned", "해당 캐릭터가 계정의 몇 번째 인지 (시작 1)"]
+            ]
+        },
+        "AcntLogin": {
+            "desc": "계정 로그인",
+            "mixins": ["bases.Device"]
+        },
+        "AcntLogout": {
+            "desc": "계정 로그아웃",
+            "mixins": ["bases.Device"]
+        }
+    }
+}
