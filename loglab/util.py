@@ -12,12 +12,9 @@ from glob import glob
 
 from requests import get
 
-
 LOGLAB_HOME = Path(os.path.dirname(os.path.abspath(__file__))).parent.absolute()
-RESULT_DIR = '.loglab'
-TEMP_DIR = os.path.join(RESULT_DIR, 'temp')
-IMPORT_DIR = os.path.join(RESULT_DIR, 'import')
 BUILTIN_TYPES = ('string', 'integer', 'number', 'boolean', 'datetime')
+
 
 class AttrDict(dict):
     """dict 키를 속성처럼 접근하는 헬퍼."""
