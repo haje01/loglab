@@ -117,32 +117,32 @@ def find_labfile(labfile, print_msg=True):
     sys.exit(1)
 
 
-def find_log_schema(labfile, labjs, _schema):
-    """로그 스키마 찾기.
+# def find_log_schema(labfile, labjs, _schema):
+#     """로그 스키마 찾기.
 
-    - 지정된 스키마가 있으면 그것을,
-    - 아니면 현재 디렉토리에서 랩 파일의 도메인 이름에 준하는 로그 스키마가 있으면 그것을,
-    - 아니면 Error
+#     - 지정된 스키마가 있으면 그것을,
+#     - 아니면 현재 디렉토리에서 랩 파일의 도메인 이름에 준하는 로그 스키마가 있으면 그것을,
+#     - 아니면 Error
 
-    Args:
-        labfile (str): 랩 파일 경로
-        labjs (dict): 랩 파일 데이터
-        _schema (str): 지정된 스키마
+#     Args:
+#         labfile (str): 랩 파일 경로
+#         labjs (dict): 랩 파일 데이터
+#         _schema (str): 지정된 스키마
 
-    Return:
-        str: 찾은 로그 스키마의 절대 경로
+#     Return:
+#         str: 찾은 로그 스키마의 절대 경로
 
-    """
-    if _schema is not None:
-        return os.path.abspath(_schema)
+#     """
+#     if _schema is not None:
+#         return os.path.abspath(_schema)
 
-    # 랩 파일 도메인 이름에서 로그 스키마 파일명 유추
-    if 'domain' in labjs or 'name' in labjs['domain']:
-        domain = labjs['domain']['name']
-        tmp_dir = request_tmp_dir(labfile)
-        schema = os.path.join(tmp_dir, f'{domain}.log.schema.json')
-        if os.path.isfile(schema):
-            return schema
+#     # 랩 파일 도메인 이름에서 로그 스키마 파일명 유추
+#     if 'domain' in labjs or 'name' in labjs['domain']:
+#         domain = labjs['domain']['name']
+#         tmp_dir = request_tmp_dir(labfile)
+#         schema = os.path.join(tmp_dir, f'{domain}.log.schema.json')
+#         if os.path.isfile(schema):
+#             return schema
 
 
 def load_file_from(path):
@@ -190,10 +190,10 @@ def explain_rstr(f, line_dlm='\n'):
             if len(enum) > 0 and type(enum[0]) is list:
                 expl = []
                 for d in enum:
-                    expl.append(f"{d[0]}: {d[1]}")
-                enum = line_dlm.join(expl)
-            else:
-                enum = f'{enum} 중 하나'
+                    expl.append(f"{d[0]} ({d[1]})")
+                # enum = line_dlm.join(expl) + "\n 중 하나"
+                enum = expl
+            enum = ', '.join(expl) + " 중 하나"
 
         assert amin is None or xmin is None,\
             'minimum 과 exclusiveMinimum 함께 사용 불가'
@@ -236,6 +236,12 @@ def explain_rstr(f, line_dlm='\n'):
             exps.append(' '.join(stmts))
 
         if enum is not None:
+            if type(enum[0]) is list:
+                _enum = []
+                for i, d in enum:
+                    _enum.append(f'{i} ({d})')
+                enum = _enum
+            enum = ', '.join(enum)
             exps.append(f"{enum} 중 하나")
         if ptrn is not None:
             exps.append(f"정규식 {ptrn} 매칭")

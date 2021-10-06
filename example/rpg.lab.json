@@ -41,11 +41,11 @@
         },
         "questStatus": {
             "desc": "퀘스트 상태",
-            "type": "integer",
+            "type": "string",
             "enum": [
-                [0, "수락"],
-                [1, "시작"],
-                [2, "종료"]
+                ["accept", "수락"],
+                ["start", "시작"],
+                ["done", "종료"]
             ]
         }
     },
@@ -63,12 +63,12 @@
             "fields": [
                 ["AppId", "types.stringId", "앱 ID"],
                 ["ClientVer", "types.stringId", "클라이언트 앱 버전"],
-                ["DevicePlatId", "types.platformId", "디바이스 플랫폼 ID"],
-                ["DeviceOsVer", "string", "디바이스 OS 버전 정보"],
+                ["DevicePlatform", "types.platformId", "디바이스 플랫폼"],
+                ["DeviceOsVer", "string", "디바이스 OS 버전"],
                 ["DeviceName", "string", "디바이스 이름"],
                 ["Channel", "string", "접속 채널(루트)"],
                 ["TelecomId", "types.stringId", "통신사 ID"],
-                ["Network", "types.networkId", "네트워크 ID", true],
+                ["Network", "types.networkId", "네트워크 종류", true],
                 ["ScreenWidth", "types.unsigned", "디바이스 화면 너비", true],
                 ["ScreenHeight", "types.unsigned", "디바이스 화면 높이", true],
                 ["ScreenDensity", "number", "디바이스 화소 밀도", true],

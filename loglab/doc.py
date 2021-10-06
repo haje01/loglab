@@ -188,7 +188,7 @@ def _html_types(dom):
         out.write('<table>')
         out.write("<tr>")
         for header in headers:
-            out.write(f'<th">{header}</th>')
+            out.write(f'<th>{header}</th>')
         out.write("</tr>")
         out.write("<tr>")
         for i, col in enumerate(row):
