@@ -49,7 +49,7 @@ def show(labfile, custom_type, name, keep_text):
 @click.argument('labfile', type=click.Path(exists=True))
 @click.option('-c', '--custom-type', is_flag=True,
               help="커스텀 타입 그대로 출력")
-@click.option('-o', '--output')
+@click.option('-o', '--output', help="출력 파일명")
 def html(labfile,  custom_type, output):
     """HTML 문서 출력."""
     # labfile = find_labfile(labfile)

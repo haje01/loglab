@@ -125,14 +125,14 @@ Description : Id 타입
 
     ans = '''Event : Login
 Description : 계정 로그인
-+----------+----------+-------------------+------------------------+
-| Field    | Type     | Description       | Restrict               |
-|----------+----------+-------------------+------------------------|
-| DateTime | datetime | 이벤트 일시       |                        |
-| ServerNo | integer  | 서버 번호         | 1 이상 100 미만        |
-| AcntId   | integer  | 계정 ID           | 0 이상                 |
-| Platform | string   | 디바이스의 플랫폼 | ['ios', 'aos'] 중 하나 |
-+----------+----------+-------------------+------------------------+'''
++----------+----------+-------------------+------------------+
+| Field    | Type     | Description       | Restrict         |
+|----------+----------+-------------------+------------------|
+| DateTime | datetime | 이벤트 일시       |                  |
+| ServerNo | integer  | 서버 번호         | 1 이상 100 미만  |
+| AcntId   | integer  | 계정 ID           | 0 이상           |
+| Platform | string   | 디바이스의 플랫폼 | ios, aos 중 하나 |
++----------+----------+-------------------+------------------+'''
     assert ans in out
 
     ans = '''Event : Logout
@@ -162,46 +162,42 @@ Description : 캐릭터 로그아웃
 
     ans = '''Event : MonsterDropItem (옵션)
 Description : 몬스터가 아이템을 떨어뜨림
-+------------+----------+--------------------+--------------------+
-| Field      | Type     | Description        | Restrict           |
-|------------+----------+--------------------+--------------------|
-| DateTime   | datetime | 이벤트 일시        |                    |
-| ServerNo   | integer  | 서버 번호          | 1 이상 100 미만    |
-| MonTypeId  | integer  | 몬스터 타입 ID     | 0 이상             |
-| MonInstId  | integer  | 몬스터 인스턴스 ID | 0 이상             |
-| MapId      | integer  | 맵 번호            | 0 이상             |
-| PosX       | number   | 맵상 X 위치        |                    |
-| PosY       | number   | 맵상 Y 위치        |                    |
-| PosZ       | number   | 맵상 Z 위치        |                    |
-| ItemTypeId | integer  | 아이템 타입 ID     | 1: 칼              |
-|            |          |                    | 2: 방패            |
-|            |          |                    | 3: 물약            |
-| ItemInstId | integer  | 아이템 인스턴스 ID | 0 이상             |
-| ItemName   | string   | 아이템 이름        | 7 자 이하          |
-|            |          |                    | 정규식 ^Itm.* 매칭 |
-+------------+----------+--------------------+--------------------+'''
++------------+----------+--------------------+------------------------------------+
+| Field      | Type     | Description        | Restrict                           |
+|------------+----------+--------------------+------------------------------------|
+| DateTime   | datetime | 이벤트 일시        |                                    |
+| ServerNo   | integer  | 서버 번호          | 1 이상 100 미만                    |
+| MonTypeId  | integer  | 몬스터 타입 ID     | 0 이상                             |
+| MonInstId  | integer  | 몬스터 인스턴스 ID | 0 이상                             |
+| MapId      | integer  | 맵 번호            | 0 이상                             |
+| PosX       | number   | 맵상 X 위치        |                                    |
+| PosY       | number   | 맵상 Y 위치        |                                    |
+| PosZ       | number   | 맵상 Z 위치        |                                    |
+| ItemTypeId | integer  | 아이템 타입 ID     | 1 (칼), 2 (방패), 3 (물약) 중 하나 |
+| ItemInstId | integer  | 아이템 인스턴스 ID | 0 이상                             |
+| ItemName   | string   | 아이템 이름        | 7 자 이하                          |
+|            |          |                    | 정규식 ^Itm.* 매칭                 |
++------------+----------+--------------------+------------------------------------+'''
     assert ans in out
 
     ans = '''Event : GetItem
 Description : 캐릭터의 아이템 습득
-+------------+----------+--------------------+--------------------+
-| Field      | Type     | Description        | Restrict           |
-|------------+----------+--------------------+--------------------|
-| DateTime   | datetime | 이벤트 일시        |                    |
-| ServerNo   | integer  | 서버 번호          | 1 이상 100 미만    |
-| AcntId     | integer  | 계정 ID            | 0 이상             |
-| CharId     | integer  | 캐릭터 ID          | 0 이상             |
-| MapId      | integer  | 맵 번호            | 0 이상             |
-| PosX       | number   | 맵상 X 위치        |                    |
-| PosY       | number   | 맵상 Y 위치        |                    |
-| PosZ       | number   | 맵상 Z 위치        |                    |
-| ItemTypeId | integer  | 아이템 타입 ID     | 1: 칼              |
-|            |          |                    | 2: 방패            |
-|            |          |                    | 3: 물약            |
-| ItemInstId | integer  | 아이템 인스턴스 ID | 0 이상             |
-| ItemName   | string   | 아이템 이름        | 7 자 이하          |
-|            |          |                    | 정규식 ^Itm.* 매칭 |
-+------------+----------+--------------------+--------------------+'''
++------------+----------+--------------------+------------------------------------+
+| Field      | Type     | Description        | Restrict                           |
+|------------+----------+--------------------+------------------------------------|
+| DateTime   | datetime | 이벤트 일시        |                                    |
+| ServerNo   | integer  | 서버 번호          | 1 이상 100 미만                    |
+| AcntId     | integer  | 계정 ID            | 0 이상                             |
+| CharId     | integer  | 캐릭터 ID          | 0 이상                             |
+| MapId      | integer  | 맵 번호            | 0 이상                             |
+| PosX       | number   | 맵상 X 위치        |                                    |
+| PosY       | number   | 맵상 Y 위치        |                                    |
+| PosZ       | number   | 맵상 Z 위치        |                                    |
+| ItemTypeId | integer  | 아이템 타입 ID     | 1 (칼), 2 (방패), 3 (물약) 중 하나 |
+| ItemInstId | integer  | 아이템 인스턴스 ID | 0 이상                             |
+| ItemName   | string   | 아이템 이름        | 7 자 이하                          |
+|            |          |                    | 정규식 ^Itm.* 매칭                 |
++------------+----------+--------------------+------------------------------------+'''
     assert ans in out
 
     res = runner.invoke(show, ['foo.lab.json', '-c', '-k'])
@@ -217,14 +213,14 @@ Description : Id 타입
 
 Event : Login
 Description : 계정 로그인
-+----------+----------+-------------------+------------------------+
-| Field    | Type     | Description       | Restrict               |
-|----------+----------+-------------------+------------------------|
-| DateTime | datetime | 이벤트 일시       |                        |
-| ServerNo | integer  | 서버 번호         | 1 이상 100 미만        |
-| AcntId   | types.Id | 계정 ID           |                        |
-| Platform | string   | 디바이스의 플랫폼 | ['ios', 'aos'] 중 하나 |
-+----------+----------+-------------------+------------------------+
++----------+----------+-------------------+------------------+
+| Field    | Type     | Description       | Restrict         |
+|----------+----------+-------------------+------------------|
+| DateTime | datetime | 이벤트 일시       |                  |
+| ServerNo | integer  | 서버 번호         | 1 이상 100 미만  |
+| AcntId   | types.Id | 계정 ID           |                  |
+| Platform | string   | 디바이스의 플랫폼 | ios, aos 중 하나 |
++----------+----------+-------------------+------------------+
 '''
     assert ans in out
 
@@ -241,15 +237,15 @@ Description : 최고의 PC 온라인 게임
 
 Event : Login
 Description : 계정 로그인
-+------------+----------+---------------+---------------------------------+
-| Field      | Type     | Description   | Restrict                        |
-|------------+----------+---------------+---------------------------------|
-| DateTime   | datetime | 이벤트 일시   |                                 |
-| BcomAcntId | integer  | BCOM 계정 ID  | 0 이상                          |
-| ServerNo   | integer  | 서버 번호     | 1 이상 100 미만                 |
-| AcntId     | integer  | 계정 ID       | 0 이상                          |
-| Platform   | string   | PC의 플랫폼   | ['win', 'mac', 'linux'] 중 하나 |
-+------------+----------+---------------+---------------------------------+
++------------+----------+---------------+-------------------------+
+| Field      | Type     | Description   | Restrict                |
+|------------+----------+---------------+-------------------------|
+| DateTime   | datetime | 이벤트 일시   |                         |
+| BcomAcntId | integer  | BCOM 계정 ID  | 0 이상                  |
+| ServerNo   | integer  | 서버 번호     | 1 이상 100 미만         |
+| AcntId     | integer  | 계정 ID       | 0 이상                  |
+| Platform   | string   | PC의 플랫폼   | win, mac, linux 중 하나 |
++------------+----------+---------------+-------------------------+
 
 Event : acme.Logout
 Description : 계정 로그아웃
@@ -282,15 +278,15 @@ Description : Id 타입
 
 Event : Login
 Description : 계정 로그인
-+------------+--------------------+---------------+---------------------------------+
-| Field      | Type               | Description   | Restrict                        |
-|------------+--------------------+---------------+---------------------------------|
-| DateTime   | datetime           | 이벤트 일시   |                                 |
-| BcomAcntId | acme.bcom.types.Id | BCOM 계정 ID  |                                 |
-| ServerNo   | integer            | 서버 번호     | 1 이상 100 미만                 |
-| AcntId     | acme.types.Id      | 계정 ID       |                                 |
-| Platform   | string             | PC의 플랫폼   | ['win', 'mac', 'linux'] 중 하나 |
-+------------+--------------------+---------------+---------------------------------+
++------------+--------------------+---------------+-------------------------+
+| Field      | Type               | Description   | Restrict                |
+|------------+--------------------+---------------+-------------------------|
+| DateTime   | datetime           | 이벤트 일시   |                         |
+| BcomAcntId | acme.bcom.types.Id | BCOM 계정 ID  |                         |
+| ServerNo   | integer            | 서버 번호     | 1 이상 100 미만         |
+| AcntId     | acme.types.Id      | 계정 ID       |                         |
+| Platform   | string             | PC의 플랫폼   | win, mac, linux 중 하나 |
++------------+--------------------+---------------+-------------------------+
 
 Event : acme.Logout
 Description : 계정 로그아웃

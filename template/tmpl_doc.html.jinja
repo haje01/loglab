@@ -92,6 +92,16 @@ body {
     padding: 7px 10px 15px 20px
 }
 
+.table-title1-div {
+    margin-top: 30px;
+    font-size: 17px;
+}
+
+.table-title2-div {
+    margin-top: 50px;
+    font-size: 20px;
+}
+
 table {
   font-family: arial, sans-serif;
   font-size: 15px;
@@ -140,8 +150,9 @@ tr:nth-child(even) {
     <div class="type-div">
         {% for key in dom.types.keys() %}
         <div class="table-div" id="type-{{ key }}">
-            <p>Type: <b>{{ types[loop.index0][0] }}</b></p>
-            <p>Description: {{ types[loop.index0][1] }}</p>
+          <div class="table-title1-div">
+            <p><b>{{ types[loop.index0][0] }}</b> ({{ types[loop.index0][1] }})</p>
+          </div>
             {{ types[loop.index0][2] }}
         </div>
         {% endfor %}
@@ -151,8 +162,9 @@ tr:nth-child(even) {
   <div class="event-div">
     {% for key in dom.events.keys() %}
     <div class="table-div" id="event-{{ key }}">
-        <p>Event: <b>{{ events[loop.index0][0] }}</b></p>
-        <p>Description: {{ events[loop.index0][1] }}</p>
+      <div class="table-title2-div">
+        <p><b>{{ events[loop.index0][0] }}</b> ({{ events[loop.index0][1] }})</p>
+      </div>
         {{ events[loop.index0][2] }}
     </div>
     {% endfor %}
