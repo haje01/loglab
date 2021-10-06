@@ -242,28 +242,28 @@ def explain_rstr(f, line_dlm='\n'):
 #     return fields
 
 
-def request_tmp_dir(labfile=None):
-    """랩 파일이 있는 경로에서 임시 파일용 디렉토리를 확보.
+# def request_tmp_dir(labfile=None):
+#     """랩 파일이 있는 경로에서 임시 파일용 디렉토리를 확보.
 
-    랩 파일 경로가 없으면 현제 디렉토리를 이용
+#     랩 파일 경로가 없으면 현제 디렉토리를 이용
 
-    Args:
-        labfile (string): 랩 파일 경로
+#     Args:
+#         labfile (string): 랩 파일 경로
 
-    """
-    return _request_dir(labfile, TEMP_DIR)
+#     """
+#     return _request_dir(labfile, TEMP_DIR)
 
 
-def request_imp_dir(labfile=None):
-    """랩 파일이 있는 경로에서 가져오기 파일용 디렉토리를 확보.
+# def request_imp_dir(labfile=None):
+#     """랩 파일이 있는 경로에서 가져오기 파일용 디렉토리를 확보.
 
-    랩 파일 경로가 없으면 현제 디렉토리를 이용
+#     랩 파일 경로가 없으면 현제 디렉토리를 이용
 
-    Args:
-        labfile (string): 랩 파일 경로
+#     Args:
+#         labfile (string): 랩 파일 경로
 
-    """
-    return _request_dir(labfile, IMPORT_DIR)
+#     """
+#     return _request_dir(labfile, IMPORT_DIR)
 
 
 def _request_dir(labfile, subdir):

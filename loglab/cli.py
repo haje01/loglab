@@ -9,8 +9,7 @@ import click
 from loglab.doc import text_from_labfile, html_from_labfile
 from loglab.schema import verify_labfile, log_schema_from_labfile,\
     flow_schema_from_labfile, verify_logfile, handle_import
-from loglab.util import find_labfile, find_log_schema, request_tmp_dir,\
-    request_imp_dir, download
+from loglab.util import find_labfile, download
 from loglab.version import VERSION
 
 
@@ -123,14 +122,12 @@ def verify(schema, logfile):
 @click.option('-o', '--output', help="저장할 파일명")
 def fetch(url, output):
     """외부 랩 파일 다운로드."""
-    edir = request_imp_dir()
     if output is None:
         output = url.split('/')[-1]
     if not output.endswith('.lab.json'):
         output += '.lab.json'
-    path = os.path.join(edir, output)
-    download(url, path)
-    print(f"'{path} 에 저장.")
+    download(url, output)
+    print(f"'{output} 에 저장.")
 
 
 @cli.command()

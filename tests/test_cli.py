@@ -9,7 +9,7 @@ from click.testing import CliRunner
 
 from loglab.cli import cli, version, show, schema, verify, fetch
 from loglab.version import VERSION
-from loglab.util import AttrDict, request_imp_dir, test_reset
+from loglab.util import AttrDict, test_reset
 
 
 CWD = os.path.dirname(__file__)
@@ -532,6 +532,5 @@ def test_fetch():
     url = 'https://raw.githubusercontent.com/haje01/loglab/master/tests/files/foo.lab.json'
     res = runner.invoke(fetch, [url])
     assert res.exit_code == 0
-    edir = request_imp_dir()
-    path = os.path.join(edir, 'foo.lab.json')
+    path = 'foo.lab.json'
     assert os.path.isfile(path)

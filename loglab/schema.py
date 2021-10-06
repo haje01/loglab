@@ -10,8 +10,7 @@ from jinja2 import Environment, FileSystemLoader
 from requests.api import request
 
 from loglab.dom import build_dom
-from loglab.util import AttrDict, load_file_from, LOGLAB_HOME,\
-    request_imp_dir
+from loglab.util import AttrDict, load_file_from, LOGLAB_HOME
 
 
 def verify_labfile(lab_path, scm_path=None, err_exit=True):
