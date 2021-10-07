@@ -10,7 +10,7 @@ body {
 }
 
 .sidebar {
-  height: 100%;
+  height: 90%;
   width: 250px;
   position: fixed;
   z-index: 1;
@@ -19,7 +19,8 @@ body {
   background-color: #111;
   overflow-x: hidden;
   transition: 0.3s;
-  padding-top: 100px;
+  padding-top: 30px;
+  padding-bottom: 100px;
 }
 
 .sidebar a {
@@ -49,8 +50,8 @@ body {
   color: #f1f1f1;
 }
 
-.sidebar a:visited {
-    color: lightgreen
+.sidebar a:hover {
+    color: orange
 }
 
 .sidebar .closebtn {
@@ -115,20 +116,25 @@ td, th {
   padding: 5px 7px 5px 7px;
 }
 
+th {
+  background-color: #aaaaaa;
+}
+
 tr:nth-child(even) {
-  background-color: #dddddd;
+  background-color: #eeeeee;
 }
 
 /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
 @media screen and (max-height: 450px) {
   .sidebar {padding-top: 15px;}
-  .sidebar a {font-size: 18px;}
 }
 </style>
 </head>
 <body>
 
 <div id="mySidebar" class="sidebar">
+  <svg version="1" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 300 300" style="margin-left:auto; margin-right:auto; display:block"><g fill="#353535"><path d="M272.3 1.1c-5.9 1.1-9.6 3.2-13.6 7.9-14.5 17 2.2 43 23.9 37.1 4.7-1.3 11.8-7 14.1-11.5 8.9-17-5.5-36.8-24.4-33.5zM283 11.5c4.5 2.3 7 6.6 7 12 0 5.8-2.2 9.7-7 12.4-6.4 3.6-13.8 2-17.9-3.7-4.5-6.4-3.6-13.8 2.5-19.2 2.8-2.4 4.4-3 8-3 2.5 0 5.8.7 7.4 1.5zM167.5 30.9c-5.9 2.7-24 21.7-25.4 26.7-1.5 5.2-1.3 11.1.4 15.9.8 2.1 1.3 4 1.2 4.1-.1.1-28.9 11.7-64.1 25.8-35.1 14-65.6 26.7-67.7 28.1-7.1 5-10.9 13-10.9 22.9 0 11.8-1.4 10.1 66.8 77.6 45.4 44.9 63.5 62.2 67.3 64.2 10.7 5.8 25.4 2.9 33.3-6.4 2.7-3.2 9.1-17.9 29.1-68.2 14.1-35.2 25.8-64.2 25.9-64.4.2-.1 2 .5 4.2 1.4 4.9 2.1 12.9 2.1 17.9 0 4.7-2 21.9-18.7 24.8-24.1 3.2-6.1 3-15.6-.5-21.5-3.9-6.6-78.4-80.5-83-82.5-5.1-2.1-14.3-1.9-19.3.4zm49.2 53.3C245.9 113.3 254 122 254 124c0 3.1-14.4 18-17.5 18-1.2 0-5.4-3.4-10.5-8.5-4.7-4.7-8.8-8.5-9.1-8.5-.4 0-3.3 6.5-6.5 14.5-3.1 8-5.9 14.5-6.1 14.5-.2 0-3.9-2.9-8.3-6.4-18.2-14.8-36-22.2-63-26-30.4-4.2-35-5-34.3-5.7.4-.4 17.9-7.6 38.8-15.9 20.9-8.4 38.2-15.4 38.4-15.6.3-.2-3.5-4.4-8.2-9.3-4.8-4.9-8.7-9.4-8.7-10.1 0-2.2 16.2-18 18.4-18 1.3 0 14.6 12.6 39.3 37.2zM94.5 124.8c5 1.2 16.4 3 25.5 4.2 30.6 4 44.8 8.3 59.6 17.9 9.8 6.4 20.4 15.5 20.4 17.5 0 .7-9.9 26.2-22 56.7-16 40.2-22.8 56-24.6 57.6-1.6 1.5-3.8 2.3-6.2 2.3-4 0 2.1 5.8-90-85.5C22.6 161.1 19 157.2 19 154.3c0-6.4 3.2-8.3 34-20.7 15.7-6.3 29.4-11.3 30.5-11.1 1.1.1 6.1 1.2 11 2.3z"/><path d="M86.5 142.4c-1.7.7-4.5 2.9-6.2 4.9-8.7 9.9-5.3 24 6.9 29.2 15.5 6.4 31.1-11.2 23-26-1.6-3-6.4-7.2-9.5-8.4-3.8-1.5-10.5-1.3-14.2.3zm13.4 10.2c6 5 3 14.8-5 16-2.8.5-4.1.1-6.7-2.1-2.7-2.2-3.2-3.4-3.2-6.8.1-8.7 8.3-12.7 14.9-7.1zm49.1-1.7c-11.1 3.6-17 11.5-17 22.8 0 17.2 17.6 28 33.1 20.2 4.9-2.4 10.7-9.3 12-14.3 3.7-13.7-6.3-28.1-20.2-29.1-3-.3-6.5-.1-7.9.4zm11.6 9.7c7 3.4 10 11.4 6.9 18.5-4.7 10.2-19.9 10.8-25 .9-2.5-4.8-1.9-11.3 1.2-15.1 4.8-5.6 10.8-7.2 16.9-4.3zM118.4 207c-4.9 2-7 9.3-3.9 13.6 5.1 7.4 16.5 3.7 16.5-5.3 0-6.1-7-10.7-12.6-8.3zM266.3 67.8c-3.5 2.7-4.5 6.7-2.9 10.7 2.7 6.3 9.7 7.5 14.8 2.5 2.6-2.7 3-3.6 2.5-6.8-1.2-7-9.1-10.6-14.4-6.4z"/></g></svg>
+
   {% if types is defined %}
     <a href="javascript:void(0)" class="sidebar-menu" id="sidebar-type" onclick="toggleItems('type')">Types</a>
     {% for i in dom.types.keys() %}
@@ -151,7 +157,7 @@ tr:nth-child(even) {
         {% for key in dom.types.keys() %}
         <div class="table-div" id="type-{{ key }}">
           <div class="table-title1-div">
-            <p><b>{{ types[loop.index0][0] }}</b> ({{ types[loop.index0][1] }})</p>
+            <p><b>{{ types[loop.index0][0] }}</b> - {{ types[loop.index0][1] }}</p>
           </div>
             {{ types[loop.index0][2] }}
         </div>
@@ -163,7 +169,7 @@ tr:nth-child(even) {
     {% for key in dom.events.keys() %}
     <div class="table-div" id="event-{{ key }}">
       <div class="table-title2-div">
-        <p><b>{{ events[loop.index0][0] }}</b> ({{ events[loop.index0][1] }})</p>
+        <p><b>{{ events[loop.index0][0] }}</b> - {{ events[loop.index0][1] }}</p>
       </div>
         {{ events[loop.index0][2] }}
     </div>

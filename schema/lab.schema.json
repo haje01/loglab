@@ -207,11 +207,16 @@
                         "mixins": {
                             "type": "array",
                             "items": {
-                                "type": "string"
+                                "type": "string",
+                                "pattern": "^([a-z0-9_]+\\.)*bases\\.[a-zA-Z0-9_]+$"
                             }
                         },
                         "fields": {
                             "$ref": "#/$defs/field-body"
+                        },
+                        "option": {
+                            "type": "boolean",
+                            "description": "옵션 여부"                            
                         }
                     },
                     "additionalProperties": false,
@@ -277,17 +282,7 @@
         },
         "events": {
             "description": "기본 엔터티",
-            "anyOf": [
-                {"$ref": "#/$defs/entity-body"},
-                {
-                    "items": {
-                        "option": {
-                            "type": "boolean",
-                            "description": "옵션 여부"
-                        }
-                   }
-                }
-            ]
+            "$ref": "#/$defs/entity-body"
         }
     },
     "additionalProperties": false
