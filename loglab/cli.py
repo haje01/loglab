@@ -9,7 +9,7 @@ import click
 from loglab.doc import text_from_labfile, html_from_labfile
 from loglab.schema import verify_labfile, log_schema_from_labfile,\
     flow_schema_from_labfile, verify_logfile, handle_import
-from loglab.util import find_labfile, download
+from loglab.util import download
 from loglab.version import VERSION
 
 
@@ -52,7 +52,6 @@ def show(labfile, custom_type, name, keep_text):
 @click.option('-o', '--output', help="출력 파일명")
 def html(labfile,  custom_type, output):
     """HTML 문서 출력."""
-    # labfile = find_labfile(labfile)
     data = verify_labfile(labfile)
     try:
         handle_import(labfile, data)
@@ -76,7 +75,6 @@ def html(labfile,  custom_type, output):
 @click.argument('labfile', type=click.Path(exists=True))
 def schema(labfile):
     """로그 및 플로우 파일용 스키마 생성."""
-    labfile = find_labfile(labfile)
     data = verify_labfile(labfile)
     try:
         handle_import(labfile, data)
@@ -109,11 +107,6 @@ def schema(labfile):
 @click.argument('logfile', type=click.Path(exists=True))
 def verify(schema, logfile):
     """생성된 로그 파일 검증."""
-    if not os.path.isfile(schema):
-        print("Error: 로그 스키마를 찾을 수 없습니다. schema 명령으로 생성하거나, "
-              "스키마의 경로를 옵션으로 지정하세요.")
-        sys.exit(1)
-    print(f"[로그 스키마 파일 : {schema}]")
     verify_logfile(schema, logfile)
 
 
@@ -133,7 +126,6 @@ def fetch(url, output):
 @cli.command()
 def dummy():
     """가짜 로그 생성."""
-    # labfile = find_labfile(labfile)
     verify_labfile(labfile)
     click.echo("Generate Dummy Log Events")
 

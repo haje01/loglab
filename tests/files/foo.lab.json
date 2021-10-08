@@ -4,44 +4,44 @@
 		"name": "foo",
 		"desc": "위대한 모바일 게임"
 	},
-    "types": {
-        "Id": {
-            "type": "integer",
-            "desc": "Id 타입",
-            "minimum": 0
-        }
-    },
+	"types": {
+		"unsigned": {
+				"type": "integer",
+				"desc": "0 이상 정수",
+				"minimum": 0
+		}
+	},
 	"bases": {
 		"Server": {
 			"desc": "서버 정보",
 			"fields": [
 				{
-                    "name": "ServerNo",
-                    "desc": "서버 번호",
-                    "type": "integer",
-                    "minimum": 1,
-                    "exclusiveMaximum": 100
-                }
+						"name": "ServerNo",
+						"desc": "서버 번호",
+						"type": "integer",
+						"minimum": 1,
+						"exclusiveMaximum": 100
+				}
 			]
 		},
 		"Account": {
 			"desc": "계정 정보",
 			"mixins": ["bases.Server"],
 			"fields": [
-                ["AcntId", "types.Id", "계정 ID"]
+				["AcntId", "types.unsigned", "계정 ID"]
 			]
 		},
 		"Character": {
 			"desc": "캐릭터 정보",
 			"mixins": ["bases.Account"],
 			"fields": [
-                ["CharId", "types.Id", "캐릭터 ID"]
+				["CharId", "types.unsigned", "캐릭터 ID"]
 			]
 		},
 		"Position": {
 			"desc": "맵상의 위치 정보",
 			"fields": [
-				["MapId", "types.Id", "맵 번호"],
+				["MapId", "types.unsigned", "맵 번호"],
 				["PosX", "number", "맵상 X 위치"],
 				["PosY", "number", "맵상 Y 위치"],
 				["PosZ", "number", "맵상 Z 위치"]
@@ -49,34 +49,34 @@
 		},
 		"Monster": {
 			"desc": "몬스터 정보",
-            "mixins": ["bases.Server"],
+			"mixins": ["bases.Server"],
 			"fields": [
-				["MonTypeId", "types.Id", "몬스터 타입 ID"],
-				["MonInstId", "types.Id", "몬스터 인스턴스 ID"]
+				["MonsterCd", "types.unsigned", "몬스터 타입 코드"],
+				["MonsterId", "types.unsigned", "몬스터 개체 ID"]
 			]
 		},
 		"Item": {
 			"desc": "아이템 정보",
-            "mixins": ["bases.Server"],
+			"mixins": ["bases.Server"],
 			"fields": [
-                {
-                    "name": "ItemTypeId",
-                    "type": "integer",
-                    "desc": "아이템 타입 ID",
-                    "enum": [
-                        [1, "칼"],
-                        [2, "방패"],
-                        [3, "물약"]
-                    ]
-                },
-                ["ItemInstId", "types.Id", "아이템 인스턴스 ID"],
-                {
-                    "name": "ItemName",
-                    "type": "string",
-                    "desc": "아이템 이름",
-                    "maxLength": 7,
-                    "pattern": "^Itm.*"
-                }
+				{
+					"name": "ItemCd",
+					"type": "integer",
+					"desc": "아이템 타입 코드",
+					"enum": [
+							[1, "칼"],
+							[2, "방패"],
+							[3, "물약"]
+					]
+				},
+				["ItemId", "types.unsigned", "아이템 개체 ID"],
+				{
+					"name": "ItemName",
+					"type": "string",
+					"desc": "아이템 이름",
+					"maxLength": 7,
+					"pattern": "^Itm.*"
+				}
 			]
 		}
 	},
@@ -84,16 +84,16 @@
 		"Login": {
 			"desc": "계정 로그인",
 			"mixins": ["bases.Account"],
-            "fields": [
-                {
-                    "name": "Platform",
-                    "desc": "디바이스의 플랫폼",
-                    "type": "string",
-                    "enum": [
-                        "ios", "aos"
-                    ]
-                }
-            ]
+			"fields": [
+				{
+					"name": "Platform",
+					"desc": "디바이스의 플랫폼",
+					"type": "string",
+					"enum": [
+							"ios", "aos"
+					]
+				}
+			]
 		},
 		"Logout": {
 			"desc": "계정 로그아웃",
@@ -117,7 +117,7 @@
 		"MonsterDropItem": {
 			"desc": "몬스터가 아이템을 떨어뜨림",
 			"mixins": ["bases.Monster", "bases.Position", "bases.Item"],
-            "option": true
+			"option": true
 		},
 		"GetItem": {
 			"desc": "캐릭터의 아이템 습득",

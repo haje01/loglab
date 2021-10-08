@@ -5,9 +5,9 @@
 		"desc": "최고의 회사"
 	},
     "types": {
-        "Id": {
+        "unsigned": {
             "type": "integer",
-            "desc": "Id 타입",
+            "desc": "0 이상 정수",
             "minimum": 0
         }
     },
@@ -15,7 +15,7 @@
 		"BcomAcnt": {
             "desc": "BCOM 계정 정보",
             "fields": [
-                ["BcomAcntId", "types.Id", "BCOM 계정 ID"]
+                ["BcomAcntId", "types.unsigned", "BCOM 계정 ID"]
             ]
         }
     }

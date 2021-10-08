@@ -4,32 +4,31 @@
 		"name": "acme",
 		"desc": "최고의 게임 회사"
 	},
-    "import": ["bcom.lab.json"],
-    "types": {
-        "Id": {
-            "type": "integer",
-            "desc": "Id 타입",
-            "minimum": 0
-        }
-    },
+	"types": {
+		"unsigned": {
+				"type": "integer",
+				"desc": "0 이상의 정수",
+				"minimum": 0
+		}
+  },
 	"bases": {
 		"Server": {
 			"desc": "서버 정보",
 			"fields": [
 				{
-                    "name": "ServerNo",
-                    "desc": "서버 번호",
-                    "type": "integer",
-                    "minimum": 1,
-                    "exclusiveMaximum": 100
-                }
+          "name": "ServerNo",
+          "desc": "서버 번호",
+          "type": "integer",
+          "minimum": 1,
+          "exclusiveMaximum": 100
+        }
 			]
 		},
 		"Account": {
 			"desc": "계정 정보",
-			"mixins": ["bcom.bases.BcomAcnt", "bases.Server"],
+			"mixins": ["bases.Server"],
 			"fields": [
-                ["AcntId", "types.Id", "계정 ID"]
+        ["AcntId", "types.unsigned", "계정 ID"]
 			]
 		}
 	},
@@ -37,23 +36,23 @@
 		"Login": {
 			"desc": "계정 로그인",
 			"mixins": ["bases.Account"],
-            "fields": [
-                {
-                    "name": "Platform",
-                    "desc": "디바이스의 플랫폼",
-                    "type": "string",
-                    "enum": [
-                        "ios", "aos"
-                    ]
-                }
-            ]
+      "fields": [
+        {
+          "name": "Platform",
+          "desc": "디바이스의 플랫폼",
+          "type": "string",
+          "enum": [
+              "ios", "aos"
+          ]
+        }
+      ]
 		},
 		"Logout": {
-			"desc": "계정 로그아웃",
+			"desc": "계정 로그인",
 			"mixins": ["bases.Account"],
 			"fields": [
 				["PlayTime", "number", "플레이 시간 (초)", true]
 			]
 		}
-    }
+  }
 }

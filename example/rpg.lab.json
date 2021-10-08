@@ -564,7 +564,8 @@
             "desc": "복귀 (이벤트로 받은 아이템/돈은 LinkRd 로 연결)",
             "mixins": ["bases.LocCharacter", "bases.Vip"],
             "fields": [
-                ["ElapseDays", "types.unsigned", "마지막 접속 이후 경과일"]
+                ["ElapseDays", "types.unsigned", "마지막 접속후 경과일"],
+                ["Days", "types.unsigned", "마지막 접속후 경과일"]
             ]
         }
     }

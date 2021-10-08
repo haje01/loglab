@@ -114,7 +114,7 @@ Description : 위대한 모바일 게임'''
 Description : 위대한 모바일 게임'''
     assert ans in out
 
-    ans = '''Type : types.Id
+    ans = '''Type : types.unsigned
 Description : Id 타입
 +------------+---------------+------------+
 | BaseType   | Description   | Restrict   |
@@ -162,65 +162,65 @@ Description : 캐릭터 로그아웃
 
     ans = '''Event : MonsterDropItem (옵션)
 Description : 몬스터가 아이템을 떨어뜨림
-+------------+----------+--------------------+------------------------------------+
-| Field      | Type     | Description        | Restrict                           |
-|------------+----------+--------------------+------------------------------------|
-| DateTime   | datetime | 이벤트 일시        |                                    |
-| ServerNo   | integer  | 서버 번호          | 1 이상 100 미만                    |
-| MonTypeId  | integer  | 몬스터 타입 ID     | 0 이상                             |
-| MonInstId  | integer  | 몬스터 인스턴스 ID | 0 이상                             |
-| MapId      | integer  | 맵 번호            | 0 이상                             |
-| PosX       | number   | 맵상 X 위치        |                                    |
-| PosY       | number   | 맵상 Y 위치        |                                    |
-| PosZ       | number   | 맵상 Z 위치        |                                    |
-| ItemTypeId | integer  | 아이템 타입 ID     | 1 (칼), 2 (방패), 3 (물약) 중 하나 |
-| ItemInstId | integer  | 아이템 인스턴스 ID | 0 이상                             |
-| ItemName   | string   | 아이템 이름        | 7 자 이하                          |
-|            |          |                    | 정규식 ^Itm.* 매칭                 |
-+------------+----------+--------------------+------------------------------------+'''
++-----------+----------+------------------+------------------------------------+
+| Field     | Type     | Description      | Restrict                           |
+|-----------+----------+------------------+------------------------------------|
+| DateTime  | datetime | 이벤트 일시      |                                    |
+| ServerNo  | integer  | 서버 번호        | 1 이상 100 미만                    |
+| MonsterCd | integer  | 몬스터 타입 코드 | 0 이상                             |
+| MonsterId | integer  | 몬스터 개체 ID   | 0 이상                             |
+| MapId     | integer  | 맵 번호          | 0 이상                             |
+| PosX      | number   | 맵상 X 위치      |                                    |
+| PosY      | number   | 맵상 Y 위치      |                                    |
+| PosZ      | number   | 맵상 Z 위치      |                                    |
+| ItemCd    | integer  | 아이템 타입 코드 | 1 (칼), 2 (방패), 3 (물약) 중 하나 |
+| ItemId    | integer  | 아이템 개체 ID   | 0 이상                             |
+| ItemName  | string   | 아이템 이름      | 7 자 이하                          |
+|           |          |                  | 정규식 ^Itm.* 매칭                 |
++-----------+----------+------------------+------------------------------------+'''
     assert ans in out
 
     ans = '''Event : GetItem
 Description : 캐릭터의 아이템 습득
-+------------+----------+--------------------+------------------------------------+
-| Field      | Type     | Description        | Restrict                           |
-|------------+----------+--------------------+------------------------------------|
-| DateTime   | datetime | 이벤트 일시        |                                    |
-| ServerNo   | integer  | 서버 번호          | 1 이상 100 미만                    |
-| AcntId     | integer  | 계정 ID            | 0 이상                             |
-| CharId     | integer  | 캐릭터 ID          | 0 이상                             |
-| MapId      | integer  | 맵 번호            | 0 이상                             |
-| PosX       | number   | 맵상 X 위치        |                                    |
-| PosY       | number   | 맵상 Y 위치        |                                    |
-| PosZ       | number   | 맵상 Z 위치        |                                    |
-| ItemTypeId | integer  | 아이템 타입 ID     | 1 (칼), 2 (방패), 3 (물약) 중 하나 |
-| ItemInstId | integer  | 아이템 인스턴스 ID | 0 이상                             |
-| ItemName   | string   | 아이템 이름        | 7 자 이하                          |
-|            |          |                    | 정규식 ^Itm.* 매칭                 |
-+------------+----------+--------------------+------------------------------------+'''
++----------+----------+------------------+------------------------------------+
+| Field    | Type     | Description      | Restrict                           |
+|----------+----------+------------------+------------------------------------|
+| DateTime | datetime | 이벤트 일시      |                                    |
+| ServerNo | integer  | 서버 번호        | 1 이상 100 미만                    |
+| AcntId   | integer  | 계정 ID          | 0 이상                             |
+| CharId   | integer  | 캐릭터 ID        | 0 이상                             |
+| MapId    | integer  | 맵 번호          | 0 이상                             |
+| PosX     | number   | 맵상 X 위치      |                                    |
+| PosY     | number   | 맵상 Y 위치      |                                    |
+| PosZ     | number   | 맵상 Z 위치      |                                    |
+| ItemCd   | integer  | 아이템 타입 코드 | 1 (칼), 2 (방패), 3 (물약) 중 하나 |
+| ItemId   | integer  | 아이템 개체 ID   | 0 이상                             |
+| ItemName | string   | 아이템 이름      | 7 자 이하                          |
+|          |          |                  | 정규식 ^Itm.* 매칭                 |
++----------+----------+------------------+------------------------------------+'''
     assert ans in out
 
     res = runner.invoke(show, ['foo.lab.json', '-c', '-k'])
     assert res.exit_code == 0
     out = res.output
-    ans = '''Type : types.Id
-Description : Id 타입
+    ans = '''Type : types.unsigned
+Description : 0 이상 정수
 +------------+---------------+------------+
 | BaseType   | Description   | Restrict   |
 |------------+---------------+------------|
-| integer    | Id 타입       | 0 이상     |
+| integer    | 0 이상 정수   | 0 이상     |
 +------------+---------------+------------+
 
 Event : Login
 Description : 계정 로그인
-+----------+----------+-------------------+------------------+
-| Field    | Type     | Description       | Restrict         |
-|----------+----------+-------------------+------------------|
-| DateTime | datetime | 이벤트 일시       |                  |
-| ServerNo | integer  | 서버 번호         | 1 이상 100 미만  |
-| AcntId   | types.Id | 계정 ID           |                  |
-| Platform | string   | 디바이스의 플랫폼 | ios, aos 중 하나 |
-+----------+----------+-------------------+------------------+
++----------+----------------+-------------------+------------------+
+| Field    | Type           | Description       | Restrict         |
+|----------+----------------+-------------------+------------------|
+| DateTime | datetime       | 이벤트 일시       |                  |
+| ServerNo | integer        | 서버 번호         | 1 이상 100 미만  |
+| AcntId   | types.unsigned | 계정 ID           |                  |
+| Platform | string         | 디바이스의 플랫폼 | ios, aos 중 하나 |
++----------+----------------+-------------------+------------------+
 '''
     assert ans in out
 
@@ -229,7 +229,7 @@ def test_imp_show(clear):
     """외부 랩 파일 가져온 경우 show."""
     runner = CliRunner()
 
-    copy_files(['boo.lab.json', 'acme.lab.json', 'bcom.lab.json'])
+    copy_files(['boo.lab.json', 'acme2.lab.json', 'bcom.lab.json'])
     res = runner.invoke(show, ['boo.lab.json', '-k'])
     ans = '''
 Domain : boo
@@ -260,45 +260,43 @@ Description : 계정 로그아웃
 +------------+----------+------------------+------------+-----------------+
 '''
     assert ans in res.output
-
     res = runner.invoke(show, ['boo.lab.json', '-c', '-k'])
     assert res.exit_code == 0
     out = res.output
-    ans = '''
-Domain : boo
+    ans = '''Domain : boo
 Description : 최고의 PC 온라인 게임
 
-Type : acme.types.Id
-Description : Id 타입
+Type : acme.types.unsigned
+Description : 0 이상 정수
 +------------+---------------+------------+
 | BaseType   | Description   | Restrict   |
 |------------+---------------+------------|
-| integer    | Id 타입       | 0 이상     |
+| integer    | 0 이상 정수   | 0 이상     |
 +------------+---------------+------------+
 
 Event : Login
 Description : 계정 로그인
-+------------+--------------------+---------------+-------------------------+
-| Field      | Type               | Description   | Restrict                |
-|------------+--------------------+---------------+-------------------------|
-| DateTime   | datetime           | 이벤트 일시   |                         |
-| BcomAcntId | acme.bcom.types.Id | BCOM 계정 ID  |                         |
-| ServerNo   | integer            | 서버 번호     | 1 이상 100 미만         |
-| AcntId     | acme.types.Id      | 계정 ID       |                         |
-| Platform   | string             | PC의 플랫폼   | win, mac, linux 중 하나 |
-+------------+--------------------+---------------+-------------------------+
++------------+--------------------------+---------------+-------------------------+
+| Field      | Type                     | Description   | Restrict                |
+|------------+--------------------------+---------------+-------------------------|
+| DateTime   | datetime                 | 이벤트 일시   |                         |
+| BcomAcntId | acme.bcom.types.unsigned | BCOM 계정 ID  |                         |
+| ServerNo   | integer                  | 서버 번호     | 1 이상 100 미만         |
+| AcntId     | acme.types.unsigned      | 계정 ID       |                         |
+| Platform   | string                   | PC의 플랫폼   | win, mac, linux 중 하나 |
++------------+--------------------------+---------------+-------------------------+
 
 Event : acme.Logout
 Description : 계정 로그아웃
-+------------+--------------------+------------------+------------+-----------------+
-| Field      | Type               | Description      | Optional   | Restrict        |
-|------------+--------------------+------------------+------------+-----------------|
-| DateTime   | datetime           | 이벤트 일시      |            |                 |
-| BcomAcntId | acme.bcom.types.Id | BCOM 계정 ID     |            |                 |
-| ServerNo   | integer            | 서버 번호        |            | 1 이상 100 미만 |
-| AcntId     | acme.types.Id      | 계정 ID          |            |                 |
-| PlayTime   | number             | 플레이 시간 (초) | True       |                 |
-+------------+--------------------+------------------+------------+-----------------+
++------------+--------------------------+------------------+------------+-----------------+
+| Field      | Type                     | Description      | Optional   | Restrict        |
+|------------+--------------------------+------------------+------------+-----------------|
+| DateTime   | datetime                 | 이벤트 일시      |            |                 |
+| BcomAcntId | acme.bcom.types.unsigned | BCOM 계정 ID     |            |                 |
+| ServerNo   | integer                  | 서버 번호        |            | 1 이상 100 미만 |
+| AcntId     | acme.types.unsigned      | 계정 ID          |            |                 |
+| PlayTime   | number                   | 플레이 시간 (초) | True       |                 |
++------------+--------------------------+------------------+------------+-----------------+
 '''
     assert ans in out
 
@@ -306,12 +304,12 @@ Description : 계정 로그아웃
     assert res.exit_code == 0
     out = res.output
     ans = '''
-Type : acme.types.Id
-Description : Id 타입
+Type : acme.types.unsigned
+Description : 0 이상 정수
 +------------+---------------+------------+
 | BaseType   | Description   | Restrict   |
 |------------+---------------+------------|
-| integer    | Id 타입       | 0 이상     |
+| integer    | 0 이상 정수   | 0 이상     |
 +------------+---------------+------------+
 '''
     assert ans in out
@@ -367,10 +365,10 @@ def test_schema(clear):
     # 설명이 있는 integer enum
     ans =  {
         'type': 'integer',
-        'description': '아이템 타입 ID',
+        'description': '아이템 타입 코드',
         'enum': [1, 2, 3]
     }
-    assert defs.GetItem.properties.ItemTypeId == ans
+    assert defs.GetItem.properties.ItemCd == ans
 
     # required
     ans = ["DateTime", "ServerNo", "AcntId", "Platform"]
@@ -394,9 +392,6 @@ def test_verify(clear):
 
     log = '{"DateTime": "2021-08-1dd20:20:39", "Event": "Login", "ServerNo": 1, "AcntId": 1000, "Platform": "ios"}'
     write_log('fakelog.txt', log)
-    res = runner.invoke(verify, args)
-    assert res.exit_code == 1
-    assert "로그 스키마를 찾을 수 없습니다." in res.output
 
     res = runner.invoke(schema, [labfile])
     assert res.exit_code == 0
@@ -418,32 +413,32 @@ def test_verify(clear):
     res = runner.invoke(verify, args)
     assert "-1 is less than the minimum of 0" in res.output
 
-    log = '{"DateTime": "2021-08-13T20:21:01+09:00", "Event": "KillMonster", "ServerNo": 1, "AcntId": 1000, "CharId": 3, "MonTypeId": 3, "MonInstId": 3, "PosX": 0, "PosY": 0, "PosZ": 0}'
+    log = '{"DateTime": "2021-08-13T20:21:01+09:00", "Event": "KillMonster", "ServerNo": 1, "AcntId": 1000, "CharId": 3, "MonsterCd": 3, "MonsterId": 3, "PosX": 0, "PosY": 0, "PosZ": 0}'
     write_log('fakelog.txt', log)
     res = runner.invoke(verify, args)
     assert "'MapId' is a required property" in res.output
 
-    log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonTypeId": 3, "MonInstId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemTypeId": 3, "ItemInstId" 4}'
+    log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonsterCd": 3, "MonsterId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemCd": 3, "ItemId" 4}'
     write_log('fakelog.txt', log)
     res = runner.invoke(verify, args)
     assert "유효한 JSON 형식이 아닙니다" in res.output
 
-    log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonTypeId": 3, "MonInstId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemTypeId": 3, "ItemInstId": 4, "ItemName": "Sword"}'
+    log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonsterCd": 3, "MonsterId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemCd": 3, "ItemId": 4, "ItemName": "Sword"}'
     write_log('fakelog.txt', log)
     res = runner.invoke(verify, args)
     assert "'Sword' does not match '^Itm.*'" in res.output
 
-    log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonTypeId": 3, "MonInstId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemTypeId": 100, "ItemInstId": 4, "ItemName": "Sword"}'
+    log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonsterCd": 3, "MonsterId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemCd": 100, "ItemId": 4, "ItemName": "Sword"}'
     write_log('fakelog.txt', log)
     res = runner.invoke(verify, args)
     assert "100 is not one of [1, 2, 3]" in res.output
 
-    log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonTypeId": 3, "MonInstId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemTypeId": 3, "ItemInstId": 4, "ItemName": "ItmSword"}'
+    log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonsterCd": 3, "MonsterId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemCd": 3, "ItemId": 4, "ItemName": "ItmSword"}'
     write_log('fakelog.txt', log)
     res = runner.invoke(verify, args)
     assert "'ItmSword' is too long" in res.output
 
-    log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonTypeId": 3, "MonInstId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemTypeId": 3, "ItemInstId": 4, "ItemName": "ItmSwrd"}'
+    log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonsterCd": 3, "MonsterId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemCd": 3, "ItemId": 4, "ItemName": "ItmSwrd"}'
     write_log('fakelog.txt', log)
     res = runner.invoke(verify, args)
     assert res.exit_code == 0
@@ -452,7 +447,7 @@ def test_verify(clear):
 def test_imp_schema(clear):
     """외부 랩 파일 가져온 경우 schema."""
     runner = CliRunner()
-    copy_files(['boo.lab.json', 'acme.lab.json', 'bcom.lab.json'])
+    copy_files(['boo.lab.json', 'acme2.lab.json', 'bcom.lab.json'])
 
     res = runner.invoke(schema, ['boo.lab.json'])
     assert res.exit_code == 0
@@ -503,7 +498,7 @@ def test_imp_schema(clear):
 
 def test_imp_verify(clear):
     """외부 랩 파일 가져온 경우 verify."""
-    copy_files(['boo.lab.json', 'acme.lab.json', 'bcom.lab.json'])
+    copy_files(['boo.lab.json', 'acme2.lab.json', 'bcom.lab.json'])
 
     fake_log = 'fakelog.txt'
     log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "Login", "ServerNo": 1, "BcomAcntId": 100, "AcntId": 1000, "Platform": "ios"}'
