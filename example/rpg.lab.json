@@ -40,7 +40,7 @@
             "desc": "IP 주소"
         },
         "moneyCd": {
-            "desc": "재화 종류 코드",
+            "desc": "돈 종류 코드",
             "type": "integer",
             "enum": [
                 [10, "귀속 게임 머니"],
@@ -63,9 +63,9 @@
                 [60, "전투"],
                 [70, "퀘스트"],
                 [80, "던전"],
-                [90, "경매"],
-                [100, "거래"],
-                [110, "유료샵"],
+                [90, "상점"],
+                [100, "유료 상점"],
+                [110, "거래소"],
                 [120, "강화"],
                 [130, "길드"],
                 [140, "우편"],
@@ -96,6 +96,39 @@
             "desc": "던전 완료 등급",
             "type": "string",
             "enum": ["s", "a", "b", "c", "f"]
+        },
+        "joinStatus": {
+            "desc": "단체 가입 상태",
+            "type": "string",
+            "enum": [
+                ["enter", "가입"],
+                ["exit", "탈퇴"]
+            ]
+        },
+        "chatChannel": {
+            "desc": "채팅 채널",
+            "type": "integer",
+            "enum": [
+                [0, "현재"],
+                [1, "월드"],
+                [2, "파티"],
+                [3, "길드"],
+                [4, "확성기"]
+            ]
+        },
+        "reportType": {
+            "desc": "신고 종류",
+            "type": "integer",
+            "enum": [
+                [1, "욕설"],
+                [2, "광고"],
+                [3, "매크로 사용"],
+                [4, "기타 어뷰징"],
+                [5, "작업장"],
+                [6, "개인 정보 요청"],
+                [7, "불법/불건전 정보"],
+                [99, "기타"]
+            ]
         }
     },
     "bases": {
@@ -138,12 +171,19 @@
             "desc": "게임 계정 정보",
             "fields": [
                 ["AcntId", "types.stringId", "게임 계정 ID"],
-                ["EventRd", "types.unsigned", "임의 코드로 로그들을 연관지음", true]
+                ["LinkRd", "types.unsigned", "랜덤 코드로 로그들을 연결", true]
             ]
         },
         "ServerAccount": {
             "desc": "게임 서버와 계정 정보",
             "mixins": ["bases.GameServer", "bases.Account"]
+        },
+        "Vip": {
+            "desc": "VIP 정보",
+            "fields": [
+                ["TotalCharge", "types.unsigned", "계정 누적 충전액"],
+                ["VipLevel", "types.unsigned", "계정 VIP 레벨"]
+            ]
         },
         "Character": {
             "desc": "캐릭터 정보",
@@ -175,9 +215,24 @@
             ]
         },
         "Money": {
-            "desc": "재화 정보",
+            "desc": "돈 정보",
             "fields": [
-                ["MoneyCd", "types.moneyCd", "재화 종류 코드"]
+                ["MoneyCd", "types.moneyCd", "돈 종류 코드"]
+            ]
+        },
+        "Guild": {
+            "desc": "길드 정보",
+            "fields": [
+                ["GuildId", "types.unsigned", "길드 ID"],
+                ["GuildName", "string", "길드 이름"]
+            ]
+        },
+        "Castle": {
+            "desc": "성 정보",
+            "fields": [
+                ["CastleId", "types.unsigned", "성 ID"],
+                ["CastleName", "string", "성 이름"],
+                ["CastleLevel", "types.unsigned", "성 레벨"]
             ]
         }
     },
@@ -202,17 +257,13 @@
         },
         "AcntLogin": {
             "desc": "계정 로그인",
-            "mixins": ["webzen.bases.WebzenAcnt", "bases.ServerAccount", "bases.Device"],
-            "fields": [
-                ["VipLevel", "types.unsigned", "VIP 레벨"]
-            ]
+            "mixins": ["webzen.bases.WebzenAcnt", "bases.ServerAccount", "bases.Device", "bases.Vip"]
         },
         "AcntLogout": {
             "desc": "계정 로그아웃",
-            "mixins": ["bases.ServerAccount", "bases.Ip"],
+            "mixins": ["bases.ServerAccount", "bases.Ip", "bases.Vip"],
             "fields": [
-				["PlayTime", "number", "플레이 시간 (초)", true],
-                ["VipLevel", "types.unsigned", "VIP 레벨"]
+				["PlayTime", "number", "플레이 시간 (초)", true]
             ]
         },
         "CharLogin": {
@@ -250,8 +301,8 @@
                 ["Paid", "boolean", "유료 부활 여부"]
             ]
         },
-        "Item": {
-            "desc": "아이템",
+        "ItemChg": {
+            "desc": "아이템 변화",
             "mixins": ["bases.LocCharacter", "bases.Item"],
             "fields": [
                 ["Change", "integer",  "아이템 수 변화량 (+는 증가/-는 감소)"],
@@ -260,8 +311,8 @@
                 ["ReasonInfo", "string", "아이템 변화 원인 추가 정보 (npc/pc 인 경우 ID)", true]
             ]
         },
-        "Money": {
-            "desc": "돈",
+        "MoneyChg": {
+            "desc": "돈 변화",
             "mixins": ["bases.LocCharacter", "bases.Money"],
             "fields": [
                 ["Change", "integer",  "돈 변화량 (+는 증가/-는 감소)"],
@@ -270,8 +321,8 @@
                 ["ReasonInfo", "string", "돈 변화 원인 추가 정보 (npc/pc 인 경우 ID)", true]
             ]
         },
-        "Exp": {
-            "desc": "경험치",
+        "ExpChg": {
+            "desc": "경험치 변화",
             "mixins": ["bases.LocCharacter"],
             "fields": [
                 ["Change", "integer",  "경험치 변화량 (+는 증가/-는 감소)"],
@@ -280,16 +331,16 @@
                 ["ReasonInfo", "string", "경험치 변화 원인 추가 정보", true]
             ]
         },
-        "Level": {
-            "desc": "레벨",
+        "LevelChg": {
+            "desc": "레벨 변화",
             "mixins": ["bases.LocCharacter"],
             "fields": [
                 ["Change", "integer",  "레벨 변화량 (+는 증가/-는 감소)"],
                 ["After", "types.unsigned",  "변화후 레벨"]
             ]
         },
-        "Quest": {
-            "desc": "퀘스트",
+        "QuestChg": {
+            "desc": "퀘스트 변화",
             "mixins": ["bases.LocCharacter"],
             "fields": [
                 ["QuestCd", "types.unsigned", "퀘스트 종류 코드"],
@@ -297,88 +348,224 @@
                 ["Status", "types.questStatus",  "퀘스트 상태"]
             ]
         },
-        "Dungeon": {
-            "desc": "던전",
+        "DungeonChg": {
+            "desc": "던전 변화",
             "mixins": ["bases.LocCharacter"],
             "fields": [
                 ["Status", "types.dungeonStatus", "던전 상태"],
                 ["Score", "types.dungeonGrade", "던전 완료 등급"]
             ]
         },
-        "SkillUse": {
-            "desc": "스킬별 1 분간 사용 횟수",
+        "SkillFreq": {
+            "desc": "스킬별 1 분간 사용 빈도 (어뷰징 검출용)",
             "mixins": ["bases.LocCharacter"],
             "fields": [
                 ["SkillId", "types.unsigned", "스킬 ID"],
                 ["Count", "types.unsigned", "사용 횟수"]
             ]
         },
-        "ItemEnchant": {
-            "desc": "아이템 강화",
+        "Enchant": {
+            "desc": "아이템 강화 (소진된 돈/아이템들은 LinkRd 로 연결)",
             "mixins": ["bases.LocCharacter", "bases.Item"],
             "fields": [
-                {
-                    "name": "Result",
-                    "desc": "강화 결과",
-                    "type": "integer",
-                    "enum": [
-                        [0, "성공"],
-                        [1, "실패"],
-                        [2, "실패 + 하락"]
-                    ]
-                }
+                ["Change", "integer", "아이템 레벨 변화"],
+                ["After", "integer", "강화 후 아이템 레벨"],
+                ["Break", "boolean", "파괴 여부"]
             ]
         },
-        "Pet": {
-            "desc": "펫"
-        },
         "Produce": {
-            "desc": "제작"
+            "desc": "제작 (재료/생산 아이템들은 LinkRd 로 연결)",
+            "mixins": ["bases.LocCharacter"],
+            "fields": [
+                ["RecipeCd", "types.unsigned", "제작 레시피 코드"],
+                ["Count", "types.unsigned", "제작 수량"]
+            ]
         },
-        "Exchange": {
-            "desc": "거래소"
+        "ExchgReg": {
+            "desc": "거래소 등록/재등록 (아이템 소진, 잔여 스택 아이템 추가는 LinkRd로 연결)",
+            "mixins": ["bases.LocCharacter", "bases.Item"],
+            "fields": [
+                ["ItemCount", "types.unsigned", "등록 아이템 수"],
+                ["ExchgId", "types.unsigned", "거래 ID"],
+                ["Price", "types.unsigned", "등록 금액"]
+            ]
         },
-        "Auction": {
-            "desc": "경매장"
+        "ExchgBuy": {
+            "desc": "거래소에서 구매 (아이템 추가, 돈 소진은 LinkRd 로 연결)",
+            "mixins": ["bases.LocCharacter", "bases.Item"],
+            "fields": [
+                ["ItemCount", "types.unsigned", "구매 아이템 수"],
+                ["ExchgId", "types.unsigned", "거래 ID"],
+                ["Price", "types.unsigned", "구매 금액 (세금 포함)"],
+                ["TaxRate", "number", "거래 당시의 세율"]
+            ]
         },
-        "CashShop": {
-            "desc": "유료 상점"
+        "ExchgSell": {
+            "desc": "거래소에서 판매 완료 (돈 추가는 LinkRd 로 연결)",
+            "mixins": ["bases.LocCharacter", "bases.Item"],
+            "fields": [
+                ["ItemCount", "types.unsigned", "판매 아이템 수"],
+                ["ExchgId", "types.unsigned", "거래 ID"],
+                ["Price", "types.unsigned", "판매 금액 (세금 포함)"],
+                ["TaxRate", "number", "거래 당시의 세율"]
+            ]
+        },
+        "ExchgUnReg": {
+            "desc": "거래소 등록 취소 (복구된 아이템은 LinkRd 로 연결)",
+            "mixins": ["bases.LocCharacter", "bases.Item"],
+            "fields": [
+                ["ItemCount", "types.unsigned", "복구 아이템 수"],
+                ["ExchgId", "types.unsigned", "거래 ID"]
+            ]
+        },
+        "CashShopBuy": {
+            "desc": "유료 상점 구매 (아이템 추가, 돈 소진은 LinkRd 로 연결)",
+            "mixins": ["bases.LocCharacter", "bases.Item"],
+            "fields": [
+                ["ItemCount", "types.unsigned", "구매 아이템 수"],
+                ["Price", "types.unsigned", "구매 금액"]
+            ]
+        },
+        "CashShopSell": {
+            "desc": "유료 상점 판매 (돈 추가는 LinkRd 로 연결)",
+            "mixins": ["bases.LocCharacter", "bases.Item"],
+            "fields": [
+                ["ItemCount", "types.unsigned", "판매 아이템 수"],
+                ["Price", "types.unsigned", "판매 금액"]
+            ]
         },
         "PartyCreate": {
-            "desc": "파티 생성"
+            "desc": "파티 생성",
+            "mixins": ["bases.LocCharacter"],
+            "fields": [
+                ["PartyId", "types.unsigned", "파티 ID"],
+                ["MaxCount", "types.unsigned", "최대 인원"]
+            ]
         },
-        "PartyMember": {
-            "desc": "파티 멤버"
+        "PartyMemChg": {
+            "desc": "파티 멤버 변화",
+            "mixins": ["bases.LocCharacter"],
+            "fields": [
+                ["PartyId", "types.unsigned", "파티 ID"],
+                ["Status", "types.joinStatus", "파티 가입 상태"]
+            ]
         },
         "PartyDelete": {
-            "desc": "파티 삭제"
+            "desc": "파티 삭제 (공헌도는 LinkRd 로 연결)",
+            "mixins": ["bases.GameServer"],
+            "fields": [
+                ["PartyId", "types.unsigned", "파티 ID"]
+            ]
         },
         "GuildCreate": {
-            "desc": "길드 생성"
+            "desc": "길드 생성",
+            "mixins": ["bases.LocCharacter", "bases.Guild"]
         },
-        "GuildMember": {
-            "desc": "길드 멤버"
+        "GuildMemChg": {
+            "desc": "길드 멤버 변화",
+            "mixins": ["bases.LocCharacter", "bases.Guild"],
+            "fields": [
+                ["Status", "types.joinStatus", "길드 가입 상태"]
+            ]
         },
         "GuildDelete": {
-            "desc": "길드 삭제"
+            "desc": "길드 삭제",
+            "mixins": ["bases.LocCharacter"],
+            "fields": [
+                ["GuildId", "types.unsigned", "길드 ID"]
+            ]
         },
-        "CastleWar": {
-            "desc": "공성"
+        "CastleWarDeclare": {
+            "desc": "공성 선언",
+            "mixins": ["bases.LocCharacter", "bases.Guild", "bases.Castle"],
+            "fields": [
+                ["GuildMemCnt", "types.unsigned", "길드 멤버 수"]
+            ]
         },
-        "Mail": {
-            "desc": "우편"
+        "CastleWarEnd": {
+            "desc": "공성 종료 (공헌도는 LinkRd 로 연결)",
+            "mixins": ["bases.LocCharacter", "bases.Guild", "bases.Castle"],
+            "fields": [
+                ["GuildMemCnt", "types.unsigned", "길드 멤버 수"],
+                ["Success", "boolean", "성공 여부"]
+            ]
+        },
+        "Contribute": {
+            "desc": "레이드, 전쟁 등에서 공헌도",
+            "mixins": ["bases.LocCharacter"],
+            "fields": [
+                ["Point", "types.unsigned", "공헌 포인트"]
+            ]
+        },
+        "MailSend": {
+            "desc": "우편 발신 (첨부된 아이템/돈은 LinkRd 로 연결)",
+            "mixins": ["bases.LocCharacter"],
+            "fields": [
+                ["title", "string", "우편 제목"],
+                ["message", "string", "우편 내용", true]
+            ]
+        },
+        "AttachItem": {
+            "desc": "첨부한 아이템",
+            "mixins": ["bases.LocCharacter", "bases.Item"],
+            "fields": [
+                ["Count", "integer",  "아이템 수"]
+            ]
+        },
+        "AttachMoney": {
+            "desc": "첨부한 돈",
+            "mixins": ["bases.LocCharacter", "bases.Money"],
+            "fields": [
+                ["Amount", "integer",  "금액"]
+            ]
+        },
+        "MailRecv": {
+            "desc": "우편 수신 (받은 아이템/돈은 LinkRd 로 연결)",
+            "mixins": ["bases.LocCharacter"],
+            "fields": [
+                ["Title", "string", "우편 제목"],
+                ["Msg", "string", "우편 내용", true]
+            ]
         },
         "Chat": {
-            "desc": "채팅"
+            "desc": "채팅",
+            "mixins": ["bases.LocCharacter"],
+            "fields": [
+                ["Channel", "types.chatChannel", "채팅 채널"],
+                ["Msg", "string", "채팅 내용"]
+            ]
         },
         "Charge": {
-            "desc": "충전"
+            "desc": "충전 (얻은 돈은 LinkRd 로 연결)",
+            "mixins": ["bases.LocCharacter", "bases.Vip"],
+            "fields": [
+                ["Amount", "types.unsigned", "충전 금액 (패키지의 경우 0)"],
+                ["PackageCd", "boolean", "패키지를 통한 충전시 패키지 코드"],
+                ["PackageName", "boolean", "패키지를 통한 충전시 패키지 이름"]
+            ]
         },
         "Report": {
-            "desc": "신고"
+            "desc": "신고",
+            "mixins": ["bases.LocCharacter", "bases.Vip"],
+            "fields": [
+                ["GuildId", "types.unsigned", "길드 ID", true],
+                ["GuildName", "string", "길드 이름", true],
+                ["Type", "types.reportType", "신고 종류"],
+                ["Title", "string", "신고 제목"],
+                ["Msg", "string", "신고 내용", true],
+                ["TargetCharId", "types.stringId", "대상 캐릭터 ID"],
+                ["TargetCharName", "string", "대상 캐릭터 이름"],
+                ["TargetCharLevel", "types.unsigned", "대상 캐릭터 레벨"],
+                ["TargetGuildId", "types.unsigned", "대상 캐릭터 길드 ID", true],
+                ["TargetGuildName", "string", "대상 캐릭터 길드 이름", true]
+            ]
         },
         "Return": {
-            "desc": "복귀"
+            "desc": "복귀 (이벤트로 받은 아이템/돈은 LinkRd 로 연결)",
+            "mixins": ["bases.LocCharacter", "bases.Vip"],
+            "fields": [
+                ["ElapseDays", "types.unsigned", "마지막 접속 이후 경과일"]
+            ]
         }
     }
 }
