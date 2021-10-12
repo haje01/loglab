@@ -59,10 +59,11 @@ def handle_import(labfile, labjs):
         labjs['_imported_'] = []
 
     for imp in labjs['import']:
-        if not os.path.isfile(imp):
-            raise FileNotFoundError(imp)
+        path = f'{imp}.lab.json'
+        if not os.path.isfile(path):
+            raise FileNotFoundError(path)
 
-        with open(imp, 'rt', encoding='utf8') as f:
+        with open(path, 'rt', encoding='utf8') as f:
             body = f.read()
             data = json.loads(body)
             if 'import' in data:

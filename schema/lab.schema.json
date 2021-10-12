@@ -18,7 +18,7 @@
             "object": "array",
             "items": {
                 "type": "string",
-                "pattern": "[a-zA-Z0-9_]+.lab.json"
+                "pattern": "[a-zA-Z0-9_]+"
             }
         },
         "dict-field-body": {
@@ -39,7 +39,7 @@
                             "description": "옵션 여부"
                         }
                     },
-                    "required": ["name", "desc"]
+                    "required": ["name"]
                 },
                 {"$ref": "#/$defs/type-rstr-body"}
             ]
@@ -188,7 +188,7 @@
                             {"type": "boolean"}
                         ],
                         "minItems": 3,
-                        "maxItems": 5
+                        "maxItems": 4
                     },
                     {"$ref": "#/$defs/dict-field-body"}
                 ]
@@ -216,11 +216,11 @@
                         },
                         "option": {
                             "type": "boolean",
-                            "description": "옵션 여부"                            
+                            "description": "옵션 여부"
                         }
                     },
                     "additionalProperties": false,
-                    "required": ["desc"]
+                    "required": []
                 }
             },
             "additionalProperties": false

@@ -4,10 +4,14 @@
         "name": "boo",
         "desc": "최고의 PC 온라인 게임"
     },
-    "import": ["acme2"],
+    "import": ["acme3"],
+    "bases": {
+        "Logout": {
+            "mixins": ["acme.bases.Logout"]
+        }
+    },
     "events": {
         "Login": {
-          "desc": "계정 로그인",
           "mixins": ["acme.events.Login"],
           "fields": [
               {
@@ -19,6 +23,9 @@
                 ]
               }
           ]
+        },
+        "Logout": {
+            "mixins": ["bases.Logout"]
         }
-      }
+    }
 }

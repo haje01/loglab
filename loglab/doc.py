@@ -169,6 +169,10 @@ def text_from_labfile(data, cus_type, namef, keep_text, out=None):
     # 각 이벤트별로
     for ename, elst in dom.events.items():
         edata = elst[-1]
+        dname = edata[0]
+        # 자기 도메인 것만 출력
+        if dname != '':
+            continue
         _write_event(ename, edata, out, namef, keep_text)
 
     return out.getvalue()

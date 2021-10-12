@@ -246,18 +246,6 @@ Description : 계정 로그인
 | AcntId     | integer  | 계정 ID       | 0 이상                  |
 | Platform   | string   | PC의 플랫폼   | win, mac, linux 중 하나 |
 +------------+----------+---------------+-------------------------+
-
-Event : acme.Logout
-Description : 계정 로그아웃
-+------------+----------+------------------+------------+-----------------+
-| Field      | Type     | Description      | Optional   | Restrict        |
-|------------+----------+------------------+------------+-----------------|
-| DateTime   | datetime | 이벤트 일시      |            |                 |
-| BcomAcntId | integer  | BCOM 계정 ID     |            | 0 이상          |
-| ServerNo   | integer  | 서버 번호        |            | 1 이상 100 미만 |
-| AcntId     | integer  | 계정 ID          |            | 0 이상          |
-| PlayTime   | number   | 플레이 시간 (초) | True       |                 |
-+------------+----------+------------------+------------+-----------------+
 '''
     assert ans in res.output
     res = runner.invoke(show, ['boo.lab.json', '-c', '-k'])
@@ -267,11 +255,11 @@ Description : 계정 로그아웃
 Description : 최고의 PC 온라인 게임
 
 Type : acme.types.unsigned
-Description : 0 이상 정수
+Description : 0 이상의 정수
 +------------+---------------+------------+
 | BaseType   | Description   | Restrict   |
 |------------+---------------+------------|
-| integer    | 0 이상 정수   | 0 이상     |
+| integer    | 0 이상의 정수 | 0 이상     |
 +------------+---------------+------------+
 
 Event : Login
@@ -285,18 +273,6 @@ Description : 계정 로그인
 | AcntId     | acme.types.unsigned      | 계정 ID       |                         |
 | Platform   | string                   | PC의 플랫폼   | win, mac, linux 중 하나 |
 +------------+--------------------------+---------------+-------------------------+
-
-Event : acme.Logout
-Description : 계정 로그아웃
-+------------+--------------------------+------------------+------------+-----------------+
-| Field      | Type                     | Description      | Optional   | Restrict        |
-|------------+--------------------------+------------------+------------+-----------------|
-| DateTime   | datetime                 | 이벤트 일시      |            |                 |
-| BcomAcntId | acme.bcom.types.unsigned | BCOM 계정 ID     |            |                 |
-| ServerNo   | integer                  | 서버 번호        |            | 1 이상 100 미만 |
-| AcntId     | acme.types.unsigned      | 계정 ID          |            |                 |
-| PlayTime   | number                   | 플레이 시간 (초) | True       |                 |
-+------------+--------------------------+------------------+------------+-----------------+
 '''
     assert ans in out
 
@@ -305,11 +281,11 @@ Description : 계정 로그아웃
     out = res.output
     ans = '''
 Type : acme.types.unsigned
-Description : 0 이상 정수
+Description : 0 이상의 정수
 +------------+---------------+------------+
 | BaseType   | Description   | Restrict   |
 |------------+---------------+------------|
-| integer    | 0 이상 정수   | 0 이상     |
+| integer    | 0 이상의 정수 | 0 이상     |
 +------------+---------------+------------+
 '''
     assert ans in out
@@ -516,6 +492,45 @@ def test_imp_verify(clear):
     write_log(fake_log, log)
     res = runner.invoke(verify, ['boo.log.schema.json', fake_log])
     assert res.exit_code == 0
+
+
+def test_desc(clear):
+    """설명 찾기."""
+    copy_files(['boo2.lab.json', 'acme3.lab.json', 'bcom.lab.json'])
+
+    runner = CliRunner()
+    res = runner.invoke(show, ['boo2.lab.json'])
+    out = res.output
+    ans = '''Event : Login
+Description : 계정 로그인
++------------+----------+---------------+-----------------+
+| Field      | Type     | Description   | Restrict        |
+|------------+----------+---------------+-----------------|
+| DateTime   | datetime | 이벤트 일시   |                 |
+| BcomAcntId | integer  | BCOM 계정 ID  | 0 이상          |
+| ServerNo   | integer  | 서버 번호     | 1 이상 100 미만 |
+| AcntId     | integer  | 계정 ID       | 0 이상          |
+| Platform   | string   | PC의 플랫폼   | win, mac, linux |
+|            |          |               | 중 하나         |
++------------+----------+---------------+-----------------+
+
+Event : Logout
+Description : 계정 로그아웃 ACME BASE
++------------+----------+------------------+------------+-----------------+
+| Field      | Type     | Description      | Optional   | Restrict        |
+|------------+----------+------------------+------------+-----------------|
+| DateTime   | datetime | 이벤트 일시      |            |                 |
+| BcomAcntId | integer  | BCOM 계정 ID     |            | 0 이상          |
+| ServerNo   | integer  | 서버 번호        |            | 1 이상 100 미만 |
+| AcntId     | integer  | 계정 ID          |            | 0 이상          |
+| PlayTime   | number   | 플레이 시간 (초) | True       |                 |
++------------+----------+------------------+------------+-----------------+
+'''
+    assert ans in out
+
+    ans = '''Event : acme.Logout
+Description : 계정 로그아웃'''
+    assert ans not in out
 
 
 def test_fetch():
