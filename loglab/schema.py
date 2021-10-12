@@ -44,33 +44,6 @@ def verify_labfile(lab_path, scm_path=None, err_exit=True):
         return lab
 
 
-def handle_import(labfile, labjs):
-    """랩 파일이 참고하는 외부 랩 파일 가져오기.
-
-    Args:
-        labfile (str): 랩 파일 경로
-        labjs (dict): 랩 데이터
-
-    """
-    if 'import' not in labjs:
-        return labjs
-
-    if '_imported_' not in labjs:
-        labjs['_imported_'] = []
-
-    for imp in labjs['import']:
-        path = f'{imp}.lab.json'
-        if not os.path.isfile(path):
-            raise FileNotFoundError(path)
-
-        with open(path, 'rt', encoding='utf8') as f:
-            body = f.read()
-            data = json.loads(body)
-            if 'import' in data:
-                handle_import(labfile, data)
-            labjs['_imported_'].append(AttrDict(data))
-
-
 def log_schema_from_labfile(data):
     """랩 데이터에서 로그용 JSON 스키마 생성.
 

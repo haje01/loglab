@@ -1,5 +1,7 @@
 """랩 파일 Document Object Model."""
+import os
 import copy
+import json
 from json.encoder import py_encode_basestring
 
 from loglab.util import BUILTIN_TYPES, AttrDict, DefaultOrderedDict
@@ -173,7 +175,6 @@ def _find_mixin(path, _bases, _events):
     for e in _refer[name]:
         if e[0] == _path:
             return name, e
-    import pdb; pdb.set_trace()
     raise Exception(f"Can not find minxin path {path}")
 
 
@@ -278,3 +279,48 @@ def build_dom(data, use_ctype=False):
     _build_events(data, None, types, bases, events, use_ctype)
     return AttrDict(dict(domain=domain, types=types, bases=bases,
                     events=events))
+
+
+def handle_import(labjs):
+    """랩 파일이 참고하는 외부 랩 파일 가져오기.
+
+    Args:
+        labjs (dict): 랩 데이터
+
+    """
+    if 'import' not in labjs:
+        return labjs
+
+    if '_imported_' not in labjs:
+        labjs['_imported_'] = []
+
+    for imp in labjs['import']:
+        path = f'{imp}.lab.json'
+        if not os.path.isfile(path):
+            raise FileNotFoundError(path)
+
+        with open(path, 'rt', encoding='utf8') as f:
+            body = f.read()
+            data = json.loads(body)
+            if 'import' in data:
+                handle_import(data)
+            labjs['_imported_'].append(AttrDict(data))
+
+
+def _handle_import(labjs):
+    """랩 파일이 참고하는 외부 랩 파일 데이터 처리 (테스트 용).
+
+    Args:
+        labjs (dict): 랩 데이터
+
+    """
+    if 'import' not in labjs:
+        return labjs
+
+    if '_imported_' not in labjs:
+        labjs['_imported_'] = []
+
+    for idata in labjs['import']:
+        if 'import' in idata:
+            _handle_import(idata)
+        labjs['_imported_'].append(AttrDict(idata))

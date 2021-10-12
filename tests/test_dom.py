@@ -1,7 +1,8 @@
 import pytest
 import copy
 
-from loglab.dom import _build_domain, _build_types, _build_bases, _build_events
+from loglab.dom import _build_domain, _build_types, _build_bases, _build_events\
+     , build_dom, _handle_import
 
 
 def test_domain():
@@ -850,3 +851,137 @@ def test_excpt():
     }
     with pytest.raises(Exception, match="not find mixin 'asdf' in bases"):
         _build_events(data)
+
+
+def test_desc():
+    acme = {
+        "domain": {
+            "name": "acme",
+            "desc": "최고의 게임 회사"
+        },
+        "events": {
+            "Login": {
+            }
+        }
+    }
+    boo = {
+        "domain": {
+            "name": "boo",
+            "desc": "최고의 PC 온라인 게임"
+        },
+        "import": [acme],
+        "events": {
+            "Login": {
+                "mixins": ["acme.events.Login"],
+            }
+        }
+    }
+    with pytest.raises(Exception, match='Can not resolve description'):
+        _handle_import(boo)
+        boo = build_dom(boo)
+
+    acme = {
+        "domain": {
+            "name": "acme",
+            "desc": "최고의 게임 회사"
+        },
+        "events": {
+            "Login": {
+                "desc": "ACME 계정 로그인",
+            }
+        }
+    }
+    boo = {
+        "domain": {
+            "name": "boo",
+            "desc": "최고의 PC 온라인 게임"
+        },
+        "import": [acme],
+        "events": {
+            "Login": {
+                "mixins": ["acme.events.Login"],
+            }
+        }
+    }
+    _handle_import(boo)
+    boo = build_dom(boo)
+    assert boo.events.Login[-1][1]['desc'] == 'ACME 계정 로그인'
+
+    bcom = {
+        "domain": {
+            "name": "bcom",
+            "desc": "최고의 회사"
+        },
+        "events": {
+            "Login": {
+                "desc": "BCOM 계정 로그인",
+            }
+        }
+    }
+    acme = {
+        "domain": {
+            "name": "acme",
+            "desc": "최고의 게임 회사"
+        },
+        "import": [bcom],
+        "events": {
+            "Login": {
+                "mixins": ["bcom.events.Login"],
+            }
+        }
+    }
+    boo = {
+        "domain": {
+            "name": "boo",
+            "desc": "최고의 PC 온라인 게임"
+        },
+        "import": [acme],
+        "events": {
+            "Login": {
+                "mixins": ["acme.events.Login"],
+            }
+        }
+    }
+    _handle_import(boo)
+    boo = build_dom(boo)
+    assert boo.events.Login[-1][1]['desc'] == 'BCOM 계정 로그인'
+
+    acme = {
+        "domain": {
+            "name": "acme",
+            "desc": "최고의 게임 회사"
+        },
+        "events": {
+            "Login": {
+            }
+        }
+    }
+    boo = {
+        "domain": {
+            "name": "boo",
+            "desc": "최고의 PC 온라인 게임"
+        },
+        "import": [acme],
+        "bases": {
+            "Server": {
+                "desc": "서버 정보",
+                "fields": [
+                    ["ServerNo", "integer", "서버 번호"]
+                ]
+            },
+            "Account": {
+                "desc": "계정 정보",
+                "fields": [
+                    ["AcntId", "integer", "계정 번호"]
+                ]
+            }
+        },
+        "events": {
+            "Login": {
+                "mixins": ["acme.events.Login", "bases.Server", "bases.Account"]
+            }
+        }
+    }
+    _handle_import(boo)
+    boo = build_dom(boo)
+    assert boo.events.Login[-1][1]['desc'] == '서버 정보'
