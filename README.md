@@ -267,6 +267,8 @@ Description : 계정 로그인
 }
 ```
 
+> 앞으로 필드 이름의 접미사 **아이디 (Id)** 는 임의의 값으로 특정 개체를 가리키는 용도로, **코드 (Cd)** 는 미리 정해진 값으로 특정 범주값을 가리키는데 사용하겠다. 
+
 이제 `show` 명령을 내려보면,
 
 ```
@@ -707,7 +709,7 @@ Description : 캐릭터 로그아웃
       "mixins": ["bases.Server"],
       "fields": [
         ["MonsterCd", "integer", "몬스터 타입 코드"],
-        ["MonsterId", "integer", "몬스터 게체 ID"]
+        ["MonsterId", "integer", "몬스터 개체 ID"]
       ]
     }
 
