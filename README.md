@@ -161,7 +161,8 @@ $ loglab version
 
 이제 작업 디텍토리에서 `loglab` 의 `show` 명령을 사용할텐데, 먼저 `--help` 옵션을 통해 도움말을 살펴보자.
 
-```$ loglab show --help
+```
+$ loglab show --help
 Usage: loglab show [OPTIONS] LABFILE
 
   로그 구성 요소 출력.
