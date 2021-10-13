@@ -936,13 +936,14 @@ Description : 계정 로그아웃
 제약문은 필드의 기본 타입별로 아래와 같은 것들이 있다.
 
 **`integer` 또는 `number`**
+  - `enum` : 허용하는 나열값
   - `minimum` : 포함하는 최소값
   - `maximum` : 포함하는 최대값
   - `exclusiveMinimum` : 제외하는 최소값
   - `exclusiveMaximum` : 제외하는 최대값
 
 **`string`**
-  - `enum` : 허용하는 문자열의 나열값
+  - `enum` : 허용하는 나열값
   - `minLength` : 문자열의 최소 길이
   - `maxLength` : 문자열의 최대 길이
   - `pattern` : 허용하는 문자열의 정규식 패턴
