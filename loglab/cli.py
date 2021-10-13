@@ -31,7 +31,7 @@ def version():
               help="커스텀 타입 그대로 출력")
 @click.option('-n', '--name', help="출력할 요소 이름 패턴")
 @click.option('-k', '--keep-text', is_flag=True, default=False,
-              help="긴 문자열 필링 않음")
+              help="긴 문자열 그대로 출력")
 def show(labfile, custom_type, name, keep_text):
     """로그 구성 요소 출력."""
     # labfile = find_labfile(labfile)
