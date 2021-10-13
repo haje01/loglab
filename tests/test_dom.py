@@ -985,3 +985,47 @@ def test_desc():
     _handle_import(boo)
     boo = build_dom(boo)
     assert boo.events.Login[-1][1]['desc'] == '서버 정보'
+
+
+def test_multi_imp():
+    acme = {
+        "domain": {
+            "name": "acme",
+            "desc": "최고의 게임 회사"
+        },
+        "events": {
+            "Login": {
+                "desc": "ACME 로그인",
+            }
+        }
+    }
+    payme = {
+        "domain": {
+            "name": "payme",
+            "desc": "최고의 결제 회사"
+        },
+        "events": {
+            "Charge": {
+                "desc": "PAYME 충전"
+            }
+        }
+    }
+    boo = {
+        "domain": {
+            "name": "boo",
+            "desc": "최고의 PC 온라인 게임"
+        },
+        "import": [acme, payme],
+        "events": {
+            "Login": {
+                "mixins": ["acme.events.Login"],
+            },
+            "Charge": {
+                "mixins": ["payme.events.Charge"],
+            }
+        }
+    }
+    _handle_import(boo)
+    boo = build_dom(boo)
+    assert 'Login' in boo['events'].keys()
+    assert 'Charge' in boo['events'].keys()

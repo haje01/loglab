@@ -4,7 +4,7 @@ import copy
 import json
 from json.encoder import py_encode_basestring
 
-from loglab.util import BUILTIN_TYPES, AttrDict, DefaultOrderedDict
+from loglab.util import BUILTIN_TYPES, AttrDict, OrderedDefaultDict
 
 
 def _build_domain(data):
@@ -15,7 +15,7 @@ def _build_domain(data):
 
 def _build_types(data, _dnames=None, _types=None):
     if _types is None:
-        _types = DefaultOrderedDict(list)
+        _types = OrderedDefaultDict(list)
 
     if _dnames is None:
         _dnames = []
@@ -62,7 +62,7 @@ def _flat_fields(data, _types, _dnames, for_event=False, use_ctype=False):
         data = copy.deepcopy(data)
 
     def _is_flat(fdata):
-        if type(fdata) is not DefaultOrderedDict:
+        if type(fdata) is not OrderedDefaultDict:
             return False
         if len(fdata) == 0:
             return True
@@ -71,7 +71,7 @@ def _flat_fields(data, _types, _dnames, for_event=False, use_ctype=False):
     if _is_flat(data['fields']):
         return data
 
-    fields = DefaultOrderedDict(list)
+    fields = OrderedDefaultDict(list)
     if for_event:
         tdata = dict(type='datetime', desc='이벤트 일시')
         fields['DateTime'].append(['', tdata])
@@ -123,7 +123,7 @@ def _resolve_mixins(name, _dnames, _bases, _events=None, for_event=False):
     if 'mixins' not in data:
         return data
 
-    fields = DefaultOrderedDict(list)
+    fields = OrderedDefaultDict(list)
     if for_event:
         tdata = dict(type='datetime', desc='이벤트 일시')
         fields['DateTime'].append(['', tdata])
@@ -146,7 +146,8 @@ def _resolve_mixins(name, _dnames, _bases, _events=None, for_event=False):
     # resolve desc
     if 'desc' not in data:
         if mdesc is None:
-            raise Exception(f"Can not resolve description for '{name}'.")
+            raise Exception(f"'Can not resolve description for '{name}'.")
+
         data['desc'] = mdesc
 
     # then own fields
@@ -175,7 +176,7 @@ def _find_mixin(path, _bases, _events):
     for e in _refer[name]:
         if e[0] == _path:
             return name, e
-    raise Exception(f"Can not find minxin path {path}")
+    raise Exception(f"Can not find mixin path '{path}'")
 
 
 # def _resolve_import(data):
@@ -187,9 +188,9 @@ def _find_mixin(path, _bases, _events):
 def _build_bases(data, _dnames=None, _types=None, _bases=None, use_ctype=False):
     """베이스 요소 빌드."""
     if _types is None:
-        _types = DefaultOrderedDict(list)
+        _types = OrderedDefaultDict(list)
     if _bases is None:
-        _bases = DefaultOrderedDict(list)
+        _bases = OrderedDefaultDict(list)
     if _dnames is None:
         _dnames = []
 
@@ -206,7 +207,7 @@ def _build_bases(data, _dnames=None, _types=None, _bases=None, use_ctype=False):
     if 'bases' not in data:
         return _bases
 
-    # normalize fields
+    # flatten fields
     nbdata = {}
     for bname, bdata in data['bases'].items():
         path = '.'.join(_dnames)
@@ -224,11 +225,11 @@ def _build_events(data, _dnames=None, _types=None, _bases=None, _events=None,
                   use_ctype=False):
     """이벤트 및 관련 요소들 빌드."""
     if _types is None:
-        _types = DefaultOrderedDict(list)
+        _types = OrderedDefaultDict(list)
     if _bases is None:
-        _bases = DefaultOrderedDict(list)
+        _bases = OrderedDefaultDict(list)
     if _events is None:
-        _events = DefaultOrderedDict(list)
+        _events = OrderedDefaultDict(list)
     if _dnames is None:
         _dnames = []
     data = copy.deepcopy(data)
@@ -239,7 +240,6 @@ def _build_events(data, _dnames=None, _types=None, _bases=None, _events=None,
             dname = idata['domain']['name']
             _build_events(idata, _dnames + [dname], _types, _bases, _events,
                           use_ctype=use_ctype)
-
     if 'types' in data:
         _build_types(data, _dnames, _types)
 
@@ -273,9 +273,9 @@ def build_dom(data, use_ctype=False):
     """
     domain = _build_domain(data)
 
-    types = DefaultOrderedDict(list)
-    bases = DefaultOrderedDict(list)
-    events = DefaultOrderedDict(list)
+    types = OrderedDefaultDict(list)
+    bases = OrderedDefaultDict(list)
+    events = OrderedDefaultDict(list)
     _build_events(data, None, types, bases, events, use_ctype)
     return AttrDict(dict(domain=domain, types=types, bases=bases,
                     events=events))

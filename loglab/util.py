@@ -34,9 +34,7 @@ class AttrDict(dict):
             self[key] = from_nested_dict(self[key])
 
 
-from collections import OrderedDict, Callable
-
-class DefaultOrderedDict(OrderedDict):
+class OrderedDefaultDict(OrderedDict):
     # Source: http://stackoverflow.com/a/6190500/562769
     def __init__(self, default_factory=None, *a, **kw):
         if (default_factory is not None and

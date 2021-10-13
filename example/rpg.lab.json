@@ -4,7 +4,7 @@
         "name": "rpg",
         "desc": "MMORPG 게임 로그 샘플"
     },
-    "import": ["webzen.lab.json"],
+    "import": ["common"],
     "types": {
         "stringId": {
             "type": "string",
@@ -193,7 +193,7 @@
                 ["CharName", "string", "캐릭터 이름"],
                 ["CharLevel", "types.unsigned", "캐릭터 레벨"]
             ]
-        }, 
+        },
         "Location": {
             "desc": "맵상 위치 정보",
             "fields": [

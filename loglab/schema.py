@@ -219,7 +219,6 @@ def verify_logfile(schema, logfile):
                 sys.exit(1)
 
             if 'Event' not in log or log['Event'] not in evt_scm:
-                import pdb; pdb.set_trace()
                 print("Error: 스키마에서 이벤트를 찾을 수 없습니다")
                 print(f"Line {lno}: {line}")
                 sys.exit(1)
