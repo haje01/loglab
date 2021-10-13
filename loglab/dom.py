@@ -3,8 +3,9 @@ import os
 import copy
 import json
 from json.encoder import py_encode_basestring
+from collections import defaultdict 
 
-from loglab.util import BUILTIN_TYPES, AttrDict, OrderedDefaultDict
+from loglab.util import BUILTIN_TYPES, AttrDict
 
 
 def _build_domain(data):
@@ -15,7 +16,7 @@ def _build_domain(data):
 
 def _build_types(data, _dnames=None, _types=None):
     if _types is None:
-        _types = OrderedDefaultDict(list)
+        _types = defaultdict(list)
 
     if _dnames is None:
         _dnames = []
@@ -62,7 +63,7 @@ def _flat_fields(data, _types, _dnames, for_event=False, use_ctype=False):
         data = copy.deepcopy(data)
 
     def _is_flat(fdata):
-        if type(fdata) is not OrderedDefaultDict:
+        if type(fdata) is not defaultdict:
             return False
         if len(fdata) == 0:
             return True
@@ -71,7 +72,7 @@ def _flat_fields(data, _types, _dnames, for_event=False, use_ctype=False):
     if _is_flat(data['fields']):
         return data
 
-    fields = OrderedDefaultDict(list)
+    fields = defaultdict(list)
     if for_event:
         tdata = dict(type='datetime', desc='이벤트 일시')
         fields['DateTime'].append(['', tdata])
@@ -123,7 +124,7 @@ def _resolve_mixins(name, _dnames, _bases, _events=None, for_event=False):
     if 'mixins' not in data:
         return data
 
-    fields = OrderedDefaultDict(list)
+    fields = defaultdict(list)
     if for_event:
         tdata = dict(type='datetime', desc='이벤트 일시')
         fields['DateTime'].append(['', tdata])
@@ -188,9 +189,9 @@ def _find_mixin(path, _bases, _events):
 def _build_bases(data, _dnames=None, _types=None, _bases=None, use_ctype=False):
     """베이스 요소 빌드."""
     if _types is None:
-        _types = OrderedDefaultDict(list)
+        _types = defaultdict(list)
     if _bases is None:
-        _bases = OrderedDefaultDict(list)
+        _bases = defaultdict(list)
     if _dnames is None:
         _dnames = []
 
@@ -225,11 +226,11 @@ def _build_events(data, _dnames=None, _types=None, _bases=None, _events=None,
                   use_ctype=False):
     """이벤트 및 관련 요소들 빌드."""
     if _types is None:
-        _types = OrderedDefaultDict(list)
+        _types = defaultdict(list)
     if _bases is None:
-        _bases = OrderedDefaultDict(list)
+        _bases = defaultdict(list)
     if _events is None:
-        _events = OrderedDefaultDict(list)
+        _events = defaultdict(list)
     if _dnames is None:
         _dnames = []
     data = copy.deepcopy(data)
@@ -273,9 +274,9 @@ def build_dom(data, use_ctype=False):
     """
     domain = _build_domain(data)
 
-    types = OrderedDefaultDict(list)
-    bases = OrderedDefaultDict(list)
-    events = OrderedDefaultDict(list)
+    types = defaultdict(list)
+    bases = defaultdict(list)
+    events = defaultdict(list)
     _build_events(data, None, types, bases, events, use_ctype)
     return AttrDict(dict(domain=domain, types=types, bases=bases,
                     events=events))

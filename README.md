@@ -90,7 +90,7 @@ DB에 남기는 로그는 잘 구조화되어 정보 활용 측면에서 뛰어�
 
 ## 설치
 
-LogLab의 설치를 위해서는 최소 Python 3.6 이상이 필요하다. 설치되어 있지 않다면 [이곳](https://www.python.org/) 에서 최신 버전의 파이썬을 설치하도록 하자.
+LogLab의 설치를 위해서는 최소 Python 3.7 이상이 필요하다. 설치되어 있지 않다면 [이곳](https://www.python.org/) 에서 최신 버전의 파이썬을 설치하도록 하자.
 
 LogLab 의 홈페이지는 https://github.com/haje01/loglab 이다. 다음과 같이 설치하자.
 

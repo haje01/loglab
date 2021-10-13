@@ -21,7 +21,7 @@ setup(
     url="https://github.com/haje01/loglab",
     description="Tools that help you design and utilize log formats",
     platforms=["any"],
-    python_requires='>=3.6',
+    python_requires='>=3.7',
     packages=['loglab'],
     scripts=SCRIPTS,
     license='MIT License',
