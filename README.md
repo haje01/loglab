@@ -1329,12 +1329,12 @@ foo.flow.schema.json 에 플로우 스키마 저장
 생성된 로그 스키마를 이용해 `verify` 명령으로 검증을 수행한다.
 
 ```
-$ loglab verify foo.schema.json fakelog.txt
+$ loglab verify foo.log.schema.json fakelog.txt
 Error: [Line: 1] 'Platform' is a required property
 {'DateTime': '2021-08-13T20:20:39+09:00', 'Event': 'Login', 'ServerNo': 1, 'AcntId': 1000}
 ```
 
-`fakelog.txt` 첫 번째 줄의 `Login` 이벤트에서 필수인 `Platform` 필드가 빠졌기 때문에 에러가 발생한다. 다음과 같이 수정한다.
+`fakelog.txt` 첫 번째 줄의 `Login` 이벤트에서 필수 필드인 `Platform` 가 빠졌다는 에러 메시지가 출력된다. 다음과 같이 수정해보자.
 
 ```js
 {"DateTime": "2021-08-13T20:20:39+09:00", "Event": "Login", "ServerNo": 1, "AcntId": 1000, "Platform": "win"}
@@ -1373,7 +1373,7 @@ $ loglab verify fakelog.txt
 
 지금까지 예로든 게임 `foo` 를 만드는 `acme` 라는 회사에서, 새로운 PC 온라인 게임 `boo` 를 출시한다고 하자. `boo` 는 `foo` 와 유사하지만 다른 점도 꽤 있다.
 
-회사는 앞으로도 다양한 서비스를 만들고 거기서 나오는 데이터를 처리/분석할 것이기에, 효율성을 위해 **로그의 기본 구조를 표준화** 하고 싶다. 이런 경우 조직 내에서 꼭 필요로하는 로그 구조를 공용 랩 파일로 만든 뒤, 이것을 `foo` 와 `boo` 가 공유하고 확장해 나가는 방식으로 가능할 것이다.
+회사는 앞으로도 다양한 서비스를 만들고 거기서 나오는 데이터를 처리/분석할 것이기에, 효율성을 위해 **로그의 기본 구조를 표준화** 하고 싶다. 이런 경우 조직 내에서 꼭 필요로하는 로그 구조를 **공용 랩 파일** 로 만든 뒤, 이것을 `foo` 와 `boo` 가 공유하고 확장해 나가는 방식으로 가능할 것이다.
 
 ## 공용 랩 파일 만들기
 
