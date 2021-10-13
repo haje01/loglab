@@ -37,6 +37,7 @@ setup(
             'pytest',
             'coverage',
             'pyinstaller',
+            'tox'
         ],
     },
     classifiers=[
