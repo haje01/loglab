@@ -1746,6 +1746,6 @@ $ sh tools/build.sh
 
 랩 파일 : https://raw.githubusercontent.com/haje01/loglab/master/example/rpg.lab.json
 
-HTML 보기 : https://htmlpreview.github.io/?https://raw.githubusercontent.com/haje01/loglab/master/example/rpg.html
+HTML 보기 : http://htmlpreview.github.io/?https://raw.githubusercontent.com/haje01/loglab/master/example/rpg.html#
 
 [TODO]
