@@ -138,7 +138,7 @@ tr:nth-child(even) {
   {% if types is defined %}
     <a href="javascript:void(0)" class="sidebar-menu" id="sidebar-type" onclick="toggleItems('type')">Types</a>
     {% for i in dom.types.keys() %}
-        <a href="#" class="sidebar-item type">{{ i }}</a>
+        <a href="#type-{{ i }}" class="sidebar-item type">{{ i }}</a>
     {% endfor %}
   {% endif %}
   <a href="javascript:void(0)" class="sidebar-menu" id="sidebar-event"  onclick="toggleItems('event')">Events</a>
