@@ -1644,7 +1644,7 @@ Description : 서버 가용 메모리.
 예를 들어 캐릭터 관련 이벤트만 보고 싶다면,
 
 ```
-$ loglab show -n Char
+$ loglab show foo.lab.json -n Char
 
 Domain : foo
 Description : 위대한 모바일 게임
@@ -1675,7 +1675,7 @@ Description : 캐릭터 로그아웃
 다음과 같이 하면 이름에 `types` 가 들어가는 요소들, 즉 타입들만 볼 수 있다.
 
 ```
-$ loglab show -c -n types
+$ loglab show foo.lab.json -c -n types
 
 Domain : foo
 Description : 위대한 모바일 게임
@@ -1698,7 +1698,7 @@ Description : Id 타입
 로그의 설계, 개발 그리고 검증 작업이 끝난 후에는, 유관 조직에 로그에 관한 설명서를 공유해야 할 필요가 생긴다. 이런 경우 로그랩의 HTML 출력 기능을 사용하면 유용하다. 다음과 같은 명령으로 간단히 생성할 수 있다.
 
 ```
-$ loglab html
+$ loglab html foo.lab.json
 'foo.html' 에 HTML 문서 저장.
 ```
 
