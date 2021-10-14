@@ -1,0 +1,4689 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title> rpg - LogLab Document </title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<style>
+body {
+  font-family: "Lato", sans-serif;
+}
+
+.sidebar {
+  height: 90%;
+  width: 250px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.3s;
+  padding-top: 30px;
+  padding-bottom: 100px;
+}
+
+.sidebar a {
+  text-decoration: none;
+  display: block;
+  color: yellow;
+  transition: 0.3s;
+}
+
+.sidebar-menu {
+  padding: 8px 8px 8px 30px;
+  font-size: 20px;
+  color: #ddd !important;
+}
+
+.sidebar-menu a:visited {
+  color: #ddd !important;
+}
+
+.sidebar-item {
+  padding: 8px 8px 8px 43px;
+  font-size: 14px;
+  color: #818181;
+}
+
+.sidebar a:hover {
+  color: #f1f1f1;
+}
+
+.sidebar a:hover {
+    color: orange
+}
+
+.sidebar .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 30px;
+  margin-left: 50px;
+}
+
+.openbtn {
+  font-size: 15px;
+  cursor: pointer;
+  background-color: #111;
+  color: white;
+  padding: 7px 12px;
+  border: none;
+}
+
+.closed:before {
+    content: "☰ "
+}
+
+.hidden {
+    display: none !important
+}
+
+.openbtn:hover {
+  background-color: #444;
+}
+
+#main {
+  margin-left: 250px;
+  transition: margin-left .1s;
+  padding: 16px;
+}
+
+.table-div {
+    padding: 7px 10px 15px 20px
+}
+
+.table-title1-div {
+    margin-top: 30px;
+    font-size: 17px;
+}
+
+.table-title2-div {
+    margin-top: 50px;
+    font-size: 20px;
+}
+
+table {
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 5px 7px 5px 7px;
+}
+
+th {
+  background-color: #aaaaaa;
+}
+
+tr:nth-child(even) {
+  background-color: #eeeeee;
+}
+
+/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+  .sidebar {padding-top: 15px;}
+}
+</style>
+</head>
+<body>
+
+<div id="mySidebar" class="sidebar">
+  <svg version="1" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 300 300" style="margin-left:auto; margin-right:auto; display:block"><g fill="#353535"><path d="M272.3 1.1c-5.9 1.1-9.6 3.2-13.6 7.9-14.5 17 2.2 43 23.9 37.1 4.7-1.3 11.8-7 14.1-11.5 8.9-17-5.5-36.8-24.4-33.5zM283 11.5c4.5 2.3 7 6.6 7 12 0 5.8-2.2 9.7-7 12.4-6.4 3.6-13.8 2-17.9-3.7-4.5-6.4-3.6-13.8 2.5-19.2 2.8-2.4 4.4-3 8-3 2.5 0 5.8.7 7.4 1.5zM167.5 30.9c-5.9 2.7-24 21.7-25.4 26.7-1.5 5.2-1.3 11.1.4 15.9.8 2.1 1.3 4 1.2 4.1-.1.1-28.9 11.7-64.1 25.8-35.1 14-65.6 26.7-67.7 28.1-7.1 5-10.9 13-10.9 22.9 0 11.8-1.4 10.1 66.8 77.6 45.4 44.9 63.5 62.2 67.3 64.2 10.7 5.8 25.4 2.9 33.3-6.4 2.7-3.2 9.1-17.9 29.1-68.2 14.1-35.2 25.8-64.2 25.9-64.4.2-.1 2 .5 4.2 1.4 4.9 2.1 12.9 2.1 17.9 0 4.7-2 21.9-18.7 24.8-24.1 3.2-6.1 3-15.6-.5-21.5-3.9-6.6-78.4-80.5-83-82.5-5.1-2.1-14.3-1.9-19.3.4zm49.2 53.3C245.9 113.3 254 122 254 124c0 3.1-14.4 18-17.5 18-1.2 0-5.4-3.4-10.5-8.5-4.7-4.7-8.8-8.5-9.1-8.5-.4 0-3.3 6.5-6.5 14.5-3.1 8-5.9 14.5-6.1 14.5-.2 0-3.9-2.9-8.3-6.4-18.2-14.8-36-22.2-63-26-30.4-4.2-35-5-34.3-5.7.4-.4 17.9-7.6 38.8-15.9 20.9-8.4 38.2-15.4 38.4-15.6.3-.2-3.5-4.4-8.2-9.3-4.8-4.9-8.7-9.4-8.7-10.1 0-2.2 16.2-18 18.4-18 1.3 0 14.6 12.6 39.3 37.2zM94.5 124.8c5 1.2 16.4 3 25.5 4.2 30.6 4 44.8 8.3 59.6 17.9 9.8 6.4 20.4 15.5 20.4 17.5 0 .7-9.9 26.2-22 56.7-16 40.2-22.8 56-24.6 57.6-1.6 1.5-3.8 2.3-6.2 2.3-4 0 2.1 5.8-90-85.5C22.6 161.1 19 157.2 19 154.3c0-6.4 3.2-8.3 34-20.7 15.7-6.3 29.4-11.3 30.5-11.1 1.1.1 6.1 1.2 11 2.3z"/><path d="M86.5 142.4c-1.7.7-4.5 2.9-6.2 4.9-8.7 9.9-5.3 24 6.9 29.2 15.5 6.4 31.1-11.2 23-26-1.6-3-6.4-7.2-9.5-8.4-3.8-1.5-10.5-1.3-14.2.3zm13.4 10.2c6 5 3 14.8-5 16-2.8.5-4.1.1-6.7-2.1-2.7-2.2-3.2-3.4-3.2-6.8.1-8.7 8.3-12.7 14.9-7.1zm49.1-1.7c-11.1 3.6-17 11.5-17 22.8 0 17.2 17.6 28 33.1 20.2 4.9-2.4 10.7-9.3 12-14.3 3.7-13.7-6.3-28.1-20.2-29.1-3-.3-6.5-.1-7.9.4zm11.6 9.7c7 3.4 10 11.4 6.9 18.5-4.7 10.2-19.9 10.8-25 .9-2.5-4.8-1.9-11.3 1.2-15.1 4.8-5.6 10.8-7.2 16.9-4.3zM118.4 207c-4.9 2-7 9.3-3.9 13.6 5.1 7.4 16.5 3.7 16.5-5.3 0-6.1-7-10.7-12.6-8.3zM266.3 67.8c-3.5 2.7-4.5 6.7-2.9 10.7 2.7 6.3 9.7 7.5 14.8 2.5 2.6-2.7 3-3.6 2.5-6.8-1.2-7-9.1-10.6-14.4-6.4z"/></g></svg>
+
+  
+    <a href="javascript:void(0)" class="sidebar-menu" id="sidebar-type" onclick="toggleItems('type')">Types</a>
+    
+        <a href="#" class="sidebar-item type">stringId</a>
+    
+        <a href="#" class="sidebar-item type">unsigned</a>
+    
+        <a href="#" class="sidebar-item type">unsignedId</a>
+    
+        <a href="#" class="sidebar-item type">platformId</a>
+    
+        <a href="#" class="sidebar-item type">networkId</a>
+    
+        <a href="#" class="sidebar-item type">ipType</a>
+    
+        <a href="#" class="sidebar-item type">ip</a>
+    
+        <a href="#" class="sidebar-item type">moneyCd</a>
+    
+        <a href="#" class="sidebar-item type">normReasonCd</a>
+    
+        <a href="#" class="sidebar-item type">questStatus</a>
+    
+        <a href="#" class="sidebar-item type">dungeonStatus</a>
+    
+        <a href="#" class="sidebar-item type">dungeonGrade</a>
+    
+        <a href="#" class="sidebar-item type">joinStatus</a>
+    
+        <a href="#" class="sidebar-item type">chatChannel</a>
+    
+        <a href="#" class="sidebar-item type">reportType</a>
+    
+  
+  <a href="javascript:void(0)" class="sidebar-menu" id="sidebar-event"  onclick="toggleItems('event')">Events</a>
+  
+    <a href="#event-AcntCreate" class="sidebar-item event">AcntCreate</a>
+  
+    <a href="#event-CharCreate" class="sidebar-item event">CharCreate</a>
+  
+    <a href="#event-CharDelete" class="sidebar-item event">CharDelete</a>
+  
+    <a href="#event-AcntLogin" class="sidebar-item event">AcntLogin</a>
+  
+    <a href="#event-AcntLogout" class="sidebar-item event">AcntLogout</a>
+  
+    <a href="#event-CharLogin" class="sidebar-item event">CharLogin</a>
+  
+    <a href="#event-CharLogout" class="sidebar-item event">CharLogout</a>
+  
+    <a href="#event-CharDie" class="sidebar-item event">CharDie</a>
+  
+    <a href="#event-CharRevive" class="sidebar-item event">CharRevive</a>
+  
+    <a href="#event-ItemChg" class="sidebar-item event">ItemChg</a>
+  
+    <a href="#event-MoneyChg" class="sidebar-item event">MoneyChg</a>
+  
+    <a href="#event-ExpChg" class="sidebar-item event">ExpChg</a>
+  
+    <a href="#event-LevelChg" class="sidebar-item event">LevelChg</a>
+  
+    <a href="#event-QuestChg" class="sidebar-item event">QuestChg</a>
+  
+    <a href="#event-DungeonChg" class="sidebar-item event">DungeonChg</a>
+  
+    <a href="#event-SkillFreq" class="sidebar-item event">SkillFreq</a>
+  
+    <a href="#event-Enchant" class="sidebar-item event">Enchant</a>
+  
+    <a href="#event-Produce" class="sidebar-item event">Produce</a>
+  
+    <a href="#event-ExchgReg" class="sidebar-item event">ExchgReg</a>
+  
+    <a href="#event-ExchgBuy" class="sidebar-item event">ExchgBuy</a>
+  
+    <a href="#event-ExchgSell" class="sidebar-item event">ExchgSell</a>
+  
+    <a href="#event-ExchgUnReg" class="sidebar-item event">ExchgUnReg</a>
+  
+    <a href="#event-CashShopBuy" class="sidebar-item event">CashShopBuy</a>
+  
+    <a href="#event-CashShopSell" class="sidebar-item event">CashShopSell</a>
+  
+    <a href="#event-PartyCreate" class="sidebar-item event">PartyCreate</a>
+  
+    <a href="#event-PartyMemChg" class="sidebar-item event">PartyMemChg</a>
+  
+    <a href="#event-PartyDelete" class="sidebar-item event">PartyDelete</a>
+  
+    <a href="#event-GuildCreate" class="sidebar-item event">GuildCreate</a>
+  
+    <a href="#event-GuildMemChg" class="sidebar-item event">GuildMemChg</a>
+  
+    <a href="#event-GuildDelete" class="sidebar-item event">GuildDelete</a>
+  
+    <a href="#event-CastleWarDeclare" class="sidebar-item event">CastleWarDeclare</a>
+  
+    <a href="#event-CastleWarEnd" class="sidebar-item event">CastleWarEnd</a>
+  
+    <a href="#event-Contribute" class="sidebar-item event">Contribute</a>
+  
+    <a href="#event-MailSend" class="sidebar-item event">MailSend</a>
+  
+    <a href="#event-AttachItem" class="sidebar-item event">AttachItem</a>
+  
+    <a href="#event-AttachMoney" class="sidebar-item event">AttachMoney</a>
+  
+    <a href="#event-MailRecv" class="sidebar-item event">MailRecv</a>
+  
+    <a href="#event-Chat" class="sidebar-item event">Chat</a>
+  
+    <a href="#event-Charge" class="sidebar-item event">Charge</a>
+  
+    <a href="#event-Report" class="sidebar-item event">Report</a>
+  
+    <a href="#event-Return" class="sidebar-item event">Return</a>
+  
+
+</div>
+
+<div id="main">
+  <button class="openbtn" onclick="toggleNav()">☰</button>
+  <h1>rpg - MMORPG 게임 로그 샘플</h1>
+
+  
+    <div class="type-div">
+        
+        <div class="table-div" id="type-stringId">
+          <div class="table-title1-div">
+            <p><b>types.stringId</b> - 문자열 ID</p>
+          </div>
+            <table><tr><th>BaseType</th><th>Description</th></tr><tr><td>string</td><td>문자열 ID</td></tr></table>
+        </div>
+        
+        <div class="table-div" id="type-unsigned">
+          <div class="table-title1-div">
+            <p><b>types.unsigned</b> - 0 또는 양의 정수</p>
+          </div>
+            <table><tr><th>BaseType</th><th>Description</th><th>Restrict</th></tr><tr><td>integer</td><td>0 또는 양의 정수</td><td style="word-wrap: break-word; max-width: 30%">0 이상</td></tr></table>
+        </div>
+        
+        <div class="table-div" id="type-unsignedId">
+          <div class="table-title1-div">
+            <p><b>types.unsignedId</b> - 0 또는 양의 정수 ID</p>
+          </div>
+            <table><tr><th>BaseType</th><th>Description</th><th>Restrict</th></tr><tr><td>integer</td><td>0 또는 양의 정수 ID</td><td style="word-wrap: break-word; max-width: 30%">0 이상</td></tr></table>
+        </div>
+        
+        <div class="table-div" id="type-platformId">
+          <div class="table-title1-div">
+            <p><b>types.platformId</b> - 플랫폼 ID</p>
+          </div>
+            <table><tr><th>BaseType</th><th>Description</th><th>Restrict</th></tr><tr><td>string</td><td>플랫폼 ID</td><td style="word-wrap: break-word; max-width: 30%">ios, aos, pc 중 하나</td></tr></table>
+        </div>
+        
+        <div class="table-div" id="type-networkId">
+          <div class="table-title1-div">
+            <p><b>types.networkId</b> - 네트워크 ID</p>
+          </div>
+            <table><tr><th>BaseType</th><th>Description</th><th>Restrict</th></tr><tr><td>string</td><td>네트워크 ID</td><td style="word-wrap: break-word; max-width: 30%">wifi, 2G, 3G, 4G, 5G 중 하나</td></tr></table>
+        </div>
+        
+        <div class="table-div" id="type-ipType">
+          <div class="table-title1-div">
+            <p><b>types.ipType</b> - IP 주소 타입</p>
+          </div>
+            <table><tr><th>BaseType</th><th>Description</th><th>Restrict</th></tr><tr><td>string</td><td>IP 주소 타입</td><td style="word-wrap: break-word; max-width: 30%">IPv4, IPv6, Unknown 중 하나</td></tr></table>
+        </div>
+        
+        <div class="table-div" id="type-ip">
+          <div class="table-title1-div">
+            <p><b>types.ip</b> - IP 주소</p>
+          </div>
+            <table><tr><th>BaseType</th><th>Description</th></tr><tr><td>string</td><td>IP 주소</td></tr></table>
+        </div>
+        
+        <div class="table-div" id="type-moneyCd">
+          <div class="table-title1-div">
+            <p><b>types.moneyCd</b> - 돈 종류 코드</p>
+          </div>
+            <table><tr><th>BaseType</th><th>Description</th><th>Restrict</th></tr><tr><td>integer</td><td>돈 종류 코드</td><td style="word-wrap: break-word; max-width: 30%">10 (귀속 게임 머니), 20 (게임 머니), 30 (귀속 유료 머니), 40 (유료 머니), 50 (포인트) 중 하나</td></tr></table>
+        </div>
+        
+        <div class="table-div" id="type-normReasonCd">
+          <div class="table-title1-div">
+            <p><b>types.normReasonCd</b> - 일반 원인 코드</p>
+          </div>
+            <table><tr><th>BaseType</th><th>Description</th><th>Restrict</th></tr><tr><td>integer</td><td>일반 원인 코드</td><td style="word-wrap: break-word; max-width: 30%">0 (알수 없음), 10 (시스템), 20 (GM), 30 (사용), 40 (드랍), 50 (채집), 60 (전투), 70 (퀘스트), 80 (던전), 90 (상점), 100 (유료 상점), 110 (거래소), 120 (강화), 130 (길드), 140 (우편), 150 (펫) 중 하나</td></tr></table>
+        </div>
+        
+        <div class="table-div" id="type-questStatus">
+          <div class="table-title1-div">
+            <p><b>types.questStatus</b> - 퀘스트 상태</p>
+          </div>
+            <table><tr><th>BaseType</th><th>Description</th><th>Restrict</th></tr><tr><td>string</td><td>퀘스트 상태</td><td style="word-wrap: break-word; max-width: 30%">take (획득), start (시작), cancel (취소), done (종료) 중 하나</td></tr></table>
+        </div>
+        
+        <div class="table-div" id="type-dungeonStatus">
+          <div class="table-title1-div">
+            <p><b>types.dungeonStatus</b> - 던전 상태</p>
+          </div>
+            <table><tr><th>BaseType</th><th>Description</th><th>Restrict</th></tr><tr><td>string</td><td>던전 상태</td><td style="word-wrap: break-word; max-width: 30%">enter (입장), cancel (취소), done (완료), death (사망) 중 하나</td></tr></table>
+        </div>
+        
+        <div class="table-div" id="type-dungeonGrade">
+          <div class="table-title1-div">
+            <p><b>types.dungeonGrade</b> - 던전 완료 등급</p>
+          </div>
+            <table><tr><th>BaseType</th><th>Description</th><th>Restrict</th></tr><tr><td>string</td><td>던전 완료 등급</td><td style="word-wrap: break-word; max-width: 30%">s, a, b, c, f 중 하나</td></tr></table>
+        </div>
+        
+        <div class="table-div" id="type-joinStatus">
+          <div class="table-title1-div">
+            <p><b>types.joinStatus</b> - 단체 가입 상태</p>
+          </div>
+            <table><tr><th>BaseType</th><th>Description</th><th>Restrict</th></tr><tr><td>string</td><td>단체 가입 상태</td><td style="word-wrap: break-word; max-width: 30%">enter (가입), exit (탈퇴) 중 하나</td></tr></table>
+        </div>
+        
+        <div class="table-div" id="type-chatChannel">
+          <div class="table-title1-div">
+            <p><b>types.chatChannel</b> - 채팅 채널</p>
+          </div>
+            <table><tr><th>BaseType</th><th>Description</th><th>Restrict</th></tr><tr><td>integer</td><td>채팅 채널</td><td style="word-wrap: break-word; max-width: 30%">0 (현재), 1 (월드), 2 (파티), 3 (길드), 4 (확성기) 중 하나</td></tr></table>
+        </div>
+        
+        <div class="table-div" id="type-reportType">
+          <div class="table-title1-div">
+            <p><b>types.reportType</b> - 신고 종류</p>
+          </div>
+            <table><tr><th>BaseType</th><th>Description</th><th>Restrict</th></tr><tr><td>integer</td><td>신고 종류</td><td style="word-wrap: break-word; max-width: 30%">1 (욕설), 2 (광고), 3 (매크로 사용), 4 (기타 어뷰징), 5 (작업장), 6 (개인 정보 요청), 7 (불법/불건전 정보), 99 (기타) 중 하나</td></tr></table>
+        </div>
+        
+    </div>
+  
+
+  <div class="event-div">
+    
+    <div class="table-div" id="event-AcntCreate">
+      <div class="table-title2-div">
+        <p><b>AcntCreate</b> - 계정 생성</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>WebzenId</td>
+<td style="text-align: center">webzen.types.stringId</td>
+<td>웹젠 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>ClientIpType</td>
+<td style="text-align: center">types.ipType</td>
+<td>클라이언트 IP 타입</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ClientIp</td>
+<td style="text-align: center">types.ip</td>
+<td>클라이언트 IP (ClientIpType 에 맞게)</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AppId</td>
+<td style="text-align: center">types.stringId</td>
+<td>앱 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ClientVer</td>
+<td style="text-align: center">types.stringId</td>
+<td>클라이언트 앱 버전</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>DevicePlatform</td>
+<td style="text-align: center">types.platformId</td>
+<td>디바이스 플랫폼</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>DeviceOsVer</td>
+<td style="text-align: center">string</td>
+<td>디바이스 OS 버전</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>DeviceName</td>
+<td style="text-align: center">string</td>
+<td>디바이스 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Channel</td>
+<td style="text-align: center">string</td>
+<td>접속 채널(루트)</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>TelecomId</td>
+<td style="text-align: center">types.stringId</td>
+<td>통신사 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Network</td>
+<td style="text-align: center">types.networkId</td>
+<td>네트워크 종류</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>ScreenWidth</td>
+<td style="text-align: center">types.unsigned</td>
+<td>디바이스 화면 너비</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>ScreenHeight</td>
+<td style="text-align: center">types.unsigned</td>
+<td>디바이스 화면 높이</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>ScreenDensity</td>
+<td style="text-align: center">number</td>
+<td>디바이스 화소 밀도</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CpuInfo</td>
+<td style="text-align: center">string</td>
+<td>디바이스 CPU 정보 ('종류|클럭|코어수' 형식)</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td style="text-align: center">types.unsigned</td>
+<td>디바이스 메모리 (MB)</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>GraphicsApi</td>
+<td style="text-align: center">string</td>
+<td>디바이스 그래픽 API 정보</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>DeviceId</td>
+<td style="text-align: center">string</td>
+<td>디바이스 ID</td>
+<td style="text-align: center">옵션</td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-CharCreate">
+      <div class="table-title2-div">
+        <p><b>CharCreate</b> - 캐릭터 생성</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharIndex</td>
+<td style="text-align: center">types.unsigned</td>
+<td>해당 캐릭터가 계정의 몇 번째 인지 (시작 1)</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-CharDelete">
+      <div class="table-title2-div">
+        <p><b>CharDelete</b> - 캐릭터 삭제</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-AcntLogin">
+      <div class="table-title2-div">
+        <p><b>AcntLogin</b> - 계정 로그인</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>WebzenId</td>
+<td style="text-align: center">webzen.types.stringId</td>
+<td>웹젠 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>ClientIpType</td>
+<td style="text-align: center">types.ipType</td>
+<td>클라이언트 IP 타입</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ClientIp</td>
+<td style="text-align: center">types.ip</td>
+<td>클라이언트 IP (ClientIpType 에 맞게)</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AppId</td>
+<td style="text-align: center">types.stringId</td>
+<td>앱 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ClientVer</td>
+<td style="text-align: center">types.stringId</td>
+<td>클라이언트 앱 버전</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>DevicePlatform</td>
+<td style="text-align: center">types.platformId</td>
+<td>디바이스 플랫폼</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>DeviceOsVer</td>
+<td style="text-align: center">string</td>
+<td>디바이스 OS 버전</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>DeviceName</td>
+<td style="text-align: center">string</td>
+<td>디바이스 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Channel</td>
+<td style="text-align: center">string</td>
+<td>접속 채널(루트)</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>TelecomId</td>
+<td style="text-align: center">types.stringId</td>
+<td>통신사 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Network</td>
+<td style="text-align: center">types.networkId</td>
+<td>네트워크 종류</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>ScreenWidth</td>
+<td style="text-align: center">types.unsigned</td>
+<td>디바이스 화면 너비</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>ScreenHeight</td>
+<td style="text-align: center">types.unsigned</td>
+<td>디바이스 화면 높이</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>ScreenDensity</td>
+<td style="text-align: center">number</td>
+<td>디바이스 화소 밀도</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CpuInfo</td>
+<td style="text-align: center">string</td>
+<td>디바이스 CPU 정보 ('종류|클럭|코어수' 형식)</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td style="text-align: center">types.unsigned</td>
+<td>디바이스 메모리 (MB)</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>GraphicsApi</td>
+<td style="text-align: center">string</td>
+<td>디바이스 그래픽 API 정보</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>DeviceId</td>
+<td style="text-align: center">string</td>
+<td>디바이스 ID</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>TotalCharge</td>
+<td style="text-align: center">types.unsigned</td>
+<td>계정 누적 충전액</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>VipLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>계정 VIP 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-AcntLogout">
+      <div class="table-title2-div">
+        <p><b>AcntLogout</b> - 계정 로그아웃</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>ClientIpType</td>
+<td style="text-align: center">types.ipType</td>
+<td>클라이언트 IP 타입</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ClientIp</td>
+<td style="text-align: center">types.ip</td>
+<td>클라이언트 IP (ClientIpType 에 맞게)</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>TotalCharge</td>
+<td style="text-align: center">types.unsigned</td>
+<td>계정 누적 충전액</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>VipLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>계정 VIP 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>PlayTime</td>
+<td style="text-align: center">number</td>
+<td>플레이 시간 (초)</td>
+<td style="text-align: center">옵션</td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-CharLogin">
+      <div class="table-title2-div">
+        <p><b>CharLogin</b> - 캐릭터 로그인</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-CharLogout">
+      <div class="table-title2-div">
+        <p><b>CharLogout</b> - 캐릭터 로그아웃</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>PlayTime</td>
+<td style="text-align: center">number</td>
+<td>플레이 시간 (초)</td>
+<td style="text-align: center">옵션</td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-CharDie">
+      <div class="table-title2-div">
+        <p><b>CharDie</b> - 캐릭터 사망</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+<th>Restrict</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+<td style="word-wrap: break-word; width: 25%"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+<td style="word-wrap: break-word; width: 25%"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+<td style="word-wrap: break-word; width: 25%"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+<td style="word-wrap: break-word; width: 25%"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+<td style="word-wrap: break-word; width: 25%"></td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+<td style="word-wrap: break-word; width: 25%"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+<td style="word-wrap: break-word; width: 25%"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+<td style="word-wrap: break-word; width: 25%"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+<td style="word-wrap: break-word; width: 25%"></td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+<td style="word-wrap: break-word; width: 25%"></td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+<td style="word-wrap: break-word; width: 25%"></td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+<td style="word-wrap: break-word; width: 25%"></td>
+</tr>
+<tr>
+<td>Reason</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 사망 원인</td>
+<td style="text-align: center"></td>
+<td style="word-wrap: break-word; width: 25%">npc (몬스터), pc (다른 캐릭터), etc (기타) 중 하나</td>
+</tr>
+<tr>
+<td>ReasonInfo</td>
+<td style="text-align: center">string</td>
+<td>사망 원인 추가 정보 (npc/pc 인 경우 ID)</td>
+<td style="text-align: center">옵션</td>
+<td style="word-wrap: break-word; width: 25%"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-CharRevive">
+      <div class="table-title2-div">
+        <p><b>CharRevive</b> - 캐릭터 부활</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>Paid</td>
+<td style="text-align: center">boolean</td>
+<td>유료 부활 여부</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-ItemChg">
+      <div class="table-title2-div">
+        <p><b>ItemChg</b> - 아이템 변화</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>ItemCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>아이템 종류 코드</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ItemId</td>
+<td style="text-align: center">types.stringId</td>
+<td>아이템 개체 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Change</td>
+<td style="text-align: center">integer</td>
+<td>아이템 수 변화량 (+는 증가/-는 감소)</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>After</td>
+<td style="text-align: center">types.unsigned</td>
+<td>변화후 아이템 수</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ReasonCd</td>
+<td style="text-align: center">types.normReasonCd</td>
+<td>아이템 변화 원인 코드</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ReasonInfo</td>
+<td style="text-align: center">string</td>
+<td>아이템 변화 원인 추가 정보 (npc/pc 인 경우 ID)</td>
+<td style="text-align: center">옵션</td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-MoneyChg">
+      <div class="table-title2-div">
+        <p><b>MoneyChg</b> - 돈 변화</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>MoneyCd</td>
+<td style="text-align: center">types.moneyCd</td>
+<td>돈 종류 코드</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Change</td>
+<td style="text-align: center">integer</td>
+<td>돈 변화량 (+는 증가/-는 감소)</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>After</td>
+<td style="text-align: center">types.unsigned</td>
+<td>변화후 돈</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ReasonCd</td>
+<td style="text-align: center">types.normReasonCd</td>
+<td>돈 변화 원인 코드</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ReasonInfo</td>
+<td style="text-align: center">string</td>
+<td>돈 변화 원인 추가 정보 (npc/pc 인 경우 ID)</td>
+<td style="text-align: center">옵션</td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-ExpChg">
+      <div class="table-title2-div">
+        <p><b>ExpChg</b> - 경험치 변화</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>Change</td>
+<td style="text-align: center">integer</td>
+<td>경험치 변화량 (+는 증가/-는 감소)</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>After</td>
+<td style="text-align: center">types.unsigned</td>
+<td>변화후 경험치</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ReasonCd</td>
+<td style="text-align: center">types.normReasonCd</td>
+<td>경험치 변화 원인 코드</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ReasonInfo</td>
+<td style="text-align: center">string</td>
+<td>경험치 변화 원인 추가 정보</td>
+<td style="text-align: center">옵션</td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-LevelChg">
+      <div class="table-title2-div">
+        <p><b>LevelChg</b> - 레벨 변화</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>Change</td>
+<td style="text-align: center">integer</td>
+<td>레벨 변화량 (+는 증가/-는 감소)</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>After</td>
+<td style="text-align: center">types.unsigned</td>
+<td>변화후 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-QuestChg">
+      <div class="table-title2-div">
+        <p><b>QuestChg</b> - 퀘스트 변화</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>QuestCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>퀘스트 종류 코드</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>QuestId</td>
+<td style="text-align: center">types.unsigned</td>
+<td>퀘스트 개체 ID</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>Status</td>
+<td style="text-align: center">types.questStatus</td>
+<td>퀘스트 상태</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-DungeonChg">
+      <div class="table-title2-div">
+        <p><b>DungeonChg</b> - 던전 변화</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>Status</td>
+<td style="text-align: center">types.dungeonStatus</td>
+<td>던전 상태</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Score</td>
+<td style="text-align: center">types.dungeonGrade</td>
+<td>던전 완료 등급</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-SkillFreq">
+      <div class="table-title2-div">
+        <p><b>SkillFreq</b> - 스킬별 1 분간 사용 빈도 (어뷰징 검출용)</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>SkillId</td>
+<td style="text-align: center">types.unsigned</td>
+<td>스킬 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Count</td>
+<td style="text-align: center">types.unsigned</td>
+<td>사용 횟수</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-Enchant">
+      <div class="table-title2-div">
+        <p><b>Enchant</b> - 아이템 강화 (소진된 돈/아이템들은 LinkRd 로 연결)</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>ItemCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>아이템 종류 코드</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ItemId</td>
+<td style="text-align: center">types.stringId</td>
+<td>아이템 개체 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Change</td>
+<td style="text-align: center">integer</td>
+<td>아이템 레벨 변화</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>After</td>
+<td style="text-align: center">integer</td>
+<td>강화 후 아이템 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Break</td>
+<td style="text-align: center">boolean</td>
+<td>파괴 여부</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-Produce">
+      <div class="table-title2-div">
+        <p><b>Produce</b> - 제작 (재료/생산 아이템들은 LinkRd 로 연결)</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>RecipeCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>제작 레시피 코드</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Count</td>
+<td style="text-align: center">types.unsigned</td>
+<td>제작 수량</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-ExchgReg">
+      <div class="table-title2-div">
+        <p><b>ExchgReg</b> - 거래소 등록/재등록 (아이템 소진, 잔여 스택 아이템 추가는 LinkRd로 연결)</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>ItemCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>아이템 종류 코드</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ItemId</td>
+<td style="text-align: center">types.stringId</td>
+<td>아이템 개체 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ItemCount</td>
+<td style="text-align: center">types.unsigned</td>
+<td>등록 아이템 수</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ExchgId</td>
+<td style="text-align: center">types.unsigned</td>
+<td>거래 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Price</td>
+<td style="text-align: center">types.unsigned</td>
+<td>등록 금액</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-ExchgBuy">
+      <div class="table-title2-div">
+        <p><b>ExchgBuy</b> - 거래소에서 구매 (아이템 추가, 돈 소진은 LinkRd 로 연결)</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>ItemCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>아이템 종류 코드</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ItemId</td>
+<td style="text-align: center">types.stringId</td>
+<td>아이템 개체 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ItemCount</td>
+<td style="text-align: center">types.unsigned</td>
+<td>구매 아이템 수</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ExchgId</td>
+<td style="text-align: center">types.unsigned</td>
+<td>거래 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Price</td>
+<td style="text-align: center">types.unsigned</td>
+<td>구매 금액 (세금 포함)</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>TaxRate</td>
+<td style="text-align: center">number</td>
+<td>거래 당시의 세율</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-ExchgSell">
+      <div class="table-title2-div">
+        <p><b>ExchgSell</b> - 거래소에서 판매 완료 (돈 추가는 LinkRd 로 연결)</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>ItemCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>아이템 종류 코드</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ItemId</td>
+<td style="text-align: center">types.stringId</td>
+<td>아이템 개체 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ItemCount</td>
+<td style="text-align: center">types.unsigned</td>
+<td>판매 아이템 수</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ExchgId</td>
+<td style="text-align: center">types.unsigned</td>
+<td>거래 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Price</td>
+<td style="text-align: center">types.unsigned</td>
+<td>판매 금액 (세금 포함)</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>TaxRate</td>
+<td style="text-align: center">number</td>
+<td>거래 당시의 세율</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-ExchgUnReg">
+      <div class="table-title2-div">
+        <p><b>ExchgUnReg</b> - 거래소 등록 취소 (복구된 아이템은 LinkRd 로 연결)</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>ItemCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>아이템 종류 코드</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ItemId</td>
+<td style="text-align: center">types.stringId</td>
+<td>아이템 개체 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ItemCount</td>
+<td style="text-align: center">types.unsigned</td>
+<td>복구 아이템 수</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ExchgId</td>
+<td style="text-align: center">types.unsigned</td>
+<td>거래 ID</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-CashShopBuy">
+      <div class="table-title2-div">
+        <p><b>CashShopBuy</b> - 유료 상점 구매 (아이템 추가, 돈 소진은 LinkRd 로 연결)</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>ItemCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>아이템 종류 코드</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ItemId</td>
+<td style="text-align: center">types.stringId</td>
+<td>아이템 개체 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ItemCount</td>
+<td style="text-align: center">types.unsigned</td>
+<td>구매 아이템 수</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Price</td>
+<td style="text-align: center">types.unsigned</td>
+<td>구매 금액</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-CashShopSell">
+      <div class="table-title2-div">
+        <p><b>CashShopSell</b> - 유료 상점 판매 (돈 추가는 LinkRd 로 연결)</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>ItemCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>아이템 종류 코드</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ItemId</td>
+<td style="text-align: center">types.stringId</td>
+<td>아이템 개체 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ItemCount</td>
+<td style="text-align: center">types.unsigned</td>
+<td>판매 아이템 수</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Price</td>
+<td style="text-align: center">types.unsigned</td>
+<td>판매 금액</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-PartyCreate">
+      <div class="table-title2-div">
+        <p><b>PartyCreate</b> - 파티 생성</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PartyId</td>
+<td style="text-align: center">types.unsigned</td>
+<td>파티 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MaxCount</td>
+<td style="text-align: center">types.unsigned</td>
+<td>최대 인원</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-PartyMemChg">
+      <div class="table-title2-div">
+        <p><b>PartyMemChg</b> - 파티 멤버 변화</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PartyId</td>
+<td style="text-align: center">types.unsigned</td>
+<td>파티 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Status</td>
+<td style="text-align: center">types.joinStatus</td>
+<td>파티 가입 상태</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-PartyDelete">
+      <div class="table-title2-div">
+        <p><b>PartyDelete</b> - 파티 삭제 (공헌도는 LinkRd 로 연결)</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+</tr>
+<tr>
+<td>PartyId</td>
+<td style="text-align: center">types.unsigned</td>
+<td>파티 ID</td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-GuildCreate">
+      <div class="table-title2-div">
+        <p><b>GuildCreate</b> - 길드 생성</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>GuildId</td>
+<td style="text-align: center">types.unsigned</td>
+<td>길드 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GuildName</td>
+<td style="text-align: center">string</td>
+<td>길드 이름</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-GuildMemChg">
+      <div class="table-title2-div">
+        <p><b>GuildMemChg</b> - 길드 멤버 변화</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>GuildId</td>
+<td style="text-align: center">types.unsigned</td>
+<td>길드 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GuildName</td>
+<td style="text-align: center">string</td>
+<td>길드 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Status</td>
+<td style="text-align: center">types.joinStatus</td>
+<td>길드 가입 상태</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-GuildDelete">
+      <div class="table-title2-div">
+        <p><b>GuildDelete</b> - 길드 삭제</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>GuildId</td>
+<td style="text-align: center">types.unsigned</td>
+<td>길드 ID</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-CastleWarDeclare">
+      <div class="table-title2-div">
+        <p><b>CastleWarDeclare</b> - 공성 선언</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>GuildId</td>
+<td style="text-align: center">types.unsigned</td>
+<td>길드 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GuildName</td>
+<td style="text-align: center">string</td>
+<td>길드 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CastleId</td>
+<td style="text-align: center">types.unsigned</td>
+<td>성 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CastleName</td>
+<td style="text-align: center">string</td>
+<td>성 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CastleLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>성 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GuildMemCnt</td>
+<td style="text-align: center">types.unsigned</td>
+<td>길드 멤버 수</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-CastleWarEnd">
+      <div class="table-title2-div">
+        <p><b>CastleWarEnd</b> - 공성 종료 (공헌도는 LinkRd 로 연결)</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>GuildId</td>
+<td style="text-align: center">types.unsigned</td>
+<td>길드 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GuildName</td>
+<td style="text-align: center">string</td>
+<td>길드 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CastleId</td>
+<td style="text-align: center">types.unsigned</td>
+<td>성 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CastleName</td>
+<td style="text-align: center">string</td>
+<td>성 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CastleLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>성 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GuildMemCnt</td>
+<td style="text-align: center">types.unsigned</td>
+<td>길드 멤버 수</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Success</td>
+<td style="text-align: center">boolean</td>
+<td>성공 여부</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-Contribute">
+      <div class="table-title2-div">
+        <p><b>Contribute</b> - 레이드, 전쟁 등에서 공헌도</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>Point</td>
+<td style="text-align: center">types.unsigned</td>
+<td>공헌 포인트</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-MailSend">
+      <div class="table-title2-div">
+        <p><b>MailSend</b> - 우편 발신 (첨부된 아이템/돈은 LinkRd 로 연결)</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>title</td>
+<td style="text-align: center">string</td>
+<td>우편 제목</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>message</td>
+<td style="text-align: center">string</td>
+<td>우편 내용</td>
+<td style="text-align: center">옵션</td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-AttachItem">
+      <div class="table-title2-div">
+        <p><b>AttachItem</b> - 첨부한 아이템</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>ItemCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>아이템 종류 코드</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ItemId</td>
+<td style="text-align: center">types.stringId</td>
+<td>아이템 개체 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Count</td>
+<td style="text-align: center">integer</td>
+<td>아이템 수</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-AttachMoney">
+      <div class="table-title2-div">
+        <p><b>AttachMoney</b> - 첨부한 돈</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>MoneyCd</td>
+<td style="text-align: center">types.moneyCd</td>
+<td>돈 종류 코드</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Amount</td>
+<td style="text-align: center">integer</td>
+<td>금액</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-MailRecv">
+      <div class="table-title2-div">
+        <p><b>MailRecv</b> - 우편 수신 (받은 아이템/돈은 LinkRd 로 연결)</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>Title</td>
+<td style="text-align: center">string</td>
+<td>우편 제목</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Msg</td>
+<td style="text-align: center">string</td>
+<td>우편 내용</td>
+<td style="text-align: center">옵션</td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-Chat">
+      <div class="table-title2-div">
+        <p><b>Chat</b> - 채팅</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>Channel</td>
+<td style="text-align: center">types.chatChannel</td>
+<td>채팅 채널</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Msg</td>
+<td style="text-align: center">string</td>
+<td>채팅 내용</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-Charge">
+      <div class="table-title2-div">
+        <p><b>Charge</b> - 충전 (얻은 돈은 LinkRd 로 연결)</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>TotalCharge</td>
+<td style="text-align: center">types.unsigned</td>
+<td>계정 누적 충전액</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>VipLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>계정 VIP 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Amount</td>
+<td style="text-align: center">types.unsigned</td>
+<td>충전 금액 (패키지의 경우 0)</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>PackageCd</td>
+<td style="text-align: center">boolean</td>
+<td>패키지를 통한 충전시 패키지 코드</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>PackageName</td>
+<td style="text-align: center">boolean</td>
+<td>패키지를 통한 충전시 패키지 이름</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-Report">
+      <div class="table-title2-div">
+        <p><b>Report</b> - 신고</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>TotalCharge</td>
+<td style="text-align: center">types.unsigned</td>
+<td>계정 누적 충전액</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>VipLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>계정 VIP 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GuildId</td>
+<td style="text-align: center">types.unsigned</td>
+<td>길드 ID</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>GuildName</td>
+<td style="text-align: center">string</td>
+<td>길드 이름</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>Type</td>
+<td style="text-align: center">types.reportType</td>
+<td>신고 종류</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Title</td>
+<td style="text-align: center">string</td>
+<td>신고 제목</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Msg</td>
+<td style="text-align: center">string</td>
+<td>신고 내용</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>TargetCharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>대상 캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>TargetCharName</td>
+<td style="text-align: center">string</td>
+<td>대상 캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>TargetCharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>대상 캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>TargetGuildId</td>
+<td style="text-align: center">types.unsigned</td>
+<td>대상 캐릭터 길드 ID</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>TargetGuildName</td>
+<td style="text-align: center">string</td>
+<td>대상 캐릭터 길드 이름</td>
+<td style="text-align: center">옵션</td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-Return">
+      <div class="table-title2-div">
+        <p><b>Return</b> - 복귀 (이벤트로 받은 아이템/돈은 LinkRd 로 연결)</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>TotalCharge</td>
+<td style="text-align: center">types.unsigned</td>
+<td>계정 누적 충전액</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>VipLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>계정 VIP 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ElapseDays</td>
+<td style="text-align: center">types.unsigned</td>
+<td>마지막 접속후 경과일</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Days</td>
+<td style="text-align: center">types.unsigned</td>
+<td>마지막 접속후 경과일</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+  </div>
+
+</div>
+
+<script>
+function toggleNav() {
+    var nav = document.getElementById('mySidebar');
+    var main = document.getElementById('main');
+    if (nav.classList.contains('hidden')) {
+        nav.style.width = "250px";
+        main.style.marginLeft = "250px";
+        nav.classList.remove('hidden')
+    } else {
+        nav.style.width = "0";
+        main.style.marginLeft = "0";
+        nav.classList.add('hidden')
+    }
+}
+
+function toggleItems(tname) {
+  for (let el of document.getElementsByClassName(tname)) {
+      if (el.classList.contains('hidden')) {
+          document.getElementById('sidebar-'.concat(tname)).classList.remove('closed')
+          el.classList.remove('hidden');
+      } else {
+          document.getElementById('sidebar-'.concat(tname)).classList.add('closed')
+          el.classList.add('hidden');
+      }
+  }
+}
+
+</script>
+
+</body>
+</html>
