@@ -1744,7 +1744,6 @@ $ sh tools/build.sh
 로그랩을 본격적으로 큰 프로젝트에 사용할 때 참고가 될 만한 예제로, MMO-RPG 게임을 위해 게임의 주요 이벤트들을 로그랩으로 기술한 것이다. 참고가 되기를 바란다.
 
 랩 파일 : https://raw.githubusercontent.com/haje01/loglab/master/example/rpg.lab.json
-HTML 문서 : 
-
+HTML 보기 : https://htmlpreview.github.io/?https://raw.githubusercontent.com/haje01/loglab/master/example/rpg.html
 
 [TODO]
