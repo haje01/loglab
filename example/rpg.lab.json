@@ -578,8 +578,9 @@
         },
         "CharMoneySync": {
             "desc": "정기적인 캐릭터 머니 상태",
-            "mixins": ["bases.Character", "bases.Money"],
+            "mixins": ["bases.Money"],
             "fields": [
+                ["LinkRd", "types.unsigned", "CharSync 와 연결"]
                 ["Amount", "types.unsigned", "금액"]
             ]
         }
