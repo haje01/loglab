@@ -1382,43 +1382,43 @@ $ loglab verify fakelog.txt
 
 ```js
 {
-	"$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
-	"domain": {
-		"name": "acme",
-		"desc": "최고의 게임 회사"
-	},
+  "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
+  "domain": {
+    "name": "acme",
+    "desc": "최고의 게임 회사"
+  },
     "types": {
       "unsigned": {
-          "type": "integer",
-          "desc": "0 이상의 정수",
-          "minimum": 0
+        "type": "integer",
+        "desc": "0 이상의 정수",
+        "minimum": 0
       }
   },
-	"bases": {
-		"Server": {
-			"desc": "서버 정보",
-			"fields": [
-				{
+  "bases": {
+    "Server": {
+      "desc": "서버 정보",
+      "fields": [
+        {
           "name": "ServerNo",
           "desc": "서버 번호",
           "type": "integer",
           "minimum": 1,
           "exclusiveMaximum": 100
         }
-			]
-		},
-		"Account": {
-			"desc": "계정 정보",
-			"mixins": ["bases.Server"],
-			"fields": [
+      ]
+    },
+    "Account": {
+      "desc": "계정 정보",
+      "mixins": ["bases.Server"],
+      "fields": [
         ["AcntId", "types.unsigned", "계정 ID"]
-			]
-		}
-	},
-	"events": {
-		"Login": {
-			"desc": "ACME 계정 로그인",
-			"mixins": ["bases.Account"],
+      ]
+    }
+  },
+  "events": {
+    "Login": {
+      "desc": "ACME 계정 로그인",
+      "mixins": ["bases.Account"],
       "fields": [
         {
           "name": "Platform",
@@ -1429,7 +1429,7 @@ $ loglab verify fakelog.txt
           ]
         }
       ]
-		}
+    }
   }
 }
 ```
