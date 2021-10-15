@@ -10,7 +10,7 @@ from loglab.doc import text_from_labfile, html_from_labfile
 from loglab.schema import verify_labfile, log_schema_from_labfile,\
     flow_schema_from_labfile, verify_logfile
 from loglab.dom import handle_import
-from loglab.util import download
+# from loglab.util import download
 from loglab.version import VERSION
 
 
@@ -111,17 +111,17 @@ def verify(schema, logfile):
     verify_logfile(schema, logfile)
 
 
-@cli.command()
-@click.argument('url')
-@click.option('-o', '--output', help="저장할 파일명")
-def fetch(url, output):
-    """외부 랩 파일 다운로드."""
-    if output is None:
-        output = url.split('/')[-1]
-    if not output.endswith('.lab.json'):
-        output += '.lab.json'
-    download(url, output)
-    print(f"'{output} 에 저장.")
+# @cli.command()
+# @click.argument('url')
+# @click.option('-o', '--output', help="저장할 파일명")
+# def fetch(url, output):
+#     """외부 랩 파일 다운로드."""
+#     if output is None:
+#         output = url.split('/')[-1]
+#     if not output.endswith('.lab.json'):
+#         output += '.lab.json'
+#     download(url, output)
+#     print(f"'{output} 에 저장.")
 
 
 @cli.command()
