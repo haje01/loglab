@@ -1703,20 +1703,20 @@ $ loglab html foo.lab.json
 'foo.html' 에 HTML 문서 저장.
 ```
 
-생성된 `foo.html` 파일을 웹브라우저로 열어보면 다음과 같은 페이지를 확인할 수 있을 것이다.
+생성된 `foo.html` 파일을 웹브라우저로 열어보면 아래와 같은 페이지를 확인할 수 있을 것이다.
 
 ![html_output](image/html.png)
 
 ### 실행 파일 이용과 빌드
 
-인터넷 접근이 자유롭지 않은 환경에서 설치를 위해서는 실행 파일 형태가 편하다. 아래의 링크에서 미리 빌드된 `loglab` 실행 파일을 찾을 수 있다.
+인터넷 접근이 자유롭지 않은 환경에서 로그랩을 사용하기 위해서는 실행 파일 형태가 편할 수 있겠다. 아래의 링크에서 미리 빌드된 `loglab` 실행 파일을 찾을 수 있다.
 
 [로그랩 릴리즈]](https://github.com/haje01/loglab/releases)
 
 여기에서 OS 에 맞는 압축 파일을 받아서 풀고, 어느 곳에서나 실행될 수 있도록 Path 를 걸어두면 되겠다.
 
 
-로그랩 코드에서 직접 실행파일을 빌드하기 위해서는 PyInstaller 가 필요하다. [PyInstaller](http://www.pyinstaller.org) 홈페이지를 참고하여 설치하자.
+로그랩 코드에서 직접 실행파일을 빌드하고 싶다면 [PyInstaller](http://www.pyinstaller.org) 가 필요하다. PyInstaller 홈페이지를 참고하여 설치하자.
 
 > PyEnv를 사용하는 경우 빌드시 동적 라이브러리를 찾지 못해 에러가 나올 수 있다. 이때는 macOS의 경우 `--enable-framework` 옵션으로 파이썬을 빌드하여 설치해야 한다. 자세한 것은 [이 글](https://github.com/pyenv/pyenv/issues/443) 을 참고하자. 리눅스의 경우 `--enable-shared` 옵션으로 빌드한다.
 
