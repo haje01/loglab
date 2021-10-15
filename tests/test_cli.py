@@ -7,7 +7,7 @@ from shutil import rmtree
 import pytest
 from click.testing import CliRunner
 
-from loglab.cli import cli, version, show, schema, verify, fetch
+from loglab.cli import cli, version, show, schema, verify
 from loglab.version import VERSION
 from loglab.util import AttrDict, test_reset
 
