@@ -132,4 +132,4 @@ def dummy():
 
 
 if __name__ == "__main__":
-    click(obj={})
+    cli(obj={})
