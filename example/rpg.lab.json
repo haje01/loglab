@@ -567,6 +567,21 @@
                 ["ElapseDays", "types.unsigned", "마지막 접속후 경과일"],
                 ["Days", "types.unsigned", "마지막 접속후 경과일"]
             ]
+        },
+        "CharSync": {
+            "desc": "정기적인 캐릭터 상태",
+            "mixins": ["bases.LocCharacter"],
+            "fields": [
+                ["Level", "types.unsigned", "캐릭터 레벨"],
+                ["Exp", "types.unsigned",  "캐릭터 경험치"]
+            ]
+        },
+        "CharMoneySync": {
+            "desc": "정기적인 캐릭터 머니 상태",
+            "mixins": ["bases.Character", "bases.Money"],
+            "fields": [
+                ["Amount", "types.unsigned", "금액"]
+            ]
         }
     }
 }

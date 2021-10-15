@@ -253,6 +253,10 @@ tr:nth-child(even) {
   
     <a href="#event-Return" class="sidebar-item event">Return</a>
   
+    <a href="#event-CharSync" class="sidebar-item event">CharSync</a>
+  
+    <a href="#event-CharMoneySync" class="sidebar-item event">CharMoneySync</a>
+  
 
 </div>
 
@@ -4646,6 +4650,180 @@ tr:nth-child(even) {
 <td>Days</td>
 <td style="text-align: center">types.unsigned</td>
 <td>마지막 접속후 경과일</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-CharSync">
+      <div class="table-title2-div">
+        <p><b>CharSync</b> - 정기적인 캐릭터 상태</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MapCd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>맵 코드</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosX</td>
+<td style="text-align: center">number</td>
+<td>맵상 X 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosY</td>
+<td style="text-align: center">number</td>
+<td>맵상 Y 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>PosZ</td>
+<td style="text-align: center">number</td>
+<td>맵상 Z 위치</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>Level</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Exp</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 경험치</td>
+<td style="text-align: center"></td>
+</tr>
+</table>
+
+    </div>
+    
+    <div class="table-div" id="event-CharMoneySync">
+      <div class="table-title2-div">
+        <p><b>CharMoneySync</b> - 정기적인 캐릭터 머니 상태</p>
+      </div>
+        <table>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+<th>Optional</th>
+</tr>
+<tr>
+<td>DateTime</td>
+<td style="text-align: center">datetime</td>
+<td>이벤트 일시</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>GameSvrId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 서버 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>ZoneId</td>
+<td style="text-align: center">types.unsignedId</td>
+<td>게임 서버가 속하는 구역 ID. 없는 경우 0</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>AcntId</td>
+<td style="text-align: center">types.stringId</td>
+<td>게임 계정 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>LinkRd</td>
+<td style="text-align: center">types.unsigned</td>
+<td>랜덤 코드로 로그들을 연결</td>
+<td style="text-align: center">옵션</td>
+</tr>
+<tr>
+<td>CharId</td>
+<td style="text-align: center">types.stringId</td>
+<td>캐릭터 ID</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharName</td>
+<td style="text-align: center">string</td>
+<td>캐릭터 이름</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>CharLevel</td>
+<td style="text-align: center">types.unsigned</td>
+<td>캐릭터 레벨</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>MoneyCd</td>
+<td style="text-align: center">types.moneyCd</td>
+<td>돈 종류 코드</td>
+<td style="text-align: center"></td>
+</tr>
+<tr>
+<td>Amount</td>
+<td style="text-align: center">types.unsigned</td>
+<td>금액</td>
 <td style="text-align: center"></td>
 </tr>
 </table>
