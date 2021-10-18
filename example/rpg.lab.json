@@ -583,6 +583,13 @@
                 ["Amount", "types.unsigned", "금액"],
                 ["LinkRd", "types.unsigned", "CharSync 와 연결"]
             ]
+        },
+        "Debug": {
+            "desc": "디버그 로그",
+            "mixins": ["bases.GameServer"],
+            "fields": [
+                ["Msg", "string", "디버깅용 메시지"]
+            ]
         }
     }
 }

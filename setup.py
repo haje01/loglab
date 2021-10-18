@@ -27,7 +27,7 @@ setup(
     license='MIT License',
     install_requires=[
         'click',
-        "jsonschema",
+        "jsonschema==3.2.0",
         'jinja2',
         'tabulate[widechars]',
         'requests'
