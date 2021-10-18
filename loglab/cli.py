@@ -37,7 +37,7 @@ def show(labfile, custom_type, name, keep_text):
     # labfile = find_labfile(labfile)
     data = verify_labfile(labfile)
     try:
-        handle_import(data)
+        handle_import(labfile, data)
     except FileNotFoundError as e:
         print(f"Error: 가져올 파일 '{e}' 을 찾을 수 없습니다.")
         sys.exit(1)
@@ -55,7 +55,7 @@ def html(labfile,  custom_type, output):
     """HTML 문서 출력."""
     data = verify_labfile(labfile)
     try:
-        handle_import(data)
+        handle_import(labfile, data)
     except FileNotFoundError as e:
         print(f"Error: 가져올 파일 '{e}' 을 찾을 수 없습니다.")
         sys.exit(1)
@@ -78,7 +78,7 @@ def schema(labfile):
     """로그 및 플로우 파일용 스키마 생성."""
     data = verify_labfile(labfile)
     try:
-        handle_import(data)
+        handle_import(labfile, data)
     except FileNotFoundError as e:
         print(f"Error: 가져올 파일 '{e}' 을 찾을 수 없습니다.")
         sys.exit(1)

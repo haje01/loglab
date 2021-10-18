@@ -3,7 +3,7 @@ import os
 import copy
 import json
 from json.encoder import py_encode_basestring
-from collections import defaultdict 
+from collections import defaultdict
 
 from loglab.util import BUILTIN_TYPES, AttrDict
 
@@ -282,10 +282,11 @@ def build_dom(data, use_ctype=False):
                     events=events))
 
 
-def handle_import(labjs):
+def handle_import(labfile, labjs):
     """랩 파일이 참고하는 외부 랩 파일 가져오기.
 
     Args:
+        labfile (Str): 랩파일 경로
         labjs (dict): 랩 데이터
 
     """
@@ -295,8 +296,10 @@ def handle_import(labjs):
     if '_imported_' not in labjs:
         labjs['_imported_'] = []
 
+    adir = os.path.dirname(labfile)
+
     for imp in labjs['import']:
-        path = f'{imp}.lab.json'
+        path = os.path.join(adir, f'{imp}.lab.json')
         if not os.path.isfile(path):
             raise FileNotFoundError(path)
 
@@ -304,7 +307,7 @@ def handle_import(labjs):
             body = f.read()
             data = json.loads(body)
             if 'import' in data:
-                handle_import(data)
+                handle_import(labfile, data)
             labjs['_imported_'].append(AttrDict(data))
 
 
