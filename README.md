@@ -650,7 +650,7 @@ Description : 계정 로그아웃
 
 `CharLogin` 은 캐릭터 베이스만을 사용해서 구현하였으나, `CharLogout` 은 캐릭터 베이스에 더해 계정 로그아웃 이벤트인 `Logout` 을 믹스인 해보았다. 이렇게 하면 중복되는 계정 정보 필드외 `PlayTime` 필드가 추가되게 된다.
 
-``show` 명령으로 확인하면 `CharLogin` 과 `CharLogout` 이벤트를 확인할 수 있다.
+`show` 명령으로 확인하면 `CharLogin` 과 `CharLogout` 이벤트를 확인할 수 있다.
 
 ```
 $ loglab show foo.lab.json
