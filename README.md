@@ -1711,7 +1711,7 @@ $ loglab html foo.lab.json
 
 인터넷 접근이 자유롭지 않은 환경에서 로그랩을 사용하기 위해서는 실행 파일 형태가 편할 수 있겠다. 아래의 링크에서 미리 빌드된 `loglab` 실행 파일을 찾을 수 있다.
 
-[로그랩 릴리즈]](https://github.com/haje01/loglab/releases)
+[로그랩 릴리즈](https://github.com/haje01/loglab/releases)
 
 여기에서 OS 에 맞는 압축 파일을 받아서 풀고, 어느 곳에서나 실행될 수 있도록 Path 를 걸어두면 되겠다.
 
