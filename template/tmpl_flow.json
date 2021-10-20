@@ -32,8 +32,7 @@
         "spawn-body": {
             "type": "object",
             "properties": {
-                "spawn_id": {"$ref": "#/$defs/fields"},
-                "spawn_cnt": {"type": "integer"},
+                "spawn_by": {"$ref": "#/$defs/by-body"},
                 "repeat": {"type": "integer"},
                 "steps": {"$ref": "#/$defs/step-body"}
             }
@@ -79,8 +78,40 @@
             "type": "object",
             "properties": {
                 "start": { "$ref": "#/$defs/datetime-type"},
+                "tzoffset": {
+                    "type": "string",
+                    "pattern": "[\\\\+|\\\\-]([01][0-9]|2[0-3]):[0-5][0-9]"
+                },
                 "speed": {"type": "number"}
             }
+        },
+        "by-body": {
+            "type": "array",
+            "items": [
+                {"$ref": "#/$defs/fields"},
+                {
+                    "anyOf": [
+                        {
+                            "type": "array",
+                            "items": {
+                                "type": "number"
+                            }
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        },
+                        {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }    
+                    ]
+                }
+            ]
         }
     },
     "properties": {
@@ -99,8 +130,7 @@
             ]
         },
         "datetime": {"$ref": "#/$defs/datetime-body"},
-        "file_id": {"$ref": "#/$defs/fields"},
-        "file_cnt": {"type": "integer"},
+        "file_by": {"$ref": "#/$defs/by-body"},
         "file_ptrn": {"type": "string"}
     },
     "required": ["flow"],
