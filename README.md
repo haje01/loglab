@@ -1322,7 +1322,7 @@ $ loglab schema foo.lab.json
 foo.log.schema.json 에 로그 스키마 저장.
 ```
 
-확장자 `log.schema.json` 이 붙은 **로그 스키마 (.log.schema.json)** 가 만들어 진다. 이 로그 스키마는 실제 로그를 검증하는데 사용된다.
+확장자 `log.schema.json` 이 붙은 **로그 스키마** 가 만들어 진다. 이 로그 스키마는 실제 로그를 검증하는데 사용된다.
 
 생성된 로그 스키마를 이용해 `verify` 명령으로 검증을 수행한다.
 
