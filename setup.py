@@ -31,7 +31,8 @@ setup(
         'jinja2',
         'tabulate[widechars]',
         'requests',
-        'python-dateutil''
+        'python-dateutil',
+        'pytz'
     ],
     extras_require={
         'dev': [

@@ -1,8 +1,9 @@
 """더미 로그 생성 테스트."""
 import os
 from shutil import copyfile
-from datetime import datetime
+from datetime import datetime, timezone
 
+from dateutil.parser import parse
 import pytest
 from click.testing import CliRunner
 
@@ -68,13 +69,14 @@ def test_dummy(clear):
         "file_by": ["ServerNo", [1, 2]],
         "file_ptrn": "foo_%Y%m%d_{ServerNo:03d}.txt"
     }
-    today = datetime.today()
+    today = datetime.now(timezone.utc).date()
     ptrn = today.strftime('foo_%Y%m%d_{ServerNo:03d}.txt')
     data = generate_dummy_sync(lab, flow)
-    assert data == {
+    res = {
         ptrn.format(ServerNo=1): [],
         ptrn.format(ServerNo=2): [],
     }
+    assert data == res
 
     flow = {
         "labfile": "foo.lab.json",
@@ -98,7 +100,7 @@ def test_dummy(clear):
     }
     data = generate_dummy_sync(lab, flow)
     assert data == {
-        'foo_20211020_001.txt': [], 
+        'foo_20211020_001.txt': [],
         'foo_20211020_002.txt': []
     }
 

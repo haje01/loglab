@@ -1,6 +1,6 @@
 """가짜 로그 생성."""
 
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from dateutil.parser import parse
 
 from loglab.dom import build_dom
@@ -10,7 +10,7 @@ def generate_dummy_sync(lab, flow):
     """랩 파일에 기반해 가짜 로그 생성 (동기).
 
     Args:
-        lab (dict): 랩 파일 데이터 
+        lab (dict): 랩 파일 데이터
         flow (dict): 플로우 파일 데이터
 
     """
@@ -45,12 +45,13 @@ def generate_dummy_sync(lab, flow):
     if 'file_ptrn' in flow:
         fptrn = flow['file_ptrn']
 
-    dt_start = datetime.today()
+    dt_start = datetime.now(timezone.utc).date()
     dt_speed = 1
     if 'datetime' in flow:
         fdt = flow['datetime']
+        tzoff = fdt['tzoffset'] if 'tzoffset' in fdt else 'Z'
         if 'start' in fdt:
-            dt_start = parse(fdt['start'])
+            dt_start = parse(fdt['start'] + tzoff)
         if 'speed' in fdt:
             dt_speed = fdt['speed']
 
@@ -63,17 +64,16 @@ def generate_dummy_sync(lab, flow):
     else:
         fnames = [dt_start.strftime(fptrn).format(**d)]
 
-    if 'flow' in flow:
-        import pdb; pdb.set_trace();
-        for evt in flow['flow']:
-        flines = [
-            [
-                {"DateTime": "2021-10-20T13:00:00+09:00", "Event": "Login"},
-                {"DateTime": "2021-10-20T13:00:01+09:00", "Event": "Logout"}
-            ]
-        ]
-    else:
-        flines = [[] for f in fnames]
+    flines = []
+    for fname in fnames:
+        lines = []
+        if 'flow' in flow:
+            dt = dt_start
+            for evt in flow['flow']['steps']:
+                line = dict(DateTime=dt.isoformat(), Event=evt)
+                lines.append(line)
+                dt += timedelta(seconds=1)
+        flines.append(lines)
 
     return dict(zip(fnames, flines))
 
@@ -84,7 +84,7 @@ def generate_dummy_sync(lab, flow):
 
     # if 'file_by' in flow:
     #     file_field = flow['file_by'][0]
-    #     for 
+    #     for
     #     files = for f in flow['file_by']
     # files = dict(for f in flow['file_by'])
     # file_cnt = flow['file_cnt'] if 'file_cnt' in flow else 1
