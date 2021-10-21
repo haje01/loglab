@@ -30,9 +30,7 @@ setup(
         "jsonschema==3.2.0",
         'jinja2',
         'tabulate[widechars]',
-        'requests',
-        'python-dateutil',
-        'pytz'
+        'requests'
     ],
     extras_require={
         'dev': [
