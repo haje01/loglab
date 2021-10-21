@@ -1725,7 +1725,7 @@ $ loglab html foo.lab.json
 $ sh tools/build.sh
 ```
 
-정상적으로 빌드가 되면, `dist/` 디렉토리 아래 `loglab.exe` (윈도우) 또는 `loglab` (리눅스/macOS) 실행 파일이 만들어진다. 이것을 배포하면 된다.
+정상적으로 빌드가 되면, `dist/` 디렉토리 아래 `loglab.exe` (윈도우) 또는 `loglab` (리눅스/macOS) 실행 파일이 만들어진다. 이것을 배포하면 되겠다.
 
 ## 로그랩 활용 방안
 
