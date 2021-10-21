@@ -143,40 +143,6 @@ def log_schema_from_labfile(data):
     '''
 
 
-def flow_schema_from_labfile(labfile, data):
-    """랩 데이터 에서 플로우 JSON 스키마 생성.
-
-    Args:
-        labfile (str): 랩 파일 경로
-        data (dict): 랩 데이터
-
-    """
-    def _collect(fields, group):
-        for k, v in group.items():
-            if 'fields' in v:
-                for field in v['fields']:
-                    if type(field) is dict:
-                        fields.add(field['name'])
-                    else:
-                        fields.add(field[0])
-
-    def _collect_all_fields(data):
-        fields = set()
-        if 'bases' in data:
-            _collect(fields, data['bases'])
-        if 'events' in data:
-            _collect(fields, data['events'])
-        return fields
-
-    events = list(data['events'].keys())
-    fields = _collect_all_fields(data)
-    tmpl_path = os.path.join(LOGLAB_HOME, "template")
-    loader = FileSystemLoader(tmpl_path)
-    env = Environment(loader=loader)
-    tmpl = env.get_template("tmpl_flow.json")
-    return tmpl.render(labfile=labfile, events=events, fields=fields)
-
-
 def verify_logfile(schema, logfile):
     """로그 파일을 스키마로 검증.
 

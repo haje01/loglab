@@ -52,7 +52,6 @@ def test_cli():
     out = res.output
     assert 'Commands:' in out
     assert 'show' in out
-    assert 'dummy' in out
     assert 'schema' in out
     assert 'verify' in out
     assert 'version' in out
@@ -300,7 +299,6 @@ def test_schema(clear):
     out = res.output
 
     assert "foo.log.schema.json 에 로그 스키마 저장" in out
-    assert "foo.flow.schema.json 에 플로우 스키마 저장" in out
 
     # 로그 스키마 체크
     with open("foo.log.schema.json", 'rt', encoding='utf8') as f:
@@ -429,7 +427,6 @@ def test_imp_schema(clear):
     assert res.exit_code == 0
     out = res.output
     assert "boo.log.schema.json 에 로그 스키마 저장" in out
-    assert "boo.flow.schema.json 에 플로우 스키마 저장" in out
 
     # 로그 스키마 체크
     with open("boo.log.schema.json", 'rt', encoding='utf8') as f:

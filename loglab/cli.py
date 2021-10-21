@@ -8,7 +8,7 @@ import click
 
 from loglab.doc import text_from_labfile, html_from_labfile
 from loglab.schema import verify_labfile, log_schema_from_labfile,\
-    flow_schema_from_labfile, verify_logfile
+    verify_logfile
 from loglab.dom import handle_import
 # from loglab.util import download
 from loglab.version import VERSION
@@ -97,11 +97,6 @@ def schema(labfile):
             print(e)
             sys.exit(1)
 
-    flow_scm_path = f'{dname}.flow.schema.json'
-    print(f"{flow_scm_path} 에 플로우 스키마 저장.")
-    with open(flow_scm_path, 'wt', encoding='utf8') as f:
-        f.write(flow_schema_from_labfile(labfile, data))
-
 
 @cli.command()
 @click.argument('schema', type=click.Path())
@@ -109,26 +104,6 @@ def schema(labfile):
 def verify(schema, logfile):
     """생성된 로그 파일 검증."""
     verify_logfile(schema, logfile)
-
-
-# @cli.command()
-# @click.argument('url')
-# @click.option('-o', '--output', help="저장할 파일명")
-# def fetch(url, output):
-#     """외부 랩 파일 다운로드."""
-#     if output is None:
-#         output = url.split('/')[-1]
-#     if not output.endswith('.lab.json'):
-#         output += '.lab.json'
-#     download(url, output)
-#     print(f"'{output} 에 저장.")
-
-
-@cli.command()
-def dummy():
-    """가짜 로그 생성."""
-    verify_labfile(labfile)
-    click.echo("Generate Dummy Log Events")
 
 
 if __name__ == "__main__":
