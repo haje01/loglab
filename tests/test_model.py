@@ -1,8 +1,8 @@
 import pytest
 import copy
 
-from loglab.dom import _build_domain, _build_types, _build_bases, _build_events\
-     , build_dom, _handle_import
+from loglab.model import _build_domain, _build_types, _build_bases,\
+    _build_events, build_model, _handle_import
 
 
 def test_domain():
@@ -878,7 +878,7 @@ def test_desc():
     }
     with pytest.raises(Exception, match='Can not resolve description'):
         _handle_import(boo)
-        boo = build_dom(boo)
+        boo = build_model(boo)
 
     acme = {
         "domain": {
@@ -904,7 +904,7 @@ def test_desc():
         }
     }
     _handle_import(boo)
-    boo = build_dom(boo)
+    boo = build_model(boo)
     assert boo.events.Login[-1][1]['desc'] == 'ACME 계정 로그인'
 
     bcom = {
@@ -943,7 +943,7 @@ def test_desc():
         }
     }
     _handle_import(boo)
-    boo = build_dom(boo)
+    boo = build_model(boo)
     assert boo.events.Login[-1][1]['desc'] == 'BCOM 계정 로그인'
 
     acme = {
@@ -983,7 +983,7 @@ def test_desc():
         }
     }
     _handle_import(boo)
-    boo = build_dom(boo)
+    boo = build_model(boo)
     assert boo.events.Login[-1][1]['desc'] == '서버 정보'
 
 
@@ -1026,6 +1026,6 @@ def test_multi_imp():
         }
     }
     _handle_import(boo)
-    boo = build_dom(boo)
+    boo = build_model(boo)
     assert 'Login' in boo['events'].keys()
     assert 'Charge' in boo['events'].keys()

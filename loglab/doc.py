@@ -8,7 +8,7 @@ from tabulate import tabulate
 from jinja2 import Environment, FileSystemLoader
 from wcwidth import wcswidth
 
-from loglab.dom import build_dom
+from loglab.model import build_model
 from loglab.util import explain_rstr, LOGLAB_HOME, absdir_for_html
 
 
@@ -155,7 +155,7 @@ def text_from_labfile(data, cus_type, namef, keep_text, out=None):
     if out is None:
         out = StringIO()
 
-    dom = build_dom(data, cus_type)
+    dom = build_model(data, cus_type)
     # 도메인
     out.write('\n')
     out.write(f"Domain : {dom.domain.name}\n")
@@ -289,7 +289,7 @@ def html_from_labfile(data, kwargs, cus_type):
     Returns:
         str: 결과 HTML
     """
-    dom = build_dom(data, cus_type)
+    dom = build_model(data, cus_type)
     assert type(kwargs) is dict
     home_dir = absdir_for_html(LOGLAB_HOME)
     kwargs['ext_dir'] = os.path.join(home_dir, 'extern')

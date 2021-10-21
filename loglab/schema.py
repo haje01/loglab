@@ -9,7 +9,7 @@ from jsonschema import validate, ValidationError
 from jinja2 import Environment, FileSystemLoader
 from requests.api import request
 
-from loglab.dom import build_dom
+from loglab.model import build_model
 from loglab.util import AttrDict, load_file_from, LOGLAB_HOME
 
 
@@ -64,7 +64,7 @@ def log_schema_from_labfile(data):
         v = [tdef['type'], v[1], v[2], None, tdef]
         return v
 
-    dom = build_dom(data)
+    dom = build_model(data)
     events = []
     items = []
     for ename, elst in dom.events.items():

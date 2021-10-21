@@ -264,8 +264,8 @@ def _build_events(data, _dnames=None, _types=None, _bases=None, _events=None,
     return _events
 
 
-def build_dom(data, use_ctype=False):
-    """DOM 을 만듦.
+def build_model(data, use_ctype=False):
+    """모델 을 만듦.
 
     Args:
         data (dict): lab 파일 데이터

@@ -9,7 +9,7 @@ import click
 from loglab.doc import text_from_labfile, html_from_labfile
 from loglab.schema import verify_labfile, log_schema_from_labfile,\
     verify_logfile
-from loglab.dom import handle_import
+from loglab.model import handle_import
 # from loglab.util import download
 from loglab.version import VERSION
 
