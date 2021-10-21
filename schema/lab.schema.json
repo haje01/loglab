@@ -28,6 +28,7 @@
                     "properties": {
                         "name": {
                             "type": "string",
+                            "pattern": "[a-zA-Z0-9_]+",
                             "description": "필드 이름"
                         },
                         "desc": {
@@ -182,7 +183,10 @@
                     {
                         "type": "array",
                         "items": [
-                            {"type": "string"},
+                            {
+                                "type": "string",
+                                "pattern": "^[a-zA-Z0-9_]+$"
+                            },
                             {"$ref": "#/$defs/ref-type-body"},
                             {"type": "string"},
                             {"type": "boolean"}
