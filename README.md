@@ -1319,15 +1319,13 @@ Options:
 
 ```
 $ loglab schema foo.lab.json
-foo.log.schema.json 에 로그 스키마 저장.
+foo.schema.json 에 로그 스키마 저장.
 ```
 
-확장자 `log.schema.json` 이 붙은 **로그 스키마** 가 만들어 진다. 이 로그 스키마는 실제 로그를 검증하는데 사용된다.
-
-생성된 로그 스키마를 이용해 `verify` 명령으로 검증을 수행한다.
+확장자 `.schema.json` 가 붙은 JSON 스키마 형식의  **로그 스키마** 가 만들어 지는데, 이것으로 실제 로그를 검증할 수 있다. 아래와 같이 `verify` 명령으로 검증을 수행한다.
 
 ```
-$ loglab verify foo.log.schema.json fakelog.txt
+$ loglab verify foo.schema.json fakelog.txt
 Error: [Line: 1] 'Platform' is a required property
 {'DateTime': '2021-08-13T20:20:39+09:00', 'Event': 'Login', 'ServerNo': 1, 'AcntId': 1000}
 ```

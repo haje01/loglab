@@ -298,10 +298,10 @@ def test_schema(clear):
     assert res.exit_code == 0
     out = res.output
 
-    assert "foo.log.schema.json 에 로그 스키마 저장" in out
+    assert "foo.schema.json 에 로그 스키마 저장" in out
 
     # 로그 스키마 체크
-    with open("foo.log.schema.json", 'rt', encoding='utf8') as f:
+    with open("foo.schema.json", 'rt', encoding='utf8') as f:
         body = f.read()
         data = json.loads(body)
         scm = AttrDict(data)
@@ -356,7 +356,7 @@ def test_verify(clear):
 
     labfile = 'foo.lab.json'
     fake_log = 'fakelog.txt'
-    scmfile = 'foo.log.schema.json'
+    scmfile = 'foo.schema.json'
 
     args = [scmfile, fake_log]
     runner = CliRunner()
@@ -426,10 +426,10 @@ def test_imp_schema(clear):
     res = runner.invoke(schema, ['boo.lab.json'])
     assert res.exit_code == 0
     out = res.output
-    assert "boo.log.schema.json 에 로그 스키마 저장" in out
+    assert "boo.schema.json 에 로그 스키마 저장" in out
 
     # 로그 스키마 체크
-    with open("boo.log.schema.json", 'rt', encoding='utf8') as f:
+    with open("boo.schema.json", 'rt', encoding='utf8') as f:
         body = f.read()
         data = json.loads(body)
         scm = AttrDict(data)
@@ -481,11 +481,11 @@ def test_imp_verify(clear):
     res = runner.invoke(schema, ['boo.lab.json'])
     assert res.exit_code == 0
 
-    res = runner.invoke(verify, ['boo.log.schema.json', fake_log])
+    res = runner.invoke(verify, ['boo.schema.json', fake_log])
     assert res.exit_code == 1
     assert "'ios' is not one of ['win', 'mac', 'linux']" in res.output
 
     log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "Login", "ServerNo": 1, "BcomAcntId": 100, "AcntId": 1000, "Platform": "win"}'
     write_log(fake_log, log)
-    res = runner.invoke(verify, ['boo.log.schema.json', fake_log])
+    res = runner.invoke(verify, ['boo.schema.json', fake_log])
     assert res.exit_code == 0

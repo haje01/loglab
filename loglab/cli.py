@@ -84,10 +84,10 @@ def schema(labfile):
         sys.exit(1)
 
     dname = data['domain']['name']
-    log_scm_path = f'{dname}.log.schema.json'
+    scm_path = f'{dname}.schema.json'
 
-    print(f"{log_scm_path} 에 로그 스키마 저장.")
-    with open(log_scm_path, 'wt', encoding='utf8') as f:
+    print(f"{scm_path} 에 로그 스키마 저장.")
+    with open(scm_path, 'wt', encoding='utf8') as f:
         try:
             scm = log_schema_from_labfile(data)
             f.write(scm)
