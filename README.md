@@ -1296,7 +1296,7 @@ Description : 캐릭터의 아이템 습득
 +----------+----------+----------------+-------------------------------+
 ```
 
-지금까지 로그 설계에 필요한 기본적인 내용을 설명하였다. 완전한 예제 파일 `foo.lab.json` 은 `loglab/example` 디렉토리에서 확인할 수 있다.
+지금까지 로그 설계에 필요한 기본적인 내용을 설명하였다. 완전한 예제 파일 `foo.lab.json` 은 `loglab/example` 디렉토리 또는 [여기](https://github.com/haje01/loglab/tree/master/example) 에서 확인할 수 있다.
 
 ## 로그 파일의 검증
 
@@ -1633,7 +1633,7 @@ Description : 서버 가용 메모리.
 
 > 외부 랩 파일을 활용할 때는 먼저 어떤 타입과 베이스가 정의되어 있는지 잘 살펴보고 사용하도록 하자. 제공하는 쪽의 철학을 이해하는 것이 도움이 될 것이다.
 
-완전한 예제 파일 `acme.lab.json`, `boo.lab.json` 은 `loglab/example` 디렉토리에서 확인할 수 있다.
+완전한 예제 파일 `acme.lab.json` 과 `boo.lab.json` 은 `loglab/example` 디렉토리 또는 [여기](https://github.com/haje01/loglab/tree/master/example) 에서 확인할 수 있다.
 
 ## 기타 기능과 팁
 
