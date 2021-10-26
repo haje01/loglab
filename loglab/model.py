@@ -5,7 +5,7 @@ import json
 from json.encoder import py_encode_basestring
 from collections import defaultdict
 
-from loglab.util import BUILTIN_TYPES, AttrDict
+from loglab.util import BUILTIN_TYPES, AttrDict, EDT_DESC
 
 
 def _build_domain(data):
@@ -74,7 +74,7 @@ def _flat_fields(data, _types, _dnames, for_event=False, use_ctype=False):
 
     fields = defaultdict(list)
     if for_event:
-        tdata = dict(type='datetime', desc='이벤트 일시')
+        tdata = dict(type='datetime', desc=EDT_DESC)
         fields['DateTime'].append(['', tdata])
 
     for f in data['fields']:
@@ -126,7 +126,7 @@ def _resolve_mixins(name, _dnames, _bases, _events=None, for_event=False):
 
     fields = defaultdict(list)
     if for_event:
-        tdata = dict(type='datetime', desc='이벤트 일시')
+        tdata = dict(type='datetime', desc=EDT_DESC)
         fields['DateTime'].append(['', tdata])
 
     mdesc = None

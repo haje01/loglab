@@ -10,9 +10,17 @@ from pathlib import Path
 from glob import glob
 
 from requests import get
+import gettext
 
 LOGLAB_HOME = Path(os.path.dirname(os.path.abspath(__file__))).parent.absolute()
 BUILTIN_TYPES = ('string', 'integer', 'number', 'boolean', 'datetime')
+
+lc_dir = os.path.join(LOGLAB_HOME, 'locales')
+trans = gettext.translation('base', localedir=lc_dir, fallback=True)
+_ = trans.gettext
+
+
+EDT_DESC = _("이벤트 일시")
 
 
 class AttrDict(dict):
@@ -92,7 +100,7 @@ def load_file_from(path):
 
 def _init_fields():
     fields = {}
-    fields["DateTime"] = ["datetime", "이벤트 일시"]
+    fields["DateTime"] = ["datetime", EDT_DESC]
     return fields
 
 
@@ -116,9 +124,9 @@ def explain_rstr(f, line_dlm='\n'):
                 expl = []
                 for d in enum:
                     expl.append(f"{d[0]} ({d[1]})")
-                # enum = line_dlm.join(expl) + "\n 중 하나"
                 enum = expl
-            enum = ', '.join(expl) + " 중 하나"
+            arr = ', '.join(expl)
+            enum = _("{} 중 하나").format(arr)
 
         assert amin is None or xmin is None,\
             'minimum 과 exclusiveMinimum 함께 사용 불가'
@@ -127,13 +135,13 @@ def explain_rstr(f, line_dlm='\n'):
 
         stmts = []
         if amin is not None:
-            stmts.append(f"{amin} 이상")
+            stmts.append(_("{} 이상").format(amin))
         if xmin is not None:
-            stmts.append(f"{xmin} 초과")
+            stmts.append(_("{} 초과").format(xmin))
         if amax is not None:
-            stmts.append(f"{amax} 이하")
+            stmts.append(_("{} 이하").format(amax))
         if xmax is not None:
-            stmts.append(f"{xmax} 미만")
+            stmts.append(_("{} 미만").format(xmax))
         if enum is not None:
             exps.append(enum)
 
@@ -154,9 +162,9 @@ def explain_rstr(f, line_dlm='\n'):
 
         stmts = []
         if minl is not None:
-            stmts.append(f"{minl} 자 이상")
+            stmts.append(_("{} 자 이상").format(minl))
         if maxl is not None:
-            stmts.append(f"{maxl} 자 이하")
+            stmts.append(_("{} 자 이하").format(maxl))
         if len(stmts) > 0:
             exps.append(' '.join(stmts))
 
@@ -166,12 +174,12 @@ def explain_rstr(f, line_dlm='\n'):
                 for i, d in enum:
                     _enum.append(f'{i} ({d})')
                 enum = _enum
-            enum = ', '.join(enum)
-            exps.append(f"{enum} 중 하나")
+            arr = ', '.join(enum)
+            exps.append(_("{} 중 하나").format(arr))
         if ptrn is not None:
-            exps.append(f"정규식 {ptrn} 매칭")
+            exps.append(_("정규식 {} 매칭").format(ptrn))
         if fmt is not None:
-            exps.append(f"{fmt} 형식")
+            exps.append(_("{} 형식").format(fmt))
     return line_dlm.join(exps)
 
 

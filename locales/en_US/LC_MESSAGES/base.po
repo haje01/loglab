@@ -1,0 +1,57 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2021-10-26 18:45+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: loglab/util.py:100
+msgid "이벤트 일시"
+msgstr "Event date time"
+
+#: loglab/util.py:126 loglab/util.py:175
+msgid "{} 중 하나"
+msgstr "one of {}"
+
+#: loglab/util.py:135
+msgid "{} 이상"
+msgstr "{} or above"
+
+#: loglab/util.py:137
+msgid "{} 초과"
+msgstr "above {}"
+
+#: loglab/util.py:139
+msgid "{} 이하"
+msgstr "{} or below"
+
+#: loglab/util.py:141
+msgid "{} 미만"
+msgstr "below {}"
+
+#: loglab/util.py:162
+msgid "{} 자 이상"
+msgstr "{} or more characters"
+
+#: loglab/util.py:164
+msgid "{} 자 이하"
+msgstr "{} or less characters"
+
+#: loglab/util.py:177
+msgid "정규식 {} 매칭"
+msgstr "match regexp {}"
+
+#: loglab/util.py:179
+msgid "{} 형식"
+msgstr "format {}"
+
