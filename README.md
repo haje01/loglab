@@ -906,7 +906,7 @@ Description : 캐릭터의 아이템 습득
 
 기존 리스트 `["ServerNo", "integer", "서버 번호"]` 대신 `name`, `desc`, `type` 키를 사용하는 요소로 바뀌었다. 끝에 추가된 `minimum` 부분은 **제약문** 으로 `ServerNo`의 값을 1 이상으로 제약하고 있다.
 
-`show` 을 실행해보자.
+`show` 를 실행해보자.
 
 ```
 $ loglab show foo.lab.json
@@ -1087,7 +1087,7 @@ Description : 계정 로그아웃
 
 > 기억해야 할 것은, **커스텀 타입을 이용하는 필드에는 추가적인 제약을 걸 수 없다** 는 점이다. 따라서, 필드에 `types.*` 로 커스텀 타입을 지정하는 것은 리스트 형식에서만 가능하다.
 
-`show` 을 호출하면, 같은 내용을 확인할 수 있다.
+`show` 를 호출하면, 같은 내용을 확인할 수 있다.
 
 ```
 $ loglab show foo.lab.json
@@ -1123,7 +1123,7 @@ Description : 계정 로그아웃
 $ loglab show foo.lab.json -c
 # ...
 
-Type : types.Id
+Type : types.unsigned
 Description : Id 타입
 +------------+---------------+------------+
 | BaseType   | Description   | Restrict   |
@@ -1232,7 +1232,7 @@ Description : 계정 로그인
             "desc": "아이템 타입 코드",
             "enum": [1, 2, 3]
         },
-        ["ItemId", "types.Id", "아이템 인스턴스 ID"]
+        ["ItemId", "types.unsigned", "아이템 인스턴스 ID"]
       ]
     }
 
@@ -1263,7 +1263,7 @@ Description : 계정 로그인
             [3, "물약"]
           ]
         },
-        ["ItemId", "types.Id", "아이템 인스턴스 ID"]
+        ["ItemId", "types.unsigned", "아이템 인스턴스 ID"]
       ]
     }
 
@@ -1271,7 +1271,7 @@ Description : 계정 로그인
 }
 ```
 
-`1`, `2` 같은 숫자값 대신 `[나열값, 나열값_설명]` 형식의 리스트를 사용한다. `show` 을 실행해보면 `ItemCd` 필드의 제약 컬럼에 각 나열값의 설명이 추가된 것을 알 수 있다.
+`1`, `2` 같은 숫자값 대신 `[나열값, 나열값_설명]` 형식의 리스트를 사용한다. `show` 를 실행해보면 `ItemCd` 필드의 제약 컬럼에 각 나열값의 설명이 추가된 것을 알 수 있다.
 
 ```$ loglab show foo.lab.json
 # ...
@@ -1678,7 +1678,7 @@ $ loglab show foo.lab.json -c -n types
 Domain : foo
 Description : 위대한 모바일 게임
 
-Type : types.Id
+Type : types.unsigned
 Description : Id 타입
 +------------+---------------+------------+
 | BaseType   | Description   | Restrict   |
