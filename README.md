@@ -907,7 +907,7 @@ Description : 캐릭터의 아이템 습득
 
 기존 리스트 `["ServerNo", "integer", "서버 번호"]` 대신 `name`, `desc`, `type` 키를 사용하는 요소로 바뀌었다. 끝에 추가된 `minimum` 부분은 **제약문** 으로 `ServerNo`의 값을 1 이상으로 제약하고 있다.
 
-`show` 을 실행해보자.
+`show` 를 실행해보자.
 
 ```
 $ loglab show foo.lab.json
@@ -1088,7 +1088,7 @@ Description : 계정 로그아웃
 
 > 기억해야 할 것은, **커스텀 타입을 이용하는 필드에는 추가적인 제약을 걸 수 없다** 는 점이다. 따라서, 필드에 `types.*` 로 커스텀 타입을 지정하는 것은 리스트 형식에서만 가능하다.
 
-`show` 을 호출하면, 같은 내용을 확인할 수 있다.
+`show` 를 호출하면, 같은 내용을 확인할 수 있다.
 
 ```
 $ loglab show foo.lab.json
@@ -1124,7 +1124,7 @@ Description : 계정 로그아웃
 $ loglab show foo.lab.json -c
 # ...
 
-Type : types.Id
+Type : types.unsigned
 Description : Id 타입
 +------------+---------------+------------+
 | BaseType   | Description   | Restrict   |
@@ -1233,7 +1233,7 @@ Description : 계정 로그인
             "desc": "아이템 타입 코드",
             "enum": [1, 2, 3]
         },
-        ["ItemId", "types.Id", "아이템 인스턴스 ID"]
+        ["ItemId", "types.unsigned", "아이템 인스턴스 ID"]
       ]
     }
 
@@ -1264,7 +1264,7 @@ Description : 계정 로그인
             [3, "물약"]
           ]
         },
-        ["ItemId", "types.Id", "아이템 인스턴스 ID"]
+        ["ItemId", "types.unsigned", "아이템 인스턴스 ID"]
       ]
     }
 
@@ -1272,7 +1272,7 @@ Description : 계정 로그인
 }
 ```
 
-`1`, `2` 같은 숫자값 대신 `[나열값, 나열값_설명]` 형식의 리스트를 사용한다. `show` 을 실행해보면 `ItemCd` 필드의 제약 컬럼에 각 나열값의 설명이 추가된 것을 알 수 있다.
+`1`, `2` 같은 숫자값 대신 `[나열값, 나열값_설명]` 형식의 리스트를 사용한다. `show` 를 실행해보면 `ItemCd` 필드의 제약 컬럼에 각 나열값의 설명이 추가된 것을 알 수 있다.
 
 ```$ loglab show foo.lab.json
 # ...
@@ -1296,7 +1296,8 @@ Description : 캐릭터의 아이템 습득
 +----------+----------+----------------+-------------------------------+
 ```
 
-지금까지 살펴본 다양한 기능을 이용하면 본격적인 서비스 로그를 설계하는데 무리가 없을 것이다.
+지금까지 로그 설계에 필요한 기본적인 내용을 설명하였다. 완전한 예제 파일 `foo.lab.json` 은 `loglab/example` 디렉토리 또는 [여기](https://github.com/haje01/loglab/tree/master/example) 에서 확인할 수 있다.
+
 ## 로그 파일의 검증
 
 로그 설계가 끝나면, 실제 서비스에서는 로그를 출력하도록 구현이 필요하다. 구현하는 측에서는 설계에 맞게 잘 구현되었는지 확인을 하고 싶은 경우가 많은데, 로그랩을 사용하면 설계된 로그의 정보를 이용하여 실제 로그를 검증할 수 있다. `loglab` 의 `verify` 명령으로 검증할 수 있는데, 먼저 도움말을 살펴보자.
@@ -1632,6 +1633,8 @@ Description : 서버 가용 메모리.
 
 > 외부 랩 파일을 활용할 때는 먼저 어떤 타입과 베이스가 정의되어 있는지 잘 살펴보고 사용하도록 하자. 제공하는 쪽의 철학을 이해하는 것이 도움이 될 것이다.
 
+완전한 예제 파일 `acme.lab.json` 과 `boo.lab.json` 은 `loglab/example` 디렉토리 또는 [여기](https://github.com/haje01/loglab/tree/master/example) 에서 확인할 수 있다.
+
 ## 기타 기능과 팁
 
 여기서는 로그랩을 활용하는데 도움이 되는 기타 기능들을 소개하겠다.
@@ -1679,7 +1682,7 @@ $ loglab show foo.lab.json -c -n types
 Domain : foo
 Description : 위대한 모바일 게임
 
-Type : types.Id
+Type : types.unsigned
 Description : Id 타입
 +------------+---------------+------------+
 | BaseType   | Description   | Restrict   |
@@ -1732,9 +1735,9 @@ $ sh tools/build.sh
 
 끝으로, 로그랩을 어떤 식으로 사용하면 좋을지 알아보자.
 
-### 로그 구현, 수집, 모니터링 
+### 로그 구현, 수집, 모니터링
 
-로그랩을 통해 로그 구조의 설계가 끝났으면, 실제 서비스의 서버 등에서 로그 코드를 작성해야 하겠다. 사용하는 프로그래밍 언어별로 적절한 로깅 라이브러리를 선택하여 설계에 맞는 JSON 형식으로 남기도록 하자. 남은 로그는 [fluentd](https://www.fluentd.org/) 나 [Filebeat](https://www.elastic.co/kr/beats/filebeat) 같은 로그 수집기를 통해 중앙 저장소에 모으고, 적절한 ETL 과정을 거치면 분석 가능한 형태의 데이터로 거듭날 것이다. 이 과정에서 로그의 실시간 모니터링이 필요하면 [Elasticsearch](https://www.elastic.co/kr/elasticsearch/) 같은 툴을 함께 이용할 수 있을 것이다.  
+로그랩을 통해 로그 구조의 설계가 끝났으면, 실제 서비스의 서버 등에서 로그 코드를 작성해야 하겠다. 사용하는 프로그래밍 언어별로 적절한 로깅 라이브러리를 선택하여 설계에 맞는 JSON 형식으로 남기도록 하자. 남은 로그는 [fluentd](https://www.fluentd.org/) 나 [Filebeat](https://www.elastic.co/kr/beats/filebeat) 같은 로그 수집기를 통해 중앙 저장소에 모으고, 적절한 ETL 과정을 거치면 분석 가능한 형태의 데이터로 거듭날 것이다. 이 과정에서 로그의 실시간 모니터링이 필요하면 [Elasticsearch](https://www.elastic.co/kr/elasticsearch/) 같은 툴을 함께 이용할 수 있을 것이다.
 
 ### 로그 변경 이력의 체계화
 

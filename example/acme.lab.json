@@ -1,0 +1,58 @@
+{
+	"$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
+	"domain": {
+		"name": "acme",
+		"desc": "최고의 게임 회사"
+	},
+    "types": {
+      "unsigned": {
+          "type": "integer",
+          "desc": "0 이상의 정수",
+          "minimum": 0
+      }
+  },
+	"bases": {
+		"Server": {
+			"desc": "서버 정보",
+			"fields": [
+				{
+          "name": "ServerNo",
+          "desc": "서버 번호",
+          "type": "integer",
+          "minimum": 1,
+          "exclusiveMaximum": 100
+        }
+			]
+		},
+		"Account": {
+			"desc": "계정 정보",
+			"mixins": ["bases.Server"],
+			"fields": [
+        ["AcntId", "types.unsigned", "계정 ID"]
+			]
+		}
+	},
+	"events": {
+		"Login": {
+			"desc": "ACME 계정 로그인",
+			"mixins": ["bases.Account"],
+      "fields": [
+        {
+          "name": "Platform",
+          "desc": "디바이스의 플랫폼",
+          "type": "string",
+          "enum": [
+              "ios", "aos"
+          ]
+        }
+      ]
+		},
+		"Logout": {
+			"desc": "ACME 계정 로그아웃",
+			"mixins": ["bases.Account"],
+			"fields": [
+				["PlayTime", "number", "플레이 시간 (초)", true]
+			]
+		}
+  }
+}
