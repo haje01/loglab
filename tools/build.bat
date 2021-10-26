@@ -1,4 +1,6 @@
 echo off
+pytest tests
+
 for /F "tokens=* USEBACKQ" %%F IN (`type loglab\version.py`) DO (
 set ver=%%F
 )
