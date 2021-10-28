@@ -16,11 +16,19 @@ LOGLAB_HOME = Path(os.path.dirname(os.path.abspath(__file__))).parent.absolute()
 BUILTIN_TYPES = ('string', 'integer', 'number', 'boolean', 'datetime')
 
 lc_dir = os.path.join(LOGLAB_HOME, 'locales')
-trans = gettext.translation('base', localedir=lc_dir, fallback=True)
-_ = trans.gettext
 
 
-EDT_DESC = _("이벤트 일시")
+def get_translator(lang):
+    if lang is None:
+        return lambda x: x
+
+    trans = gettext.translation('base', localedir=lc_dir, languages=(lang,))
+    return trans.gettext
+
+
+def get_dt_desc(lang):
+    _ = get_translator(lang)
+    return _("이벤트 일시")
 
 
 class AttrDict(dict):
@@ -98,14 +106,15 @@ def load_file_from(path):
             return f.read()
 
 
-def _init_fields():
-    fields = {}
-    fields["DateTime"] = ["datetime", EDT_DESC]
-    return fields
+# def _init_fields():
+#     fields = {}
+#     fields["DateTime"] = ["datetime", EDT_DESC]
+#     return fields
 
 
-def explain_rstr(f, line_dlm='\n'):
+def explain_rstr(f, lang, line_dlm='\n'):
     """제약을 설명으로 변환."""
+    _ = get_translator(lang)
     exps = []
     atype = f['type']
     if atype in ('integer', 'number'):

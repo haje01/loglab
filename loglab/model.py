@@ -5,7 +5,7 @@ import json
 from json.encoder import py_encode_basestring
 from collections import defaultdict
 
-from loglab.util import BUILTIN_TYPES, AttrDict, EDT_DESC
+from loglab.util import BUILTIN_TYPES, AttrDict, get_dt_desc
 
 
 def _build_domain(data):
@@ -55,7 +55,7 @@ def _resolve_type(tname, _types):
     raise Exception(f"Can not find '{tname}' in type data")
 
 
-def _flat_fields(data, _types, _dnames, for_event=False, use_ctype=False):
+def _flat_fields(data, _types, _dnames, lang, for_event=False, use_ctype=False):
     """베이스 또는 이벤트가 참조하는 필드를 평탄화."""
     if 'fields' not in data:
         data['fields'] = {}
@@ -74,7 +74,7 @@ def _flat_fields(data, _types, _dnames, for_event=False, use_ctype=False):
 
     fields = defaultdict(list)
     if for_event:
-        tdata = dict(type='datetime', desc=EDT_DESC)
+        tdata = dict(type='datetime', desc=get_dt_desc(lang))
         fields['DateTime'].append(['', tdata])
 
     for f in data['fields']:
@@ -111,7 +111,7 @@ def _flat_fields(data, _types, _dnames, for_event=False, use_ctype=False):
     return data
 
 
-def _resolve_mixins(name, _dnames, _bases, _events=None, for_event=False):
+def _resolve_mixins(name, lang, _dnames, _bases, _events=None, for_event=False):
     pbase = name in _bases
     pevent = name in _events if _events is not None else False
     if not pbase and not pevent:
@@ -126,7 +126,7 @@ def _resolve_mixins(name, _dnames, _bases, _events=None, for_event=False):
 
     fields = defaultdict(list)
     if for_event:
-        tdata = dict(type='datetime', desc=EDT_DESC)
+        tdata = dict(type='datetime', desc=get_dt_desc(lang))
         fields['DateTime'].append(['', tdata])
 
     mdesc = None
@@ -186,7 +186,7 @@ def _find_mixin(path, _bases, _events):
 #     if type(data[0]) is dict:
 
 
-def _build_bases(data, _dnames=None, _types=None, _bases=None, use_ctype=False):
+def _build_bases(data, lang, _dnames=None, _types=None, _bases=None, use_ctype=False):
     """베이스 요소 빌드."""
     if _types is None:
         _types = defaultdict(list)
@@ -200,7 +200,7 @@ def _build_bases(data, _dnames=None, _types=None, _bases=None, use_ctype=False):
     if '_imported_' in data:
         for idata in data['_imported_']:
             dname = idata['domain']['name']
-            _build_bases(idata, _dnames + [dname], _types, _bases, use_ctype)
+            _build_bases(idata, lang, _dnames + [dname], _types, _bases, use_ctype)
 
     if 'types' in data:
         _build_types(data, _dnames, _types)
@@ -212,17 +212,17 @@ def _build_bases(data, _dnames=None, _types=None, _bases=None, use_ctype=False):
     nbdata = {}
     for bname, bdata in data['bases'].items():
         path = '.'.join(_dnames)
-        ndata = _flat_fields(bdata, _types, _dnames, use_ctype=use_ctype)
+        ndata = _flat_fields(bdata, _types, _dnames, lang, use_ctype=use_ctype)
         nbdata[bname] = ndata
         _bases[bname].append([path, ndata])
 
     for bname, bdata in nbdata.items():
-        _resolve_mixins(bname, _dnames, _bases)
+        _resolve_mixins(bname, lang, _dnames, _bases)
 
     return _bases
 
 
-def _build_events(data, _dnames=None, _types=None, _bases=None, _events=None,
+def _build_events(data, lang=None, _dnames=None, _types=None, _bases=None, _events=None,
                   use_ctype=False):
     """이벤트 및 관련 요소들 빌드."""
     if _types is None:
@@ -239,13 +239,13 @@ def _build_events(data, _dnames=None, _types=None, _bases=None, _events=None,
         # 수입된 것이 있으면 그것도 빌드
         for idata in data['_imported_']:
             dname = idata['domain']['name']
-            _build_events(idata, _dnames + [dname], _types, _bases, _events,
-                          use_ctype=use_ctype)
+            _build_events(idata, lang, _dnames + [dname], _types, _bases,
+                          _events, use_ctype=use_ctype)
     if 'types' in data:
         _build_types(data, _dnames, _types)
 
     if 'bases' in data:
-        _build_bases(data, _dnames, _types, _bases, use_ctype)
+        _build_bases(data, lang, _dnames, _types, _bases, use_ctype)
 
     if 'events' not in data:
         return _events
@@ -254,21 +254,22 @@ def _build_events(data, _dnames=None, _types=None, _bases=None, _events=None,
     nedata = {}
     for ename, edata in data['events'].items():
         path = '.'.join(_dnames)
-        ndata = _flat_fields(edata, _types, _dnames, True, use_ctype=use_ctype)
+        ndata = _flat_fields(edata, _types, _dnames, lang, True, use_ctype=use_ctype)
         nedata[ename] = ndata
         _events[ename].append([path, ndata])
 
     for ename, edata in nedata.items():
-        _resolve_mixins(ename, _dnames, _bases, _events, True)
+        _resolve_mixins(ename, lang, _dnames, _bases, _events, True)
 
     return _events
 
 
-def build_model(data, use_ctype=False):
+def build_model(data, lang=None, use_ctype=False):
     """모델 을 만듦.
 
     Args:
         data (dict): lab 파일 데이터
+        lang (str): 언어 코드
         use_ctype (bool): 커스텀 타입 유지 여부. 기본 False
 
     """
@@ -277,7 +278,7 @@ def build_model(data, use_ctype=False):
     types = defaultdict(list)
     bases = defaultdict(list)
     events = defaultdict(list)
-    _build_events(data, None, types, bases, events, use_ctype)
+    _build_events(data, lang, None, types, bases, events, use_ctype)
     return AttrDict(dict(domain=domain, types=types, bases=bases,
                     events=events))
 

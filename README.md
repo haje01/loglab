@@ -172,6 +172,7 @@ Options:
   -c, --custom-type  커스텀 타입 그대로 출력
   -n, --name TEXT    출력할 요소 이름 패턴
   -k, --keep-text    긴 문자열 그대로 출력
+  -l, --lang TEXT    로그랩 메시지 언어
   --help             Show this message and exit.
 ```
 
@@ -1713,10 +1714,10 @@ $ loglab html foo.lab.json
 
 > 언어 코드는 [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes), 지역 코드는 [ISO 3166-1](https://en.wikipedia.org/wiki/ISO_3166-1) 을 따른다.
 
-아래와 같이 `LANGUAGE` 환경 변수에 로케일을 지정하여 메시지 언어를 선택해보자.
+아래와 같이 `show` 명령에서 `-l` 또는 `--lang` 옵션을 통해 메시지 언어를 선택해보자.
 
 ```
-$ LANGUAGE=en_US loglab show foo.lab.json
+$ loglab show foo.lab.json -l en_US
 
 # ...
 
@@ -1740,7 +1741,7 @@ Description : 캐릭터의 아이템 습득
 ```
 
 ```
-$ LANGUAGE=zh_CN loglab show foo.lab.json
+$ loglab show foo.lab.json -l zh_CN
 
 # ...
 

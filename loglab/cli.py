@@ -32,7 +32,8 @@ def version():
 @click.option('-n', '--name', help="출력할 요소 이름 패턴")
 @click.option('-k', '--keep-text', is_flag=True, default=False,
               help="긴 문자열 그대로 출력")
-def show(labfile, custom_type, name, keep_text):
+@click.option('-l', '--lang', help="로그랩 메시지 언어")
+def show(labfile, custom_type, name, keep_text, lang):
     """로그 구성 요소 출력."""
     # labfile = find_labfile(labfile)
     data = verify_labfile(labfile)
@@ -43,7 +44,7 @@ def show(labfile, custom_type, name, keep_text):
         sys.exit(1)
     if name is not None:
         name = re.compile(name)
-    print(text_from_labfile(data, custom_type, name, keep_text))
+    print(text_from_labfile(data, custom_type, name, keep_text, lang))
 
 
 @cli.command()
@@ -51,7 +52,8 @@ def show(labfile, custom_type, name, keep_text):
 @click.option('-c', '--custom-type', is_flag=True,
               help="커스텀 타입 그대로 출력")
 @click.option('-o', '--output', help="출력 파일명")
-def html(labfile,  custom_type, output):
+@click.option('-l', '--lang', help="로그랩 메시지 언어")
+def html(labfile,  custom_type, output, lang):
     """HTML 문서 출력."""
     data = verify_labfile(labfile)
     try:
@@ -64,7 +66,7 @@ def html(labfile,  custom_type, output):
     kwargs = dict(
         domain=domain
     )
-    doc = html_from_labfile(data, kwargs, custom_type)
+    doc = html_from_labfile(data, kwargs, custom_type, lang)
     if output is None:
         output = f"{domain['name']}.html"
     print(f"'{output}' 에 HTML 문서 저장.")

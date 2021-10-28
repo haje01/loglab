@@ -137,12 +137,12 @@ tr:nth-child(even) {
 
   {% if types is defined %}
     <a href="javascript:void(0)" class="sidebar-menu" id="sidebar-type" onclick="toggleItems('type')">Types</a>
-    {% for i in dom.types.keys() %}
+    {% for i in model.types.keys() %}
         <a href="#type-{{ i }}" class="sidebar-item type">{{ i }}</a>
     {% endfor %}
   {% endif %}
   <a href="javascript:void(0)" class="sidebar-menu" id="sidebar-event"  onclick="toggleItems('event')">Events</a>
-  {% for i in dom.events.keys() %}
+  {% for i in model.events.keys() %}
     <a href="#event-{{ i }}" class="sidebar-item event">{{ i }}</a>
   {% endfor %}
 
@@ -154,7 +154,7 @@ tr:nth-child(even) {
 
   {% if types is defined %}
     <div class="type-div">
-        {% for key in dom.types.keys() %}
+        {% for key in model.types.keys() %}
         <div class="table-div" id="type-{{ key }}">
           <div class="table-title1-div">
             <p><b>{{ types[loop.index0][0] }}</b> - {{ types[loop.index0][1] }}</p>
@@ -166,7 +166,7 @@ tr:nth-child(even) {
   {% endif %}
 
   <div class="event-div">
-    {% for key in dom.events.keys() %}
+    {% for key in model.events.keys() %}
     <div class="table-div" id="event-{{ key }}">
       <div class="table-title2-div">
         <p><b>{{ events[loop.index0][0] }}</b> - {{ events[loop.index0][1] }}</p>

@@ -7,7 +7,7 @@ from shutil import rmtree
 import pytest
 from click.testing import CliRunner
 
-from loglab.cli import cli, version, show, schema, verify
+from loglab.cli import cli, version, show, schema, verify, html
 from loglab.version import VERSION
 from loglab.util import AttrDict, test_reset
 
@@ -35,15 +35,6 @@ def write_log(fname, body):
         f.write(body)
 
 
-# def write_lab(fname, body):
-#     """임시 랩 파일 생성."""
-#     test_reset()
-#     if not fname.endswith('.lab.json'):
-#         path = fname + '.lab.json'
-#     with open(path, 'wt', encoding='utf8') as f:
-#         f.write(body)
-
-
 def test_cli():
     """기본 실행 테스트."""
     runner = CliRunner()
@@ -63,22 +54,6 @@ def test_version():
     res = runner.invoke(version)
     assert res.exit_code == 0
     assert res.output.strip() == VERSION
-
-
-# def test_labfile():
-#     """랩 파일 찾기 테스트."""
-#     runner = CliRunner()
-
-#     # 랩 파일 없이
-#     res = runner.invoke(show)
-#     assert "랩 파일이 없습니다" in res.output
-#     assert res.exit_code == 1
-
-#     # 랩 파일 둘 이상
-#     copy_files(["minimal.lab.json", "foo.lab.json"])
-#     res = runner.invoke(show)
-#     assert '하나 이상' in res.output
-#     assert res.exit_code == 1
 
 
 def test_show(clear):
@@ -223,6 +198,30 @@ Description : 계정 로그인
 '''
     assert ans in out
 
+    res = runner.invoke(show, ['foo.lab.json', '-l', 'en_US', '-c', '-k'])
+    assert res.exit_code == 0
+    out = res.output
+    ans = '''Type : types.unsigned
+Description : 0 이상 정수
++------------+---------------+------------+
+| BaseType   | Description   | Restrict   |
+|------------+---------------+------------|
+| integer    | 0 이상 정수   | 0 or above |
++------------+---------------+------------+
+
+Event : Login
+Description : 계정 로그인
++----------+----------------+-------------------+----------------------+
+| Field    | Type           | Description       | Restrict             |
+|----------+----------------+-------------------+----------------------|
+| DateTime | datetime       | Event date time   |                      |
+| ServerNo | integer        | 서버 번호         | 1 or above below 100 |
+| AcntId   | types.unsigned | 계정 ID           |                      |
+| Platform | string         | 디바이스의 플랫폼 | one of ios, aos      |
++----------+----------------+-------------------+----------------------+
+'''
+    assert ans in out
+
 
 def test_imp_show(clear):
     """외부 랩 파일 가져온 경우 show."""
@@ -290,65 +289,13 @@ Description : 0 이상의 정수
     assert ans in out
 
 
-def test_schema(clear):
+def test_html(clear):
+    """HTML 생성."""
     runner = CliRunner()
+
     copy_files(['foo.lab.json'])
-
-    res = runner.invoke(schema, 'foo.lab.json')
-    assert res.exit_code == 0
-    out = res.output
-
-    assert "foo.schema.json 에 로그 스키마 저장" in out
-
-    # 로그 스키마 체크
-    with open("foo.schema.json", 'rt', encoding='utf8') as f:
-        body = f.read()
-        data = json.loads(body)
-        scm = AttrDict(data)
-        defs = scm['$defs']
-
-    # 이벤트 타입 const
-    ans = {"const": "Login"}
-    assert defs.Login.properties.Event == ans
-
-    # datetime 포맷
-    ans = {
-        "type": "string",
-        "description": "이벤트 일시",
-        "pattern": "^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\\.[0-9]+)?(([Zz])|([\\+|\\-]([01][0-9]|2[0-3]):[0-5][0-9]))$"
-    }
-    assert defs.Login.properties.DateTime == ans
-
-    # integer 제약
-    ans = {
-        "type": "integer",
-        "description": "서버 번호",
-        "minimum": 1,
-        "exclusiveMaximum": 100
-    }
-    assert defs.Login.properties.ServerNo == ans
-
-    # string enum
-    ans = {
-        "type": "string",
-        "description": "디바이스의 플랫폼",
-        "enum": ["ios", "aos"]
-    }
-    assert defs.Login.properties.Platform == ans
-
-    # 설명이 있는 integer enum
-    ans =  {
-        'type': 'integer',
-        'description': '아이템 타입 코드',
-        'enum': [1, 2, 3]
-    }
-    assert defs.GetItem.properties.ItemCd == ans
-
-    # required
-    ans = ["DateTime", "ServerNo", "AcntId", "Platform"]
-    assert defs.Login.required == ans
-    ans = ["DateTime", "ServerNo", "AcntId"]
-    assert defs.Logout.required == ans
+    res = runner.invoke(html, ['foo.lab.json'])
+    assert "'foo.html' 에 HTML 문서 저장" in res.output
 
 
 def test_verify(clear):

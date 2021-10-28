@@ -109,7 +109,7 @@ def test_mixins():
             }
         }
     }
-    bases = _build_bases(data1)
+    bases = _build_bases(data1, None)
     assert {'Account': [
             ['',
             {
@@ -178,7 +178,7 @@ def test_bases():
         }
     }
     _data1 = copy.deepcopy(data1)
-    bases = _build_bases(data1)
+    bases = _build_bases(data1, None)
     assert _data1 == data1
     assert {
         "Account": [
@@ -219,7 +219,7 @@ def test_bases():
         }
     }
     _data2 = copy.deepcopy(data2)
-    bases = _build_bases(data2)
+    bases = _build_bases(data2, None)
     assert _data2 == data2
     assert {
         "Account": [
@@ -293,7 +293,7 @@ def test_bases():
         }
     }
     _data3 = copy.deepcopy(data3)
-    bases = _build_bases(data3)
+    bases = _build_bases(data3, None)
     assert _data3 == data3
     assert {
         'Account': [
@@ -387,7 +387,7 @@ def test_bases2():
             }
         }
     }
-    bases = _build_bases(data)
+    bases = _build_bases(data, None)
     assert {
         'Server': [
             ['',

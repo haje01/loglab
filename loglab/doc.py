@@ -34,7 +34,7 @@ def _get_dmp(domain):
     return f'{domain}.' if len(domain) > 0 else ''
 
 
-def _write_type_table(tdef, out, keep_text):
+def _write_type_table(tdef, out, keep_text, lang):
 
     headers = ['BaseType', 'Description']
     desc = tdef['desc']
@@ -42,7 +42,7 @@ def _write_type_table(tdef, out, keep_text):
     if not keep_text and w_desc >= T_DESC_WIDTH:
         desc = textwrap.fill(desc, width=T_DESC_WIDTH)
     row = [tdef['type'], desc]
-    rstr = explain_rstr(tdef)
+    rstr = explain_rstr(tdef, lang)
     w_rstr = wcswidth(rstr)
 
     if rstr != '':
@@ -56,10 +56,10 @@ def _write_type_table(tdef, out, keep_text):
     out.write('\n')
 
 
-def _write_custom_types(dom, out, namef, keep_text):
+def _write_custom_types(model, out, namef, keep_text, lang):
     # 출력할 것이 있는지 확인
     cnt = 0
-    for tname, tlst in dom['types'].items():
+    for tname, tlst in model['types'].items():
         td = tlst[-1]
         dmp = _get_dmp(td[0])
         qtname = f'{dmp}types.{tname}'
@@ -68,7 +68,7 @@ def _write_custom_types(dom, out, namef, keep_text):
     if cnt > 0:
         out.write('\n')
 
-    for tname, tlst in dom['types'].items():
+    for tname, tlst in model['types'].items():
         td = tlst[-1]
         dmp = _get_dmp(td[0])
         tdef = td[1]
@@ -78,10 +78,10 @@ def _write_custom_types(dom, out, namef, keep_text):
 
         out.write(f"Type : {qtname}\n")
         out.write(f"Description : {tdef['desc']}\n")
-        _write_type_table(tdef, out, keep_text)
+        _write_type_table(tdef, out, keep_text, lang)
 
 
-def _write_table(edef, out, keep_text):
+def _write_table(edef, out, keep_text, lang):
     headers = ['Field', 'Type', 'Description']
     fields = []
     types = []
@@ -92,7 +92,7 @@ def _write_table(edef, out, keep_text):
     for k, v in edef['fields'].items():
         fdata = v[-1]
         fdef = fdata[1]
-        rstr = explain_rstr(fdef)
+        rstr = explain_rstr(fdef, lang)
         opt = fdef['option'] if 'option' in fdef else None
         fields.append(k)
         types.append(fdef['type'])
@@ -126,7 +126,7 @@ def _write_table(edef, out, keep_text):
     out.write('\n')
 
 
-def _write_event(name, data, out, namef, keep_text):
+def _write_event(name, data, out, namef, keep_text, lang):
     dmp = _get_dmp(data[0])
     edef = data[1]
     qname = f'{dmp}{name}'
@@ -137,54 +137,54 @@ def _write_event(name, data, out, namef, keep_text):
     opt = ' (옵션)' if 'option' in edef and edef['option'] else ''
     out.write(f"Event : {qname}{opt}\n")
     out.write(f"Description : {edef['desc']}\n")
-    _write_table(edef, out, keep_text)
+    _write_table(edef, out, keep_text, lang)
 
 
-def text_from_labfile(data, cus_type, namef, keep_text, out=None):
+def text_from_labfile(data, cus_type, namef, keep_text, lang, out=None):
     """랩 파일에서 텍스트 문서 생성.
 
     Args:
         data (dict): 랩 데이터
         cus_type (bool): 커스텀 타입 출력 여부. 기본 False
         namef (str): 이름 필터
+        keep_text (bool): 긴 문자열 그대로 출력 여부
+        lang (str): 언어 코드
         out (StringIO): 문자열 IO
-        domain (string): 도메인 이름
-        host (dict): 이 랩을 불러온 랩 데이터
 
     """
     if out is None:
         out = StringIO()
 
-    dom = build_model(data, cus_type)
+    model = build_model(data, lang, cus_type)
     # 도메인
     out.write('\n')
-    out.write(f"Domain : {dom.domain.name}\n")
-    if 'desc' in dom.domain:
-        out.write("Description : {}\n".format(dom.domain.desc))
+    out.write(f"Domain : {model.domain.name}\n")
+    if 'desc' in model.domain:
+        out.write("Description : {}\n".format(model.domain.desc))
 
     # 커스텀 타입
-    if 'types' in dom and cus_type:
-        _write_custom_types(dom, out, namef, keep_text)
+    if 'types' in model and cus_type:
+        _write_custom_types(model, out, namef, keep_text, lang)
 
     # 각 이벤트별로
-    for ename, elst in dom.events.items():
+    for ename, elst in model.events.items():
         edata = elst[-1]
         dname = edata[0]
         # 자기 도메인 것만 출력
         if dname != '':
             continue
-        _write_event(ename, edata, out, namef, keep_text)
+        _write_event(ename, edata, out, namef, keep_text, lang)
 
     return out.getvalue()
 
 
-def _html_types(dom):
+def _html_types(model, lang):
 
     def _html_type_table(tdef):
         out = StringIO()
         headers = ['BaseType', 'Description']
         row = [tdef['type'], tdef['desc']]
-        rstr = explain_rstr(tdef)
+        rstr = explain_rstr(tdef, lang)
         if rstr != '':
             headers.append('Restrict')
             row.append(rstr)
@@ -205,7 +205,7 @@ def _html_types(dom):
         return out.getvalue()
 
     types = []
-    for tname, tlst in dom['types'].items():
+    for tname, tlst in model['types'].items():
         td = tlst[-1]
         dmp = _get_dmp(td[0])
         tdef = td[1]
@@ -215,9 +215,9 @@ def _html_types(dom):
     return types
 
 
-def _html_events(dom):
+def _html_events(model, lang):
 
-    def _html_event_table(edef):
+    def _html_event_table(edef, lang):
         out = StringIO()
 
         headers = ['Field', 'Type', 'Description']
@@ -229,7 +229,7 @@ def _html_events(dom):
         for k, v in edef['fields'].items():
             fdata = v[-1]
             fdef = fdata[1]
-            rstr = explain_rstr(fdef, '<br>')
+            rstr = explain_rstr(fdef, lang, '<br>')
             opt = fdef['option'] if 'option' in fdef else None
             fields.append(k)
             types.append(fdef['type'])
@@ -267,18 +267,18 @@ def _html_events(dom):
         return out.getvalue()
 
     events = []
-    for name, data in dom.events.items():
+    for name, data in model.events.items():
         edata = data[-1]
         dmp = _get_dmp(edata[0])
         edef = edata[1]
         opt = ' (옵션)' if 'option' in edef and edef['option'] else ''
         qname = f'{dmp}{name}{opt}'
-        table = _html_event_table(edef)
+        table = _html_event_table(edef, lang)
         events.append([qname, edef['desc'], table])
     return events
 
 
-def html_from_labfile(data, kwargs, cus_type):
+def html_from_labfile(data, kwargs, cus_type, lang):
     """랩 파일에서 HTML 파일 생성.
 
     Args:
@@ -289,21 +289,21 @@ def html_from_labfile(data, kwargs, cus_type):
     Returns:
         str: 결과 HTML
     """
-    dom = build_model(data, cus_type)
+    model = build_model(data, lang, cus_type)
     assert type(kwargs) is dict
     home_dir = absdir_for_html(LOGLAB_HOME)
     kwargs['ext_dir'] = os.path.join(home_dir, 'extern')
 
     # custom types
-    if 'types' in dom and cus_type:
-        types = _html_types(dom)
+    if 'types' in model and cus_type:
+        types = _html_types(model)
         kwargs['types'] = types
 
     # events
-    kwargs['events'] = _html_events(dom)
+    kwargs['events'] = _html_events(model, lang)
 
     tmpl_dir = os.path.join(LOGLAB_HOME, "template")
     loader = FileSystemLoader(tmpl_dir)
     env = Environment(loader=loader)
     tmpl = env.get_template("tmpl_doc.html.jinja")
-    return tmpl.render(dom=dom, **kwargs)
+    return tmpl.render(model=model, **kwargs)
