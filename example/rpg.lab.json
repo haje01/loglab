@@ -239,7 +239,7 @@
     "events": {
         "AcntCreate": {
             "desc": "계정 생성",
-            "mixins": ["webzen.bases.WebzenAcnt", "bases.Account", "bases.Device"]
+            "mixins": ["common.bases.CommonAcnt", "bases.Account", "bases.Device"]
         },
         "CharCreate": {
             "desc": "캐릭터 생성",
@@ -257,7 +257,7 @@
         },
         "AcntLogin": {
             "desc": "계정 로그인",
-            "mixins": ["webzen.bases.WebzenAcnt", "bases.ServerAccount", "bases.Device", "bases.Vip"]
+            "mixins": ["common.bases.CommonAcnt", "bases.ServerAccount", "bases.Device", "bases.Vip"]
         },
         "AcntLogout": {
             "desc": "계정 로그아웃",

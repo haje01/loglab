@@ -1298,7 +1298,7 @@ Description : 캐릭터의 아이템 습득
 +----------+----------+----------------+-------------------------------+
 ```
 
-지금까지 로그 설계에 필요한 기본적인 내용을 설명하였다. 완전한 예제 파일 `foo.lab.json` 은 `loglab/example` 디렉토리 또는 [여기](https://github.com/haje01/loglab/tree/master/example) 에서 확인할 수 있다.
+지금까지 로그 설계에 필요한 기본적인 내용을 설명하였다. 완전한 예제 파일 `foo.lab.json` 은 로그랩 코드의 `example` 디렉토리 또는 [여기](https://github.com/haje01/loglab/tree/master/example) 에서 확인할 수 있다.
 
 ## 로그 파일의 검증
 
@@ -1439,6 +1439,7 @@ $ loglab verify fakelog.txt
 
 ```js
 {
+  "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
   "domain": {
     "name": "boo",
     "desc": "최고의 PC 온라인 게임"
@@ -1635,7 +1636,7 @@ Description : 서버 가용 메모리.
 
 > 외부 랩 파일을 활용할 때는 먼저 어떤 타입과 베이스가 정의되어 있는지 잘 살펴보고 사용하도록 하자. 제공하는 쪽의 철학을 이해하는 것이 도움이 될 것이다.
 
-완전한 예제 파일 `acme.lab.json` 과 `boo.lab.json` 은 `loglab/example` 디렉토리 또는 [여기](https://github.com/haje01/loglab/tree/master/example) 에서 확인할 수 있다.
+완전한 예제 파일 `acme.lab.json` 과 `boo.lab.json` 은 로그랩 코드의 `example` 디렉토리 또는 [여기](https://github.com/haje01/loglab/tree/master/example) 에서 확인할 수 있다.
 
 ## 기타 기능과 팁
 
@@ -1810,6 +1811,8 @@ $ sh tools/build.sh
 로그랩을 큰 프로젝트에 사용할 때 참고할 만한 예제가 있으면 도움이 될 것이다. 아래는 MMORPG 게임의 주요 이벤트들을 로그랩으로 기술한 것이다.
 
 랩 파일 : https://raw.githubusercontent.com/haje01/loglab/master/example/rpg.lab.json
+
+> 로그랩 코드의 `example/rpg.lab.json` 에서도 확인할 수 있다.
 
 HTML 보기 : http://htmlpreview.github.io/?https://raw.githubusercontent.com/haje01/loglab/master/example/rpg.html#
 

@@ -1,8 +1,8 @@
 {
     "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
     "domain": {
-        "name": "webzen",
-        "desc": "MMORPG 게임"
+        "name": "common",
+        "desc": "공용 구조"
     },
     "types": {
         "stringId": {
@@ -11,10 +11,10 @@
         }
     },
     "bases": {
-        "WebzenAcnt": {
-            "desc": "웹젠 계정 정보",
+        "CommonAcnt": {
+            "desc": "공통 계정 정보",
             "fields": [
-                ["WebzenId", "types.stringId", "웹젠 계정 ID"]
+                ["CommonId", "types.stringId", "공통 계정 ID"]
             ]
         }
     }
