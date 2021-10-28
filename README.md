@@ -1740,7 +1740,7 @@ Description : 캐릭터의 아이템 습득
 ```
 
 ```
-$ LANGUAGE=en_US loglab show foo.lab.json
+$ LANGUAGE=zh_CN loglab show foo.lab.json
 
 # ...
 
