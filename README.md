@@ -1711,7 +1711,7 @@ $ loglab html foo.lab.json
 
 문제가 되는 것은 로그랩에서 설명을 위해 자동으로 추가되는 메시지들 (`이벤트 시간`, `~이상`, `~미만` 등) 이 한국어로 나오는 것이다. 로그랩은 메시지 언어를 `언어_지역` 형식의 로케일로 선택할 수 있는데, 현재는 영어 `en_US` 와 중국어 `zh_CN` 가 준비되어 있다.
 
-> 언어 코드는 [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes), 지역 코드는 [ISO 3166-1](https://en.wikipedia.org/wiki/ISO_3166-1) 을 참고하자.
+> 언어 코드는 [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes), 지역 코드는 [ISO 3166-1](https://en.wikipedia.org/wiki/ISO_3166-1) 을 따른다.
 
 아래와 같이 `LANGUAGE` 환경 변수를 통해 로그랩의 메시지 언어를 선택할 수 있다.
 
