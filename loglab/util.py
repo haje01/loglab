@@ -21,7 +21,6 @@ lc_dir = os.path.join(LOGLAB_HOME, 'locales')
 def get_translator(lang):
     if lang is None:
         return lambda x: x
-
     trans = gettext.translation('base', localedir=lc_dir, languages=(lang,))
     return trans.gettext
 
