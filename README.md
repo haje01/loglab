@@ -33,6 +33,7 @@
     - [복잡한 랩 파일 필터링하기](#복잡한-랩-파일-필터링하기)
     - [HTML 문서 출력](#html-문서-출력)
     - [실행 파일 이용과 빌드](#실행-파일-이용과-빌드)
+    - [현지화 (Localization)](#현지화-localization)
   - [로그랩 활용 방안](#로그랩-활용-방안)
     - [로그 구현, 수집, 모니터링](#로그-구현-수집-모니터링)
     - [로그 변경 이력의 체계화](#로그-변경-이력의-체계화)
@@ -1730,6 +1731,66 @@ $ sh tools/build.sh
 ```
 
 정상적으로 빌드가 되면, `dist/` 디렉토리 아래 `loglab.exe` (윈도우) 또는 `loglab` (리눅스/macOS) 실행 파일이 만들어진다. 이것을 배포하면 되겠다.
+
+### 현지화 (Localization)
+
+서비스가 잘 완성되어 해외 진출을 준비하는 경우, 현지 언어로 된 로그 문서가 필요할 수 있다. 이런 경우 현재 로그랩에서는 해당 언어를 위한 별도의 랩 파일을 만들고 현지 언어로 설명을 번역하는 식으로 작업이 가능하다.
+
+문제가 되는 것은 로그랩에서 설명을 위해 자동으로 추가되는 메시지들 (`이벤트 시간`, `~이상`, `~미만` 등) 이 한국어로 나오는 것인데, 로그랩은 현지화 지원을 위해 이런 메시지들을 별도 카탈로그로 추출해 두었다. `언어_지역` 형식의 로케일로 선택할 수 있으며, 현재는 영어 `en_US` 와 중국어 `zh_CN` 가 준비되어 있다.
+
+> 언어 코드는 [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes), 지역 코드는 [ISO 3166-1](https://en.wikipedia.org/wiki/ISO_3166-1) 을 참고하자.
+
+아래와 같이 `LANGUAGE` 환경 변수를 통해 로그랩의 메시지 언어를 선택할 수 있다.
+
+```
+$ LANGUAGE=en_US loglab show foo.lab.json
+
+# ...
+
+Event : GetItem
+Description : 캐릭터의 아이템 습득
++----------+----------+------------------+--------------------------+
+| Field    | Type     | Description      | Restrict                 |
+|----------+----------+------------------+--------------------------|
+| DateTime | datetime | Event date time  |                          |
+| ServerNo | integer  | 서버 번호        | 1 or above below 100     |
+| AcntId   | integer  | 계정 ID          | 0 or above               |
+| CharId   | integer  | 캐릭터 ID        | 0 or above               |
+| MapCd    | integer  | 맵 코드          | 0 or above               |
+| PosX     | number   | 맵상 X 위치      |                          |
+| PosY     | number   | 맵상 Y 위치      |                          |
+| PosZ     | number   | 맵상 Z 위치      |                          |
+| ItemCd   | integer  | 아이템 타입 코드 | one of 1 (칼), 2 (방패), |
+|          |          |                  | 3 (물약)                 |
+| ItemId   | integer  | 아이템 개체 ID   | 0 or above               |
++----------+----------+------------------+--------------------------+
+```
+
+```
+$ LANGUAGE=en_US loglab show foo.lab.json
+
+# ...
+
+Event : GetItem
+Description : 캐릭터의 아이템 습득
++----------+----------+------------------+----------------------------+
+| Field    | Type     | Description      | Restrict                   |
+|----------+----------+------------------+----------------------------|
+| DateTime | datetime | 事件日期         |                            |
+| ServerNo | integer  | 서버 번호        | 1 以上(含) 100 以下        |
+| AcntId   | integer  | 계정 ID          | 0 以上(含)                 |
+| CharId   | integer  | 캐릭터 ID        | 0 以上(含)                 |
+| MapCd    | integer  | 맵 코드          | 0 以上(含)                 |
+| PosX     | number   | 맵상 X 위치      |                            |
+| PosY     | number   | 맵상 Y 위치      |                            |
+| PosZ     | number   | 맵상 Z 위치      |                            |
+| ItemCd   | integer  | 아이템 타입 코드 | 1 (칼), 2 (방패), 3 (물약) |
+|          |          |                  | 之一                       |
+| ItemId   | integer  | 아이템 개체 ID   | 0 以上(含)                 |
++----------+----------+------------------+----------------------------+
+```
+
+지금까지 작성한 랩 파일을 사용해 설명이 한국어로 나오지만, 로그랩에서 추가된 메시지는 해당 언어로 나오는 것을 확인할 수 있다.
 
 ## 로그랩 활용 방안
 
