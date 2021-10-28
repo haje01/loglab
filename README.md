@@ -1808,11 +1808,9 @@ $ sh tools/build.sh
 
 ### MMORPG 위한 예제
 
-로그랩을 큰 프로젝트에 사용할 때 참고할 만한 예제가 있으면 도움이 될 것이다. 아래는 MMORPG 게임의 주요 이벤트들을 로그랩으로 기술한 것이다.
+로그랩을 큰 프로젝트에 사용할 때 참고할 만한 예제가 있으면 도움이 될 것이다. 아래는 MMORPG 게임의 주요 이벤트들을 로그랩으로 기술한 것이다 (로그랩 코드의 `example` 디렉토리에서 확인할 수 있다).
 
 랩 파일 : https://raw.githubusercontent.com/haje01/loglab/master/example/rpg.lab.json
-
-> 로그랩 코드의 `example/rpg.lab.json` 에서도 확인할 수 있다.
 
 HTML 보기 : http://htmlpreview.github.io/?https://raw.githubusercontent.com/haje01/loglab/master/example/rpg.html#
 
