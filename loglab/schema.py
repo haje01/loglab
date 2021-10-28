@@ -98,8 +98,14 @@ def log_schema_from_labfile(data):
                 for rk, rv in v[1].items():
                     if rk in ('type', 'desc'):
                         continue
-                    if rk == 'enum' and len(rv) > 0 and type(rv[0]) is list:
-                        rv = [r[0] for r in rv]
+                    if rk == 'enum' and len(rv) > 0:
+                        ev = []
+                        for r in rv:
+                            if type(r) is list:
+                                ev.append(r[0])
+                            else:
+                                ev.append(r)
+                        rv = ev
                     finfo[rk] = rv
                 body = json.dumps(finfo, ensure_ascii=False)
                 prop = f"""

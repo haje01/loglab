@@ -128,10 +128,13 @@ def explain_rstr(f, lang, line_dlm='\n'):
             xmax = f['exclusiveMaximum']
         if 'enum' in f:
             enum = f['enum']
-            if len(enum) > 0 and type(enum[0]) is list:
+            if len(enum) > 0:
                 expl = []
                 for d in enum:
-                    expl.append(f"{d[0]} ({d[1]})")
+                    if type(d) is list:
+                        expl.append(f"{d[0]} ({d[1]})")
+                    else:
+                        expl.append(str(d))
                 enum = expl
             arr = ', '.join(expl)
             enum = _("{} 중 하나").format(arr)

@@ -125,7 +125,7 @@ Commands:
 
 ```
 $ loglab version
-0.1.2
+0.1.3
 ```
 
 ## 최초 랩 파일 만들기
@@ -739,7 +739,7 @@ Description : 캐릭터 로그아웃
 
     "KillMonster": {
       "desc": "몬스터를 잡음",
-      "mixins": ["bases.Character", "bases.Position", "bases.Monster"],
+      "mixins": ["bases.Character", "bases.Position", "bases.Monster"]
     }
 }
 ```
@@ -1023,11 +1023,11 @@ Description : 계정 로그아웃
 
   "types": {
     "unsigned": {
-      "desc": "0 이상의 정수"
+      "desc": "0 이상의 정수",
       "type": "integer",
       "minimum": 0
     }
-  }
+  },
 
   //...
 }
@@ -1243,7 +1243,7 @@ Description : 계정 로그인
 }
 ```
 
-기존 제약을 기본 타입 + `enum` 으로 대체할 것이기에, 기존 `types.unsigned` 대신 `integer` 로 타입을 변경하였다. 이어서 각 값에 대한 설명을 아래와 같이 추가한다.
+기존 제약을 기본 타입 + `enum` 으로 대체할 것이기에, 기존 `types.unsigned` 대신 `integer` 로 타입을 변경하였다. 이대로 사용해도 되지만, 여기서는 각 값에 대한 설명을 아래와 같이 추가한다.
 
 ```js
 {

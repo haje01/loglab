@@ -136,42 +136,42 @@ Description : 캐릭터 로그아웃
 
     ans = '''Event : MonsterDropItem (옵션)
 Description : 몬스터가 아이템을 떨어뜨림
-+-----------+----------+------------------+------------------------------------+
-| Field     | Type     | Description      | Restrict                           |
-|-----------+----------+------------------+------------------------------------|
-| DateTime  | datetime | 이벤트 일시      |                                    |
-| ServerNo  | integer  | 서버 번호        | 1 이상 100 미만                    |
-| MonsterCd | integer  | 몬스터 타입 코드 | 0 이상                             |
-| MonsterId | integer  | 몬스터 개체 ID   | 0 이상                             |
-| MapId     | integer  | 맵 번호          | 0 이상                             |
-| PosX      | number   | 맵상 X 위치      |                                    |
-| PosY      | number   | 맵상 Y 위치      |                                    |
-| PosZ      | number   | 맵상 Z 위치      |                                    |
-| ItemCd    | integer  | 아이템 타입 코드 | 1 (칼), 2 (방패), 3 (물약) 중 하나 |
-| ItemId    | integer  | 아이템 개체 ID   | 0 이상                             |
-| ItemName  | string   | 아이템 이름      | 7 자 이하                          |
-|           |          |                  | 정규식 ^Itm.* 매칭                 |
-+-----------+----------+------------------+------------------------------------+'''
++-----------+----------+------------------+-------------------------------------------+
+| Field     | Type     | Description      | Restrict                                  |
+|-----------+----------+------------------+-------------------------------------------|
+| DateTime  | datetime | 이벤트 일시      |                                           |
+| ServerNo  | integer  | 서버 번호        | 1 이상 100 미만                           |
+| MonsterCd | integer  | 몬스터 타입 코드 | 0 이상                                    |
+| MonsterId | integer  | 몬스터 개체 ID   | 0 이상                                    |
+| MapId     | integer  | 맵 번호          | 0 이상                                    |
+| PosX      | number   | 맵상 X 위치      |                                           |
+| PosY      | number   | 맵상 Y 위치      |                                           |
+| PosZ      | number   | 맵상 Z 위치      |                                           |
+| ItemCd    | integer  | 아이템 타입 코드 | 0, 1 (칼), 2 (방패), 3 (물약), 99 중 하나 |
+| ItemId    | integer  | 아이템 개체 ID   | 0 이상                                    |
+| ItemName  | string   | 아이템 이름      | 7 자 이하                                 |
+|           |          |                  | 정규식 ^Itm.* 매칭                        |
++-----------+----------+------------------+-------------------------------------------+'''
     assert ans in out
 
     ans = '''Event : GetItem
 Description : 캐릭터의 아이템 습득
-+----------+----------+------------------+------------------------------------+
-| Field    | Type     | Description      | Restrict                           |
-|----------+----------+------------------+------------------------------------|
-| DateTime | datetime | 이벤트 일시      |                                    |
-| ServerNo | integer  | 서버 번호        | 1 이상 100 미만                    |
-| AcntId   | integer  | 계정 ID          | 0 이상                             |
-| CharId   | integer  | 캐릭터 ID        | 0 이상                             |
-| MapId    | integer  | 맵 번호          | 0 이상                             |
-| PosX     | number   | 맵상 X 위치      |                                    |
-| PosY     | number   | 맵상 Y 위치      |                                    |
-| PosZ     | number   | 맵상 Z 위치      |                                    |
-| ItemCd   | integer  | 아이템 타입 코드 | 1 (칼), 2 (방패), 3 (물약) 중 하나 |
-| ItemId   | integer  | 아이템 개체 ID   | 0 이상                             |
-| ItemName | string   | 아이템 이름      | 7 자 이하                          |
-|          |          |                  | 정규식 ^Itm.* 매칭                 |
-+----------+----------+------------------+------------------------------------+'''
++----------+----------+------------------+-------------------------------------------+
+| Field    | Type     | Description      | Restrict                                  |
+|----------+----------+------------------+-------------------------------------------|
+| DateTime | datetime | 이벤트 일시      |                                           |
+| ServerNo | integer  | 서버 번호        | 1 이상 100 미만                           |
+| AcntId   | integer  | 계정 ID          | 0 이상                                    |
+| CharId   | integer  | 캐릭터 ID        | 0 이상                                    |
+| MapId    | integer  | 맵 번호          | 0 이상                                    |
+| PosX     | number   | 맵상 X 위치      |                                           |
+| PosY     | number   | 맵상 Y 위치      |                                           |
+| PosZ     | number   | 맵상 Z 위치      |                                           |
+| ItemCd   | integer  | 아이템 타입 코드 | 0, 1 (칼), 2 (방패), 3 (물약), 99 중 하나 |
+| ItemId   | integer  | 아이템 개체 ID   | 0 이상                                    |
+| ItemName | string   | 아이템 이름      | 7 자 이하                                 |
+|          |          |                  | 정규식 ^Itm.* 매칭                        |
++----------+----------+------------------+-------------------------------------------+'''
     assert ans in out
 
     res = runner.invoke(show, ['foo.lab.json', '-c', '-k'])
@@ -352,7 +352,7 @@ def test_verify(clear):
     log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonsterCd": 3, "MonsterId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemCd": 100, "ItemId": 4, "ItemName": "Sword"}'
     write_log('fakelog.txt', log)
     res = runner.invoke(verify, args)
-    assert "100 is not one of [1, 2, 3]" in res.output
+    assert "100 is not one of [0, 1, 2, 3, 99]" in res.output
 
     log = '{"DateTime": "2021-08-13T20:20:39+09:00", "Event": "MonsterDropItem", "ServerNo": 1, "MonsterCd": 3, "MonsterId": 3, "MapId": 1, "PosX": 0, "PosY": 0, "PosZ": 0, "ItemCd": 3, "ItemId": 4, "ItemName": "ItmSword"}'
     write_log('fakelog.txt', log)
