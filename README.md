@@ -1757,7 +1757,7 @@ namespace foo
         public string Serialize()
         {
             string json = JsonSerializer.Serialize(this);
-            string dt = DateTime.Now.ToString("yyyy-MM-ddTH:mm:ss");
+            string dt = DateTime.Now.ToString("yyyy-MM-ddTH:mm:sszzz");
             string head = String.Format("\"DateTime\":\"{0}\",\"Event\":\"{1}\",", dt, "Login");
             json = json.Insert(1, head);
             return json;
