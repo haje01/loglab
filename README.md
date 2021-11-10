@@ -1747,16 +1747,12 @@ namespace foo
     public class Login
     {
         public const string Event = "Login";
-
         /// <summary>서버 번호</summary>
         public int ServerNo { get; set; }
-
         /// <summary>계정 ID</summary>
         public int AcntId { get; set; }
-
         /// <summary>디바이스의 플랫폼</summary>
         public string Platform { get; set; }
-
 
         public string Serialize()
         {
@@ -1778,37 +1774,26 @@ namespace foo
     public class GetItem
     {
         public const string Event = "GetItem";
-
         /// <summary>서버 번호</summary>
         public int ServerNo { get; set; }
-
         /// <summary>계정 ID</summary>
         public int AcntId { get; set; }
-
         /// <summary>캐릭터 ID</summary>
         public int CharId { get; set; }
-
         /// <summary>맵 번호</summary>
         public int MapId { get; set; }
-
         /// <summary>맵상 X 위치</summary>
         public float PosX { get; set; }
-
         /// <summary>맵상 Y 위치</summary>
         public float PosY { get; set; }
-
         /// <summary>맵상 Z 위치</summary>
         public float PosZ { get; set; }
-
         /// <summary>아이템 타입 코드</summary>
         public int ItemCd { get; set; }
-
         /// <summary>아이템 개체 ID</summary>
         public int ItemId { get; set; }
-
         /// <summary>아이템 이름</summary>
         public string ItemName { get; set; }
-
 
         public string Serialize()
         {
