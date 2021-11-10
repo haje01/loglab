@@ -1,12 +1,12 @@
 """LogLab 커맨드라인 툴."""
-import os
 import sys
 import json
 import re
 
 import click
 
-from loglab.doc import text_from_labfile, html_from_labfile
+from loglab.doc import text_from_labfile, html_from_labfile,\
+    object_from_labfile, object_code_type
 from loglab.schema import verify_labfile, log_schema_from_labfile,\
     verify_logfile
 from loglab.model import handle_import
@@ -106,6 +106,27 @@ def schema(labfile):
 def verify(schema, logfile):
     """생성된 로그 파일 검증."""
     verify_logfile(schema, logfile)
+
+
+@cli.command()
+@click.argument('labfile', type=click.Path(exists=True))
+@click.option('-c', '--code-type', default="cs", help="출력 코드 타입")
+@click.option('-l', '--lang', help="로그랩 메시지 언어")
+def object(labfile, code_type, lang):
+    """로그 객체 코드 출력."""
+    data = verify_labfile(labfile)
+    try:
+        handle_import(labfile, data)
+    except FileNotFoundError as e:
+        print(f"Error: 가져올 파일 '{e}' 을 찾을 수 없습니다.")
+        sys.exit(1)
+
+    code_type = code_type.lower()
+    if code_type != 'cs':
+        print(f"Error: 지원하지 않는 코드 타입 (.{code_type}) 입니다.")
+        sys.exit(1)
+
+    print(object_from_labfile(data, code_type, lang))
 
 
 if __name__ == "__main__":

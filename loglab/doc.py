@@ -307,3 +307,44 @@ def html_from_labfile(data, kwargs, cus_type, lang):
     env = Environment(loader=loader)
     tmpl = env.get_template("tmpl_doc.html.jinja")
     return tmpl.render(model=model, **kwargs)
+
+
+_type_json2cs = {
+    'integer': 'int',
+    'number': 'float',
+    'string': 'string',
+    'boolean': 'bool',
+    'datetime': 'DateTime'
+}
+
+
+def object_code_type(fname):
+    """파일명에서 랭귀지 타입 (확장자) 얻음."""
+    elms = fname.split(os.sep)
+    _, fext = elms[-1].split('.')
+    ctype = fext.lower()
+    return ctype
+
+
+def object_from_labfile(data, code_type, lang):
+    """
+
+    로그 쓰기용 객체 출력.
+
+    Args:
+        data (dict): 랩 파일 데이터
+        lang (str): 언어 코드
+        output (str): 저장할 코드 파일 경로
+
+    """
+    assert code_type == 'cs'
+    model = build_model(data, lang)
+    tmpl_dir = os.path.join(LOGLAB_HOME, "template")
+    loader = FileSystemLoader(tmpl_dir)
+    env = Environment(loader=loader)
+    tmpl = env.get_template("tmpl_code.cs.jinja")
+
+    domain = data['domain']
+    events = model['events']
+    kwargs = dict(domain=domain, events=events)
+    return tmpl.render(json2cs=_type_json2cs, **kwargs)

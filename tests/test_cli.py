@@ -7,7 +7,7 @@ from shutil import rmtree
 import pytest
 from click.testing import CliRunner
 
-from loglab.cli import cli, version, show, schema, verify, html
+from loglab.cli import cli, version, show, schema, verify, html, code
 from loglab.version import VERSION
 from loglab.util import AttrDict, test_reset
 
@@ -436,3 +436,14 @@ def test_imp_verify(clear):
     write_log(fake_log, log)
     res = runner.invoke(verify, ['boo.schema.json', fake_log])
     assert res.exit_code == 0
+
+
+def test_code(clear):
+    """로그 쓰기용 코드 생성."""
+    copy_files(['foo.lab.json'])
+
+    runner = CliRunner()
+    res = runner.invoke(code, ['foo.lab.json', 'loglab_minimal.cs'])
+    assert res.exit_code == 0
+    out = res.output
+    import pdb; pdb.set_trace()

@@ -32,6 +32,7 @@
   - [기타 기능과 팁](#기타-기능과-팁)
     - [복잡한 랩 파일 필터링하기](#복잡한-랩-파일-필터링하기)
     - [HTML 문서 출력](#html-문서-출력)
+    - [로그 객체 출력](#로그-객체-출력)
     - [현지화 (Localization)](#현지화-localization)
     - [실행 파일 이용과 빌드](#실행-파일-이용과-빌드)
   - [로그랩 활용 방안](#로그랩-활용-방안)
@@ -1706,6 +1707,124 @@ $ loglab html foo.lab.json
 생성된 `foo.html` 파일을 웹브라우저로 열어보면 아래와 같은 페이지를 확인할 수 있을 것이다.
 
 ![html_output](image/html.png)
+
+
+### 로그 객체 출력
+
+서비스 코드에서 로그 출력을 구현할 때, 필요한 필드와 값을 매번 문자열로 만들어 쓰는 것보다, 이벤트에 맞는 객체 (Object) 를 미리 정의하고 그것의 멤버 변수에 값을 채운뒤, 최종적으로 문자열로 시리얼라이즈 (Serialize) 하는 방식이 좀 더 편리할 수 있다. 여기서는 이것을 **로그 객체 (Log Object)** 로 부르겠다.
+
+로그랩에서는 `object` 명령으로 로그 객체 코드 출력을 지원한다.
+
+```
+$ loglab object foo.lab.json -c cs > loglab_foo.cs
+```
+
+`-c` 옵션으로 생성할 코드 타입을 지정하는데, 현재는 C# `cs` 만 지원하기에 생략 가능하다. 결과는 표준 출력으로 나가며, 위 예에서 처럼 파일로 리다이렉션하여 저장할 수 있다.
+
+아래는 `foo.lab.json` 에서 생성된 로그 객체 코드 파일 `loglab_foo.cs` 의 내용이다. 이것을 프로젝트에서 불러와 원하는 값으로 객체를 구성하고 `Serialize()` 를 불러주면 JSON 형태의 문자열을 얻을 수 있고, 그것을 사용하는 로깅 라이브러리에 건네주어 출력하게 하면 편리할 것이다.
+
+> 생성된 코드에서 `DateTime` 필드는 빠져있는데, 그것은 로깅 라이브러리에서 출력시 생성될 것으로 가정하였다.
+
+```cs
+/*
+
+    ** 이 파일은 loglab 에서 생성된 것입니다. 고치지 마세요! **
+
+    Domain: foo
+    Description: 위대한 모바일 게임
+
+*/
+
+using System;
+using System.Text.Json;
+
+namespace loglab
+{
+namespace foo
+{
+
+    /// <summary>
+    ///  계정 로그인
+    /// </summary>
+    public class Login
+    {
+        public const string Event = "Login";
+
+        /// <summary>서버 번호</summary>
+        public int ServerNo { get; set; }
+
+        /// <summary>계정 ID</summary>
+        public int AcntId { get; set; }
+
+        /// <summary>디바이스의 플랫폼</summary>
+        public string Platform { get; set; }
+
+
+        public string Serialize()
+        {
+            string json = JsonSerializer.Serialize(this);
+            string dt = DateTime.Now.ToString("yyyy-MM-ddTH:mm:ss");
+            string head = String.Format("\"DateTime\":\"{0}\",\"Event\":\"{1}\",", dt, "Login");
+            json = json.Insert(1, head);
+            return json;
+        }
+    }
+
+
+    // ...
+
+
+    /// <summary>
+    ///  캐릭터의 아이템 습득
+    /// </summary>
+    public class GetItem
+    {
+        public const string Event = "GetItem";
+
+        /// <summary>서버 번호</summary>
+        public int ServerNo { get; set; }
+
+        /// <summary>계정 ID</summary>
+        public int AcntId { get; set; }
+
+        /// <summary>캐릭터 ID</summary>
+        public int CharId { get; set; }
+
+        /// <summary>맵 번호</summary>
+        public int MapId { get; set; }
+
+        /// <summary>맵상 X 위치</summary>
+        public float PosX { get; set; }
+
+        /// <summary>맵상 Y 위치</summary>
+        public float PosY { get; set; }
+
+        /// <summary>맵상 Z 위치</summary>
+        public float PosZ { get; set; }
+
+        /// <summary>아이템 타입 코드</summary>
+        public int ItemCd { get; set; }
+
+        /// <summary>아이템 개체 ID</summary>
+        public int ItemId { get; set; }
+
+        /// <summary>아이템 이름</summary>
+        public string ItemName { get; set; }
+
+
+        public string Serialize()
+        {
+            string json = JsonSerializer.Serialize(this);
+            string dt = DateTime.Now.ToString("yyyy-MM-ddTH:mm:sszzz");
+            string head = String.Format("\"DateTime\":\"{0}\",\"Event\":\"{1}\",", dt, "GetItem");
+            json = json.Insert(1, head);
+            return json;
+        }
+    }
+
+}
+}
+```
 
 ### 현지화 (Localization)
 
