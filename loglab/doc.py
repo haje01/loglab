@@ -342,6 +342,8 @@ def object_from_labfile(data, code_type, lang):
     tmpl_dir = os.path.join(LOGLAB_HOME, "template")
     loader = FileSystemLoader(tmpl_dir)
     env = Environment(loader=loader)
+    env.trim_blocks = True
+    env.lstrip_blocks = True
     tmpl = env.get_template("tmpl_code.cs.jinja")
 
     domain = data['domain']

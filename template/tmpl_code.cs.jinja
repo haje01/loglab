@@ -21,9 +21,9 @@ namespace {{ domain.name }}
     public class {{ ename }}
     {
         public const string Event = "{{ ename }}";
-        {% for fname in events[ename][-1][1]['fields'].keys() %}{% if fname != 'DateTime' %}/// <summary>{{ events[ename][-1][1]['fields'][fname][-1][1]['desc'] }}</summary>
-        public {{ json2cs[events[ename][-1][1   ]['fields'][fname][-1][1]['type']] }} {{ fname }} { get; set; }{% endif %}
-        {% endfor %}
+        {% for fname in events[ename][-1][1]['fields'].keys() %}{% if fname != 'DateTime' %}        // {{ events[ename][-1][1]['fields'][fname][-1][1]['desc'] }}
+        public {{ json2cs[events[ename][-1][1   ]['fields'][fname][-1][1]['type']] }} {{ fname }} { get; set; }
+        {% endif %}{% endfor %}
         public string Serialize()
         {
             string json = JsonSerializer.Serialize(this);

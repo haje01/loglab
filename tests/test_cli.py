@@ -7,7 +7,7 @@ from shutil import rmtree
 import pytest
 from click.testing import CliRunner
 
-from loglab.cli import cli, version, show, schema, verify, html, code
+from loglab.cli import cli, version, show, schema, verify, html, object
 from loglab.version import VERSION
 from loglab.util import AttrDict, test_reset
 
@@ -438,12 +438,47 @@ def test_imp_verify(clear):
     assert res.exit_code == 0
 
 
-def test_code(clear):
-    """로그 쓰기용 코드 생성."""
+def test_object(clear):
+    """로그 객체 코드 생성."""
     copy_files(['foo.lab.json'])
 
     runner = CliRunner()
-    res = runner.invoke(code, ['foo.lab.json', 'loglab_minimal.cs'])
+    res = runner.invoke(object, ['foo.lab.json'])
     assert res.exit_code == 0
     out = res.output
-    import pdb; pdb.set_trace()
+    assert '''
+    /// <summary>
+    ///  캐릭터의 아이템 습득
+    /// </summary>
+    public class GetItem
+    {
+        public const string Event = "GetItem";
+        // 서버 번호
+        public int ServerNo { get; set; }
+        // 계정 ID
+        public int AcntId { get; set; }
+        // 캐릭터 ID
+        public int CharId { get; set; }
+        // 맵 번호
+        public int MapId { get; set; }
+        // 맵상 X 위치
+        public float PosX { get; set; }
+        // 맵상 Y 위치
+        public float PosY { get; set; }
+        // 맵상 Z 위치
+        public float PosZ { get; set; }
+        // 아이템 타입 코드
+        public int ItemCd { get; set; }
+        // 아이템 개체 ID
+        public int ItemId { get; set; }
+        // 아이템 이름
+        public string ItemName { get; set; }
+        public string Serialize()
+        {
+            string json = JsonSerializer.Serialize(this);
+            string dt = DateTime.Now.ToString("yyyy-MM-ddTH:mm:sszzz");
+            string head = String.Format("\\"DateTime\\":\\"{0}\\",\\"Event\\":\\"{1}\\",", dt, "GetItem");
+            json = json.Insert(1, head);
+            return json;
+        }
+    }''' in out
