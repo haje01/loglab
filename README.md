@@ -1778,7 +1778,33 @@ namespace loglab_foo
 }
 ```
 
-생성된 코드를 프로젝트에서 불러와 원하는 값으로 이벤트 객체를 구성하고 `Serialize()` 를 불러주면 JSON 형태의 문자열을 얻을 수 있다. 이것을 사용하는 로깅 라이브러리에 건네주기만 하면, 간편하게 설계에 맞는 로그를 출력할 수 있을 것이다.
+아래는 이 코드를 불러와서 사용하는 예이다.
+
+```cs
+using System;
+using loglab_foo;
+
+namespace csharp
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Logout logout = new Logout(33, 44);
+            logout.PlayTime = 100;
+            Console.WriteLine(logout.Serialize());
+        }
+    }
+}
+```
+
+결과는 아래와 같다.
+
+```json
+{"DateTime": "2021-11-12T12:19:00+09:00", "Event": "Logout", "ServerNo": 33, "AcntId": 44, "PlayTime": 100}
+```
+
+생성된 코드를 프로젝트에서 불러와 원하는 값으로 이벤트 객체를 구성하고 `Serialize()` 를 불러주면 JSON 형태의 문자열을 얻을 수 있다. 이것을 사용하는 로깅 라이브러리에 건네주는 것으로, 간편하게 설계에 맞는 로그를 출력할 수 있을 것이다.
 
 ### 현지화 (Localization)
 
