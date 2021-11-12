@@ -443,42 +443,43 @@ def test_object(clear):
     copy_files(['foo.lab.json'])
 
     runner = CliRunner()
-    res = runner.invoke(object, ['foo.lab.json'])
+    res = runner.invoke(object, ['foo.lab.json', 'cs'])
     assert res.exit_code == 0
     out = res.output
     assert '''
     /// <summary>
-    ///  캐릭터의 아이템 습득
+    ///  캐릭터 로그인
     /// </summary>
-    public class GetItem
+    public class CharLogin
     {
-        public const string Event = "GetItem";
+        private Dictionary<string, bool> _set;
+        private static readonly string[] fnames = { "DateTime", "ServerNo", "AcntId", "CharId" };
+        private static readonly string[] ofnames = {  };
+
+        public const string Event = "CharLogin";
         // 서버 번호
         public int ServerNo { get; set; }
         // 계정 ID
         public int AcntId { get; set; }
         // 캐릭터 ID
         public int CharId { get; set; }
-        // 맵 번호
-        public int MapId { get; set; }
-        // 맵상 X 위치
-        public float PosX { get; set; }
-        // 맵상 Y 위치
-        public float PosY { get; set; }
-        // 맵상 Z 위치
-        public float PosZ { get; set; }
-        // 아이템 타입 코드
-        public int ItemCd { get; set; }
-        // 아이템 개체 ID
-        public int ItemId { get; set; }
-        // 아이템 이름
-        public string ItemName { get; set; }
+
+        public CharLogin(int _ServerNo, int _AcntId, int _CharId)
+        {
+            _set = new Dictionary<string, bool>();
+            ServerNo = _ServerNo;
+            AcntId = _AcntId;
+            CharId = _CharId;
+        }
         public string Serialize()
         {
-            string json = JsonSerializer.Serialize(this);
+            List<string> fields = new List<string>();
+            fields.Add($"\\"ServerNo\\": {ServerNo}");
+            fields.Add($"\\"AcntId\\": {AcntId}");
+            fields.Add($"\\"CharId\\": {CharId}");
+            string sfields = String.Join(", ", fields);
             string dt = DateTime.Now.ToString("yyyy-MM-ddTH:mm:sszzz");
-            string head = String.Format("\\"DateTime\\":\\"{0}\\",\\"Event\\":\\"{1}\\",", dt, "GetItem");
-            json = json.Insert(1, head);
-            return json;
+            string sjson = $"{{\\"DateTime\\": \\"{dt}\\", \\"Event\\": \\"{Event}\\", {sfields}}}";
+            return sjson;
         }
     }''' in out

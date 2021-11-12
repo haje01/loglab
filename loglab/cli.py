@@ -6,7 +6,7 @@ import re
 import click
 
 from loglab.doc import text_from_labfile, html_from_labfile,\
-    object_from_labfile, object_code_type
+    object_from_labfile
 from loglab.schema import verify_labfile, log_schema_from_labfile,\
     verify_logfile
 from loglab.model import handle_import
@@ -110,7 +110,7 @@ def verify(schema, logfile):
 
 @cli.command()
 @click.argument('labfile', type=click.Path(exists=True))
-@click.option('-c', '--code-type', default="cs", help="출력 코드 타입")
+@click.argument('code_type')
 @click.option('-l', '--lang', help="로그랩 메시지 언어")
 def object(labfile, code_type, lang):
     """로그 객체 코드 출력."""
@@ -122,7 +122,7 @@ def object(labfile, code_type, lang):
         sys.exit(1)
 
     code_type = code_type.lower()
-    if code_type != 'cs':
+    if code_type not in ('cs', 'py'):
         print(f"Error: 지원하지 않는 코드 타입 (.{code_type}) 입니다.")
         sys.exit(1)
 

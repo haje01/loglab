@@ -1,0 +1,69 @@
+/*
+
+    ** 이 파일은 loglab 에서 생성된 것입니다. 고치지 마세요! **
+
+    Domain: {{ domain.name }}
+    Description: {{ domain.desc }}
+
+*/
+
+using System;
+using System.Collections.Generic;
+
+namespace loglab_{{ domain.name }}
+{
+    {% for ename in events.keys() %}
+    /// <summary>
+    ///  {{ events[ename][-1][1]['desc'] }}
+    /// </summary>
+    public class {{ ename }}
+    {
+        private Dictionary<string, bool> _set;
+        {% set fields = events[ename][-1][1]['fields'] %}
+        {% set rfields = fields | required %}
+        {% set ofields = fields | optional %}
+
+        public const string Event = "{{ ename }}";
+        {% for fname in fields.keys() %}{% if fname != 'DateTime' %}        // {{ events[ename][-1][1]['fields'][fname][-1][1]['desc'] }}
+        {% set field = fields[fname][-1][1] %}
+        {% if 'option' in field and field['option'] %}
+        private {{ types[field['type']] }} __{{ fname }};
+        public {{ types[field['type']] }} {{ fname }} {
+            get { return __{{ fname }}; }
+            set { __{{ fname }} = value; _set["{{ fname }}"] = true; }
+        }
+        {% else %}
+        public {{ types[field['type']] }} {{ fname }} { get; set; }
+        {% endif %}
+        {% endif %}{% endfor %}
+
+        public {{ ename }}({% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}{{ types[field['type']] }} _{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %})
+        {
+            _set = new Dictionary<string, bool>();
+            {% for fname in rfields.keys() %}
+            {% set field = rfields[fname][-1][1] %}
+            {{ fname }} = _{{ fname }};
+            {% endfor %}
+        }
+        public string Serialize()
+        {
+            List<string> fields = new List<string>();
+            {% for fname in fields %}
+            {% if fname != 'DateTime' %}
+            {% set field = fields[fname][-1][1] %}
+            {% if fname in rfields %}
+            fields.Add($"\"{{ fname }}\": {% if field['type'] == 'string' %}\"{% endif %}{% raw %}{{% endraw %}{{ fname }}{% raw %}}{% endraw %}{% if field['type'] == 'string' %}\"{% endif %}");
+            {% else %}
+            if (_set.ContainsKey("{{ fname }}"))
+                fields.Add($"\"{{ fname }}\": {% if field['type'] == 'string' %}\"{% endif %}{% raw %}{{% endraw %}{{ fname }}{% raw %}}{% endraw %}{% if field['type'] == 'string' %}\"{% endif %}");
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+            string sfields = String.Join(", ", fields);
+            string dt = DateTime.Now.ToString("yyyy-MM-ddTH:mm:sszzz");
+            string sjson = $"{% raw %}{{{% endraw %}\"DateTime\": \"{dt}\", \"Event\": \"{Event}\", {sfields}{% raw %}}}{% endraw %}";
+            return sjson;
+        }
+    }
+    {% endfor %}
+}

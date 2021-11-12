@@ -317,13 +317,37 @@ _type_json2cs = {
     'datetime': 'DateTime'
 }
 
+_type_json2py = {
+    'integer': 'int',
+    'number': 'float',
+    'string': 'str',
+    'boolean': 'bool',
+    'datetime': 'datetime'
+}
 
-def object_code_type(fname):
-    """파일명에서 랭귀지 타입 (확장자) 얻음."""
-    elms = fname.split(os.sep)
-    _, fext = elms[-1].split('.')
-    ctype = fext.lower()
-    return ctype
+
+def _object_required_filter(fields):
+    rfields = dict()
+    for fname in fields.keys():
+        if fname == 'DateTime':
+            continue
+        field = fields[fname][-1][1]
+        if 'option' in field and field['option']:
+            continue
+        rfields[fname] = fields[fname]
+    return rfields
+
+
+def _object_optional_filter(fields):
+    ofields = dict()
+    for fname in fields.keys():
+        if fname == 'DateTime':
+            continue
+        field = fields[fname][-1][1]
+        if 'option' not in field or not field['option']:
+            continue
+        ofields[fname] = fields[fname]
+    return ofields
 
 
 def object_from_labfile(data, code_type, lang):
@@ -337,16 +361,18 @@ def object_from_labfile(data, code_type, lang):
         output (str): 저장할 코드 파일 경로
 
     """
-    assert code_type == 'cs'
+    assert code_type in ('cs', 'py')
     model = build_model(data, lang)
     tmpl_dir = os.path.join(LOGLAB_HOME, "template")
     loader = FileSystemLoader(tmpl_dir)
     env = Environment(loader=loader)
     env.trim_blocks = True
     env.lstrip_blocks = True
-    tmpl = env.get_template("tmpl_code.cs.jinja")
-
+    env.filters['required'] = _object_required_filter
+    env.filters['optional'] = _object_optional_filter
+    tmpl = env.get_template(f"tmpl_obj.{code_type}.jinja")
+    type_dic = _type_json2cs if code_type == 'cs' else _type_json2py
     domain = data['domain']
     events = model['events']
     kwargs = dict(domain=domain, events=events)
-    return tmpl.render(json2cs=_type_json2cs, **kwargs)
+    return tmpl.render(types=type_dic, **kwargs)

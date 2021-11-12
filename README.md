@@ -1716,12 +1716,12 @@ $ loglab html foo.lab.json
 로그랩에서는 `object` 명령으로 로그 객체 코드 출력을 지원한다.
 
 ```
-$ loglab object foo.lab.json -c cs > loglab_foo.cs
+$ loglab object foo.lab.json cs > loglab_foo.cs
 ```
 
-`-c` 옵션으로 생성할 코드 타입을 지정하는데, 현재는 C# `cs` 만 지원하기에 생략 가능하다. 결과는 표준 출력으로 나가며, 위 예에서 처럼 파일로 리다이렉션하여 저장할 수 있다.
+첫 번재 인자는 랩 파일명이고, 두 번재 인자는 생성할 코드 타입이다. 현재는 C# `cs` 만 지원한다. 결과는 표준 출력으로 나가며, 위 예에서 처럼 파일로 리다이렉션하여 저장할 수 있다.
 
-아래는 `foo.lab.json` 에서 생성된 로그 객체 코드 파일 `loglab_foo.cs` 의 내용이다. 이것을 프로젝트에서 불러와 원하는 값으로 객체를 구성하고 `Serialize()` 를 불러주면 JSON 형태의 문자열을 얻을 수 있고, 그것을 사용하는 로깅 라이브러리에 건네주어 출력하게 하면 편리할 것이다.
+아래는 `foo.lab.json` 에서 생성된 로그 객체 코드 파일 `loglab_foo.cs` 의 내용이다. 랩 파일의 이벤트 별로 객체가 정의되어 있다. 이벤트의 필수 필드는 객체의 생성자 인자로 받아들이고, 옵션 필드는 객체 생성 후 직접 설정하는 식으로 사용한다.
 
 ```cs
 /*
@@ -1734,80 +1734,51 @@ $ loglab object foo.lab.json -c cs > loglab_foo.cs
 */
 
 using System;
-using System.Text.Json;
+using System.Collections.Generic;
 
-namespace loglab
+namespace loglab_foo
 {
-namespace foo
-{
-
     /// <summary>
     ///  계정 로그인
     /// </summary>
     public class Login
     {
+        private Dictionary<string, bool> _set;
+
         public const string Event = "Login";
-        /// <summary>서버 번호</summary>
+        // 서버 번호
         public int ServerNo { get; set; }
-        /// <summary>계정 ID</summary>
+        // 계정 ID
         public int AcntId { get; set; }
-        /// <summary>디바이스의 플랫폼</summary>
+        // 디바이스의 플랫폼
         public string Platform { get; set; }
 
+        public Login(int _ServerNo, int _AcntId, string _Platform)
+        {
+            _set = new Dictionary<string, bool>();
+            ServerNo = _ServerNo;
+            AcntId = _AcntId;
+            Platform = _Platform;
+        }
         public string Serialize()
         {
-            string json = JsonSerializer.Serialize(this);
+            List<string> fields = new List<string>();
+            fields.Add($"\"ServerNo\": {ServerNo}");
+            fields.Add($"\"AcntId\": {AcntId}");
+            fields.Add($"\"Platform\": \"{Platform}\"");
+            string sfields = String.Join(", ", fields);
             string dt = DateTime.Now.ToString("yyyy-MM-ddTH:mm:sszzz");
-            string head = String.Format("\"DateTime\":\"{0}\",\"Event\":\"{1}\",", dt, "Login");
-            json = json.Insert(1, head);
-            return json;
+            string sjson = $"{{\"DateTime\": \"{dt}\", \"Event\": \"{Event}\", {sfields}}}";
+            return sjson;
         }
     }
-
 
     // ...
 
-
-    /// <summary>
-    ///  캐릭터의 아이템 습득
-    /// </summary>
-    public class GetItem
-    {
-        public const string Event = "GetItem";
-        /// <summary>서버 번호</summary>
-        public int ServerNo { get; set; }
-        /// <summary>계정 ID</summary>
-        public int AcntId { get; set; }
-        /// <summary>캐릭터 ID</summary>
-        public int CharId { get; set; }
-        /// <summary>맵 번호</summary>
-        public int MapId { get; set; }
-        /// <summary>맵상 X 위치</summary>
-        public float PosX { get; set; }
-        /// <summary>맵상 Y 위치</summary>
-        public float PosY { get; set; }
-        /// <summary>맵상 Z 위치</summary>
-        public float PosZ { get; set; }
-        /// <summary>아이템 타입 코드</summary>
-        public int ItemCd { get; set; }
-        /// <summary>아이템 개체 ID</summary>
-        public int ItemId { get; set; }
-        /// <summary>아이템 이름</summary>
-        public string ItemName { get; set; }
-
-        public string Serialize()
-        {
-            string json = JsonSerializer.Serialize(this);
-            string dt = DateTime.Now.ToString("yyyy-MM-ddTH:mm:sszzz");
-            string head = String.Format("\"DateTime\":\"{0}\",\"Event\":\"{1}\",", dt, "GetItem");
-            json = json.Insert(1, head);
-            return json;
-        }
-    }
-
-}
 }
 ```
+
+생성된 코드를 프로젝트에서 불러와 원하는 값으로 이벤트 객체를 구성하고 `Serialize()` 를 불러주면 JSON 형태의 문자열을 얻을 수 있다. 이것을 사용하는 로깅 라이브러리에 건네주기만 하면, 간편하게 설계에 맞는 로그를 출력할 수 있을 것이다.
 
 ### 현지화 (Localization)
 
