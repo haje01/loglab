@@ -116,6 +116,7 @@ Options:
 
 Commands:
   html     HTML 문서 출력.
+  object   로그 객체 코드 출력.
   schema   로그 검증용 스키마 생성.
   show     로그 구성 요소 출력.
   verify   생성된 로그 파일 검증.
