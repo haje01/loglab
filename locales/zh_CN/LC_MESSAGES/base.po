@@ -55,3 +55,6 @@ msgstr "正则表达式 {}"
 msgid "{} 형식"
 msgstr "{} 格式"
 
+#: loglab/util.py:33
+msgid "이 파일은 LogLab 에서 생성된 것입니다. 고치지 마세요!"
+msgstr "该文件由 LogLab 生成。 不要修理它！"

@@ -30,6 +30,11 @@ def get_dt_desc(lang):
     return _("이벤트 일시")
 
 
+def get_object_warn(lang):
+    _ = get_translator(lang)
+    return _("이 파일은 LogLab 에서 생성된 것입니다. 고치지 마세요!")
+
+
 class AttrDict(dict):
     """dict 키를 속성처럼 접근하는 헬퍼."""
     def __init__(self, *args, **kwargs):

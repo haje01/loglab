@@ -9,7 +9,8 @@ from jinja2 import Environment, FileSystemLoader
 from wcwidth import wcswidth
 
 from loglab.model import build_model
-from loglab.util import explain_rstr, LOGLAB_HOME, absdir_for_html
+from loglab.util import explain_rstr, LOGLAB_HOME, absdir_for_html, \
+    get_object_warn
 
 
 SCR_WIDTH = shutil.get_terminal_size((80, 20)).columns
@@ -374,5 +375,6 @@ def object_from_labfile(data, code_type, lang):
     type_dic = _type_json2cs if code_type == 'cs' else _type_json2py
     domain = data['domain']
     events = model['events']
-    kwargs = dict(domain=domain, events=events)
+    warn = get_object_warn(lang)
+    kwargs = dict(domain=domain, events=events, warn=warn)
     return tmpl.render(types=type_dic, **kwargs)

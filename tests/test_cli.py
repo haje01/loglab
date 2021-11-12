@@ -443,40 +443,66 @@ def test_object(clear):
     copy_files(['foo.lab.json'])
 
     runner = CliRunner()
+    res = runner.invoke(object, ['foo.lab.json', 'py'])
+    assert res.exit_code == 0
+    out = res.output
+    assert '''
+class Logout:
+    """
+        계정 로그아웃
+    """
+
+    def __init__(self, _ServerNo: int, _AcntId: int):
+
+        self.ServerNo: Optional[int] = _ServerNo
+        self.AcntId: Optional[int] = _AcntId
+        self.PlayTime: Optional[float] = None
+
+    def serialize(self):
+        data = dict(DateTime=datetime.now().astimezone().isoformat(),
+                    Event="Logout")
+        data["ServerNo"] = self.ServerNo
+        data["AcntId"] = self.AcntId
+        if self.PlayTime is not None:
+            data["PlayTime"] = self.PlayTime
+        return json.dumps(data)''' in out
+
     res = runner.invoke(object, ['foo.lab.json', 'cs'])
     assert res.exit_code == 0
     out = res.output
     assert '''
     /// <summary>
-    ///  캐릭터 로그인
+    ///  계정 로그아웃
     /// </summary>
-    public class CharLogin
+    public class Logout
     {
         private Dictionary<string, bool> _set;
-        private static readonly string[] fnames = { "DateTime", "ServerNo", "AcntId", "CharId" };
-        private static readonly string[] ofnames = {  };
 
-        public const string Event = "CharLogin";
+        public const string Event = "Logout";
         // 서버 번호
         public int ServerNo { get; set; }
         // 계정 ID
         public int AcntId { get; set; }
-        // 캐릭터 ID
-        public int CharId { get; set; }
+        // 플레이 시간 (초)
+        private float __PlayTime;
+        public float PlayTime {
+            get { return __PlayTime; }
+            set { __PlayTime = value; _set["PlayTime"] = true; }
+        }
 
-        public CharLogin(int _ServerNo, int _AcntId, int _CharId)
+        public Logout(int _ServerNo, int _AcntId)
         {
             _set = new Dictionary<string, bool>();
             ServerNo = _ServerNo;
             AcntId = _AcntId;
-            CharId = _CharId;
         }
         public string Serialize()
         {
             List<string> fields = new List<string>();
             fields.Add($"\\"ServerNo\\": {ServerNo}");
             fields.Add($"\\"AcntId\\": {AcntId}");
-            fields.Add($"\\"CharId\\": {CharId}");
+            if (_set.ContainsKey("PlayTime"))
+                fields.Add($"\\"PlayTime\\": {PlayTime}");
             string sfields = String.Join(", ", fields);
             string dt = DateTime.Now.ToString("yyyy-MM-ddTH:mm:sszzz");
             string sjson = $"{{\\"DateTime\\": \\"{dt}\\", \\"Event\\": \\"{Event}\\", {sfields}}}";

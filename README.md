@@ -1716,12 +1716,67 @@ $ loglab html foo.lab.json
 로그랩에서는 `object` 명령으로 로그 객체 코드 출력을 지원한다.
 
 ```
-$ loglab object foo.lab.json cs > loglab_foo.cs
+$ loglab object foo.lab.json py > loglab_foo.py
 ```
 
-첫 번째 인자는 랩 파일명이고, 두 번째 인자는 생성할 코드 타입이다. 현재는 C# `cs` 만 지원한다. 결과는 표준 출력으로 나가며, 위 예에서 처럼 파일로 리다이렉션하여 저장할 수 있다.
+첫 번째 인자는 랩 파일명이고, 두 번째 인자는 생성할 코드 타입이다. 현재는 파이썬 `py` 및 C# `cs` 를 지원한다. 결과는 표준 출력으로 나가며, 위 예에서 처럼 파일로 리다이렉션하여 저장할 수 있다.
 
-아래는 `foo.lab.json` 에서 생성된 로그 객체 코드 파일 `loglab_foo.cs` 의 내용이다. 랩 파일의 이벤트 별로 객체가 정의되어 있다.
+아래는 랩 파일 `foo.lab.json` 에서 생성된 파이썬 로그 객체 파일 `loglab_foo.py` 의 내용이다. 이벤트 별로 객체가 정의되어 있다.
+
+```python
+"""
+    ** 이 파일은 LogLab 에서 생성된 것입니다. 고치지 마세요! **
+
+    Domain: foo
+    Description: 위대한 모바일 게임
+"""
+import json
+from datetime import datetime
+from typing import Optional
+
+# ...
+
+class Logout:
+    """
+        계정 로그아웃
+    """
+
+    def __init__(self, _ServerNo: int, _AcntId: int):
+
+        self.ServerNo: Optional[int] = _ServerNo
+        self.AcntId: Optional[int] = _AcntId
+        self.PlayTime: Optional[float] = None
+
+    def serialize(self):
+        data = dict(DateTime=datetime.now().astimezone().isoformat(),
+                    Event="Logout")
+        data["ServerNo"] = self.ServerNo
+        data["AcntId"] = self.AcntId
+        if self.PlayTime is not None:
+            data["PlayTime"] = self.PlayTime
+        return json.dumps(data)
+
+# ...
+
+```
+
+아래는 이 로그 객체를 불러와서 사용하는 예이다. 이벤트의 필수 필드는 객체의 생성자 인자로 받아들이고, 옵션 필드는 객체 생성 후 직접 설정하는 식으로 사용한다.
+
+```python
+import loglab_foo as lf
+
+e = lf.Logout(33, 44)
+e.PlayTime = 100
+print(e.serialize())
+```
+
+결과는 아래와 같다.
+
+```json
+{"DateTime": "2021-11-12T13:37:05.491169+09:00", "Event": "Logout", "ServerNo": 33, "AcntId": 44, "PlayTime": 100}
+```
+
+아래는 C# 버전 로그 객체 파일 `loglab_foo.cs` 의 내용이다.
 
 ```cs
 /*
@@ -1778,7 +1833,7 @@ namespace loglab_foo
 }
 ```
 
-아래는 이 코드를 불러와서 사용하는 예이다. 이벤트의 필수 필드는 객체의 생성자 인자로 받아들이고, 옵션 필드는 객체 생성 후 직접 설정하는 식으로 사용한다.
+아래는 이 로그 객체를 불러와서 사용하는 예이다. 파이썬과 마찬가지로 이벤트의 필수 필드는 객체의 생성자 인자로 받아들이고, 옵션 필드는 객체 생성 후 직접 설정하는 식으로 사용한다.
 
 ```cs
 using System;
@@ -1804,7 +1859,7 @@ namespace csharp
 {"DateTime": "2021-11-12T12:19:00+09:00", "Event": "Logout", "ServerNo": 33, "AcntId": 44, "PlayTime": 100}
 ```
 
-생성된 코드를 프로젝트에서 불러와 원하는 값으로 이벤트 객체를 구성하고 `Serialize()` 를 불러주면 JSON 형태의 문자열을 얻을 수 있다. 이것을 사용하는 로깅 라이브러리에 건네주는 것으로, 간편하게 설계에 맞는 로그를 출력할 수 있을 것이다.
+이와 같이, 생성된 로그 객체의 필드를 지정하는 것으로 간단히 JSON 형태의 문자열을 얻을 수 있다. 실제 파일에 쓰기 위해서 사용하는 로깅 라이브러리에 이 문자열을 건네주면 될 것이다.
 
 ### 현지화 (Localization)
 
