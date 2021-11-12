@@ -1776,7 +1776,13 @@ print(e.serialize())
 {"DateTime": "2021-11-12T13:37:05.491169+09:00", "Event": "Logout", "ServerNo": 33, "AcntId": 44, "PlayTime": 100}
 ```
 
-아래는 C# 버전 로그 객체 파일 `loglab_foo.cs` 의 내용이다.
+다음과 같이 C# 버전을 생성할 수 있다.
+
+```
+$ loglab object foo.lab.json cs > loglab_foo.cs
+```
+
+아래는 C# 로그 객체 파일 `loglab_foo.cs` 의 내용이다.
 
 ```cs
 /*
