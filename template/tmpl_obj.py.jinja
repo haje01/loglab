@@ -11,9 +11,7 @@ from typing import Optional
 {% for ename in events.keys() %}
 
 class {{ename}}:
-    """
-        {{ events[ename][-1][1]['desc'] }}
-    """
+    """{{ events[ename][-1][1]['desc'] }}"""
     {% set fields = events[ename][-1][1]['fields'] %}
     {% set fields = events[ename][-1][1]['fields'] %}
     {% set rfields = fields | required %}

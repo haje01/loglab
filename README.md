@@ -1738,9 +1738,7 @@ from typing import Optional
 # ...
 
 class Logout:
-    """
-        계정 로그아웃
-    """
+    """계정 로그아웃"""
 
     def __init__(self, _ServerNo: int, _AcntId: int):
 
@@ -1802,34 +1800,41 @@ using System.Collections.Generic;
 
 namespace loglab_foo
 {
+
+    // ...
+
     /// <summary>
-    ///  계정 로그인
+    ///  계정 로그아웃
     /// </summary>
-    public class Login
+    public class Logout
     {
         private Dictionary<string, bool> _set;
 
-        public const string Event = "Login";
+        public const string Event = "Logout";
         // 서버 번호
         public int ServerNo { get; set; }
         // 계정 ID
         public int AcntId { get; set; }
-        // 디바이스의 플랫폼
-        public string Platform { get; set; }
+        // 플레이 시간 (초)
+        private float __PlayTime;
+        public float PlayTime {
+            get { return __PlayTime; }
+            set { __PlayTime = value; _set["PlayTime"] = true; }
+        }
 
-        public Login(int _ServerNo, int _AcntId, string _Platform)
+        public Logout(int _ServerNo, int _AcntId)
         {
             _set = new Dictionary<string, bool>();
             ServerNo = _ServerNo;
             AcntId = _AcntId;
-            Platform = _Platform;
         }
         public string Serialize()
         {
             List<string> fields = new List<string>();
             fields.Add($"\"ServerNo\": {ServerNo}");
             fields.Add($"\"AcntId\": {AcntId}");
-            fields.Add($"\"Platform\": \"{Platform}\"");
+            if (_set.ContainsKey("PlayTime"))
+                fields.Add($"\"PlayTime\": {PlayTime}");
             string sfields = String.Join(", ", fields);
             string dt = DateTime.Now.ToString("yyyy-MM-ddTH:mm:sszzz");
             string sjson = $"{{\"DateTime\": \"{dt}\", \"Event\": \"{Event}\", {sfields}}}";
