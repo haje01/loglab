@@ -1,0 +1,45 @@
+"""
+    ** {{ warn }} **
+
+    Domain: {{ domain.name }}
+    Description: {{ domain.desc }}
+"""
+import json
+from datetime import datetime
+from typing import Optional
+
+{% for ename in events.keys() %}
+
+class {{ename}}:
+    """
+        {{ events[ename][-1][1]['desc'] }}
+    """
+    {% set fields = events[ename][-1][1]['fields'] %}
+    {% set fields = events[ename][-1][1]['fields'] %}
+    {% set rfields = fields | required %}
+    {% set ofields = fields | optional %}
+
+    def __init__(self, {% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}_{{ fname }}: {{ types[field['type']] }}{% if not loop.last %}, {% endif %}{% endfor %}):
+        {% for fname in fields.keys() %}{% if fname != 'DateTime'%}
+        {% set field = fields[fname][-1][1] %}
+        self.{{fname}}: Optional[{{ types[field['type']] }}]{% if 'option' in field and field['option'] %} = None{% else %} = _{{ fname }}{% endif %}{% endif %}
+
+        {% endfor %}
+
+    def serialize(self):
+        data = dict(DateTime=datetime.now().astimezone().isoformat(),
+                    Event="{{ ename }}")
+        {% for fname in fields %}
+        {% if fname != 'DateTime' %}
+        {% set field = fields[fname][-1][1] %}
+        {% if fname in rfields %}
+        data["{{ fname }}"] = self.{{ fname }}
+        {% else %}
+        if self.{{ fname }} is not None:
+            data["{{ fname }}"] = self.{{ fname }}
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+        return json.dumps(data)
+
+{% endfor %}
