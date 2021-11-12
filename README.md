@@ -127,7 +127,7 @@ Commands:
 
 ```
 $ loglab version
-0.1.3
+0.1.4
 ```
 
 ## 최초 랩 파일 만들기
