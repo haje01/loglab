@@ -40,6 +40,11 @@ namespace loglab_{{ domain.name }}
         public {{ ename }}({% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}{{ types[field['type']] }} _{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %})
         {
             _set = new Dictionary<string, bool>();
+            Reset({% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}_{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %});
+        }
+        public void Reset({% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}{{ types[field['type']] }} _{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %})
+        {
+            _set.Clear();
             {% for fname in rfields.keys() %}
             {% set field = rfields[fname][-1][1] %}
             {{ fname }} = _{{ fname }};

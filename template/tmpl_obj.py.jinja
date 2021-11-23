@@ -18,9 +18,12 @@ class {{ename}}:
     {% set ofields = fields | optional %}
 
     def __init__(self, {% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}_{{ fname }}: {{ types[field['type']] }}{% if not loop.last %}, {% endif %}{% endfor %}):
+        self.reset({% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}_{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %})
+
+    def reset(self, {% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}_{{ fname }}: {{ types[field['type']] }}{% if not loop.last %}, {% endif %}{% endfor %}):
         {% for fname in fields.keys() %}{% if fname != 'DateTime'%}
         {% set field = fields[fname][-1][1] %}
-        self.{{fname}}: Optional[{{ types[field['type']] }}]{% if 'option' in field and field['option'] %} = None{% else %} = _{{ fname }}{% endif %}{% endif %}
+        self.{{fname}}{% if fname in ofields %} : Optional[{{ types[field['type']] }}]{% if 'option' in field and field['option'] %}{% endif %} = None{% else %} = _{{ fname }}{% endif %}{% endif %}
 
         {% endfor %}
 

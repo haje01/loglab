@@ -1741,10 +1741,13 @@ class Logout:
     """계정 로그아웃"""
 
     def __init__(self, _ServerNo: int, _AcntId: int):
+        self.reset(_ServerNo, _AcntId)
 
-        self.ServerNo: Optional[int] = _ServerNo
-        self.AcntId: Optional[int] = _AcntId
-        self.PlayTime: Optional[float] = None
+    def reset(self, _ServerNo: int, _AcntId: int):
+
+        self.ServerNo = _ServerNo
+        self.AcntId = _AcntId
+        self.PlayTime : Optional[float] = None
 
     def serialize(self):
         data = dict(DateTime=datetime.now().astimezone().isoformat(),
@@ -1825,6 +1828,11 @@ namespace loglab_foo
         public Logout(int _ServerNo, int _AcntId)
         {
             _set = new Dictionary<string, bool>();
+            Reset(_ServerNo, _AcntId);
+        }
+        public void Reset(int _ServerNo, int _AcntId)
+        {
+            _set.Clear();
             ServerNo = _ServerNo;
             AcntId = _AcntId;
         }
@@ -1874,6 +1882,10 @@ namespace csharp
 ```
 
 이와 같이, 로그 객체를 사용하면 손쉽게 JSON 형태의 문자열을 얻을 수 있다. 실제 파일에 쓰기 위해서 사용하는 로깅 라이브러리에 이 문자열을 건네주면 될 것이다.
+
+> **빈번한 로그 객체 생성**
+>
+> 만약 특정 이벤트가 매우 자주 발생하고 그때마다 로그 객체를 생성하여 로그를 쓴다면, 가베지 콜렉션이나 메모리 단편화 등으로 인한 시스템 성능 저하가 발생할 수 있다. 이에 로그랩에서 생성된 로그 객체는 **리셋 (Reset)** 메소드를 제공하는데, 그것은 로그 객체를 초기화해준다. 이벤트의 처리 코드에서 로그 객체를 매번 생성하지 말고, 클래스의 멤버 변수나 정적 (Static) 객체로 선언해 두고, 리셋 메소드로 로그 객체를 초기화한 후 재활용하는 것을 추천한다.
 
 ### 현지화 (Localization)
 

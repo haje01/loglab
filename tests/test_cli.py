@@ -451,10 +451,13 @@ class Logout:
     """계정 로그아웃"""
 
     def __init__(self, _ServerNo: int, _AcntId: int):
+        self.reset(_ServerNo, _AcntId)
 
-        self.ServerNo: Optional[int] = _ServerNo
-        self.AcntId: Optional[int] = _AcntId
-        self.PlayTime: Optional[float] = None
+    def reset(self, _ServerNo: int, _AcntId: int):
+
+        self.ServerNo = _ServerNo
+        self.AcntId = _AcntId
+        self.PlayTime : Optional[float] = None
 
     def serialize(self):
         data = dict(DateTime=datetime.now().astimezone().isoformat(),
@@ -491,6 +494,11 @@ class Logout:
         public Logout(int _ServerNo, int _AcntId)
         {
             _set = new Dictionary<string, bool>();
+            Reset(_ServerNo, _AcntId);
+        }
+        public void Reset(int _ServerNo, int _AcntId)
+        {
+            _set.Clear();
             ServerNo = _ServerNo;
             AcntId = _AcntId;
         }
