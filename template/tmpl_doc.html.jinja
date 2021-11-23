@@ -150,7 +150,7 @@ tr:nth-child(even) {
 
 <div id="main">
   <button class="openbtn" onclick="toggleNav()">☰</button>
-  <h1>{{ domain.name }} - {{ domain.desc }}</h1>
+  <h1>{{ domain.name }}{% if 'desc' in domain %} - {{ domain.desc }}{% endif %}{% if 'version' in domain %} ({{ domain.version }}){% endif %}</h1>
 
   {% if types is defined %}
     <div class="type-div">

@@ -81,11 +81,8 @@ Description : 계정 로그인
     out = res.output
 
     ans = '''Domain : foo
-Description : 위대한 모바일 게임'''
-    assert ans in out
-
-    ans = '''Domain : foo
-Description : 위대한 모바일 게임'''
+Description : 위대한 모바일 게임
+Version : 0.0.1'''
     assert ans in out
 
     ans = '''Type : types.unsigned

@@ -162,6 +162,8 @@ def text_from_labfile(data, cus_type, namef, keep_text, lang, out=None):
     out.write(f"Domain : {model.domain.name}\n")
     if 'desc' in model.domain:
         out.write("Description : {}\n".format(model.domain.desc))
+    if 'version' in model.domain:
+        out.write("Version : {}\n".format(model.domain.version))
 
     # 커스텀 타입
     if 'types' in model and cus_type:

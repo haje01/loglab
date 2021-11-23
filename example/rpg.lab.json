@@ -2,7 +2,8 @@
     "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
     "domain": {
         "name": "rpg",
-        "desc": "MMORPG 게임 로그 샘플"
+        "desc": "MMORPG 게임 로그 샘플",
+        "version": "0.0.1"
     },
     "import": ["common"],
     "types": {
