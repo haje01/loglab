@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title> {{ domain.name }} - LogLab Document </title>
+<title>{{ domain.name }}{% if 'version' in domain %} ({{ domain.version }}){% endif %}</title>
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta charset="utf-8">
 <style>
