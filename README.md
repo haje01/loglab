@@ -1786,7 +1786,7 @@ print(e.serialize())
 $ loglab object foo.lab.json cs > loglab_foo.cs
 ```
 
-아래는 C# 로그 객체 파일 `loglab_foo.cs` 의 내용이다.
+아래는 C# 로그 객체 파일 `loglab_foo.cs` 내용의 일부이다.
 
 ```cs
 /*
