@@ -274,6 +274,7 @@
                     "type": "string"
                 }
             },
+            "additionalProperties": false,
             "required": ["name"]
         },
         "import": {
