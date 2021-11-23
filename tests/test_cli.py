@@ -448,9 +448,7 @@ def test_object(clear):
     out = res.output
     assert '''
 class Logout:
-    """
-        계정 로그아웃
-    """
+    """계정 로그아웃"""
 
     def __init__(self, _ServerNo: int, _AcntId: int):
 

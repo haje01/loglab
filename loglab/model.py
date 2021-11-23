@@ -180,12 +180,6 @@ def _find_mixin(path, _bases, _events):
     raise Exception(f"Can not find mixin path '{path}'")
 
 
-# def _resolve_import(data):
-#     if len(data) == 0 or type(data[0]) is dict:
-#         return
-#     if type(data[0]) is dict:
-
-
 def _build_bases(data, lang, _dnames=None, _types=None, _bases=None, use_ctype=False):
     """베이스 요소 빌드."""
     if _types is None:
