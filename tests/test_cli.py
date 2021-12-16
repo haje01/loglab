@@ -474,37 +474,30 @@ class Logout:
     /// </summary>
     public class Logout
     {
-        private Dictionary<string, bool> _set;
-
         public const string Event = "Logout";
         // 서버 번호
-        public int ServerNo { get; set; }
+        public int ServerNo;
         // 계정 ID
-        public int AcntId { get; set; }
+        public int AcntId;
         // 플레이 시간 (초)
-        private float __PlayTime;
-        public float PlayTime {
-            get { return __PlayTime; }
-            set { __PlayTime = value; _set["PlayTime"] = true; }
-        }
+        public float? PlayTime = null;
 
         public Logout(int _ServerNo, int _AcntId)
         {
-            _set = new Dictionary<string, bool>();
             Reset(_ServerNo, _AcntId);
         }
         public void Reset(int _ServerNo, int _AcntId)
         {
-            _set.Clear();
             ServerNo = _ServerNo;
             AcntId = _AcntId;
+            PlayTime = null;
         }
         public string Serialize()
         {
             List<string> fields = new List<string>();
             fields.Add($"\\"ServerNo\\": {ServerNo}");
             fields.Add($"\\"AcntId\\": {AcntId}");
-            if (_set.ContainsKey("PlayTime"))
+            if (PlayTime.HasValue)
                 fields.Add($"\\"PlayTime\\": {PlayTime}");
             string sfields = String.Join(", ", fields);
             string dt = DateTime.Now.ToString("yyyy-MM-ddTH:mm:sszzz");

@@ -2,6 +2,7 @@
 import sys
 import json
 import re
+import codecs
 
 import click
 
@@ -111,8 +112,9 @@ def verify(schema, logfile):
 @cli.command()
 @click.argument('labfile', type=click.Path(exists=True))
 @click.argument('code_type')
+@click.option('-o', '--output', help="출력 파일명")
 @click.option('-l', '--lang', help="로그랩 메시지 언어")
-def object(labfile, code_type, lang):
+def object(labfile, code_type, output, lang):
     """로그 객체 코드 출력."""
     data = verify_labfile(labfile)
     try:
@@ -126,7 +128,12 @@ def object(labfile, code_type, lang):
         print(f"Error: 지원하지 않는 코드 타입 (.{code_type}) 입니다.")
         sys.exit(1)
 
-    print(object_from_labfile(data, code_type, lang))
+    src = object_from_labfile(data, code_type, lang)
+    if output is None:
+        print(src)
+    else:
+        with codecs.open(output, 'wt', 'utf-8') as f:
+            f.write(src)
 
 
 if __name__ == "__main__":
