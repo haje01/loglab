@@ -7,21 +7,29 @@
 	},
 	"types": {
 		"unsigned": {
-				"type": "integer",
-				"desc": "0 이상 정수",
-				"minimum": 0
-		}
+            "type": "integer",
+            "desc": "0 이상 정수",
+            "minimum": 0
+		},
+        "ulong": {
+            "type": "integer",
+            "desc": "0 이상 정수 (C# 로그 객체에서 ulong)",
+            "minimum": 0,
+            "objtype": {
+                "cs": "ulong"
+            }
+        }
 	},
 	"bases": {
 		"Server": {
 			"desc": "서버 정보",
 			"fields": [
 				{
-						"name": "ServerNo",
-						"desc": "서버 번호",
-						"type": "integer",
-						"minimum": 1,
-						"exclusiveMaximum": 100
+                    "name": "ServerNo",
+                    "desc": "서버 번호",
+                    "type": "integer",
+                    "minimum": 1,
+                    "exclusiveMaximum": 100
 				}
 			]
 		},
@@ -29,7 +37,7 @@
 			"desc": "계정 정보",
 			"mixins": ["bases.Server"],
 			"fields": [
-				["AcntId", "types.unsigned", "계정 ID"]
+				["AcntId", "types.ulong", "계정 ID"]
 			]
 		},
 		"Character": {
@@ -65,11 +73,11 @@
 					"type": "integer",
 					"desc": "아이템 타입 코드",
 					"enum": [
-                            0,
-							[1, "칼"],
-							[2, "방패"],
-							[3, "물약"],
-                            99
+                        0,
+                        [1, "칼"],
+                        [2, "방패"],
+                        [3, "물약"],
+                        99
 					]
 				},
 				["ItemId", "types.unsigned", "아이템 개체 ID"],

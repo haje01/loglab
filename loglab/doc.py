@@ -80,6 +80,7 @@ def _write_custom_types(model, out, namef, keep_text, lang):
         out.write(f"Type : {qtname}\n")
         out.write(f"Description : {tdef['desc']}\n")
         _write_type_table(tdef, out, keep_text, lang)
+        out.write('\n')
 
 
 def _write_table(edef, out, keep_text, lang):
@@ -329,6 +330,20 @@ _type_json2py = {
 }
 
 
+def _type_cs(field):
+    if 'objtype' in field and 'cs' in field['objtype']:
+        return field['objtype']['cs']
+    else:
+        return _type_json2cs[field['type']]
+
+
+def _type_py(field):
+    if 'objtype' in field and 'py' in field['objtype']:
+        return field['objtype']['py']
+    else:
+        return _type_json2py[field['type']]
+
+
 def _object_required_filter(fields):
     rfields = dict()
     for fname in fields.keys():
@@ -374,9 +389,9 @@ def object_from_labfile(data, code_type, lang):
     env.filters['required'] = _object_required_filter
     env.filters['optional'] = _object_optional_filter
     tmpl = env.get_template(f"tmpl_obj.{code_type}.jinja")
-    type_dic = _type_json2cs if code_type == 'cs' else _type_json2py
+    _type = _type_cs if code_type == 'cs' else _type_py
     domain = data['domain']
     events = model['events']
     warn = get_object_warn(lang)
     kwargs = dict(domain=domain, events=events, warn=warn)
-    return tmpl.render(types=type_dic, **kwargs)
+    return tmpl.render(type=_type, **kwargs)

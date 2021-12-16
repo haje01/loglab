@@ -25,16 +25,16 @@ namespace loglab_{{ domain.name }}
         {% for fname in fields.keys() %}{% if fname != 'DateTime' %}        // {{ events[ename][-1][1]['fields'][fname][-1][1]['desc'] }}
         {% set field = fields[fname][-1][1] %}
         {% if 'option' in field and field['option'] %}
-        public {{ types[field['type']] }}? {{ fname }} = null;
+        public {{ type(field) }}? {{ fname }} = null;
         {% else %}
-        public {{ types[field['type']] }} {{ fname }};
+        public {{ type(field) }} {{ fname }};
         {% endif %}{% endif %}{% endfor %}
 
-        public {{ ename }}({% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}{{ types[field['type']] }} _{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %})
+        public {{ ename }}({% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}{{ type(field) }} _{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %})
         {
             Reset({% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}_{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %});
         }
-        public void Reset({% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}{{ types[field['type']] }} _{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %})
+        public void Reset({% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}{{ type(field) }} _{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %})
         {
             {% for fname in rfields.keys() %}
             {% set field = rfields[fname][-1][1] %}
