@@ -132,7 +132,7 @@ def object(labfile, code_type, output, lang):
     if output is None:
         print(src)
     else:
-        with codecs.open(output, 'wt', 'utf-8') as f:
+        with codecs.open(output, 'w', 'utf-8') as f:
             f.write(src)
 
 

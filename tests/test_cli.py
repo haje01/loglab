@@ -3,6 +3,7 @@ import os
 from shutil import copyfile
 import json
 from shutil import rmtree
+import codecs
 
 import pytest
 from click.testing import CliRunner
@@ -468,7 +469,7 @@ class Logout:
     res = runner.invoke(object, ['foo.lab.json', 'cs'])
     assert res.exit_code == 0
     out = res.output
-    assert '''
+    logout = '''
     /// <summary>
     ///  계정 로그아웃
     /// </summary>
@@ -504,4 +505,11 @@ class Logout:
             string sjson = $"{{\\"DateTime\\": \\"{dt}\\", \\"Event\\": \\"{Event}\\", {sfields}}}";
             return sjson;
         }
-    }''' in out
+    }'''
+    assert logout in out
+
+    res = runner.invoke(object, ['foo.lab.json', 'cs', '-o', 'loglab_foo.cs'])
+    assert res.exit_code == 0
+    with codecs.open('loglab_foo.cs', encoding='utf-8') as f:
+        code = f.read()
+        assert logout in code
