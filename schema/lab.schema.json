@@ -45,6 +45,19 @@
                 {"$ref": "#/$defs/type-rstr-body"}
             ]
         },
+        "objtype-body": {
+            "type": "object",
+            "description": "로그객체 생성시 언어별 타입",
+            "properties": {
+                "cs": {
+                    "type": "string"
+                },
+                "py": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false
+        },
         "type-rstr-body": {
             "anyOf": [
                 {
@@ -88,6 +101,9 @@
                             "enum": [
                                 "date-time", "date", "email", "hostname", "ipv4", "ipv6", "uri"
                             ]
+                        },
+                        "objtype": {
+                            "$ref": "#/$defs/objtype-body"
                         }
                     },
                     "required" : ["type"]
@@ -129,6 +145,9 @@
                                     }
                                 ]
                             }
+                        },
+                        "objtype": {
+                            "$ref": "#/$defs/objtype-body"
                         }
                     },
                     "required": ["type"]
@@ -170,6 +189,9 @@
                                     }
                                 ]
                             }
+                        },
+                        "objtype": {
+                            "$ref": "#/$defs/objtype-body"
                         }
                     },
                     "required": ["type"]

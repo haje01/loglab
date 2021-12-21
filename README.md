@@ -33,6 +33,7 @@
     - [복잡한 랩 파일 필터링하기](#복잡한-랩-파일-필터링하기)
     - [HTML 문서 출력](#html-문서-출력)
     - [로그 객체 출력](#로그-객체-출력)
+      - [필드별 타입 지정](#필드별-타입-지정)
     - [현지화 (Localization)](#현지화-localization)
     - [실행 파일 이용과 빌드](#실행-파일-이용과-빌드)
   - [로그랩 활용 방안](#로그랩-활용-방안)
@@ -1717,13 +1718,17 @@ $ loglab html foo.lab.json
 
 서비스 코드에서 로그 출력을 구현할 때, 필요한 필드와 값을 매번 문자열로 만들어 쓰는 것은 번거롭다. 로그 이벤트 구조에 맞는 객체 (Object) 를 미리 정의하고 그것의 멤버 변수에 값을 채운뒤, 최종적으로 JSON 형식으로 시리얼라이즈 (Serialize) 하는 방식이 좀 더 편리할 수 있다. 여기서는 이러한 객체를 **로그 객체 (Log Object)** 로 부르겠다. 로그랩에서는 로그 객체를 위한 코드 생성을 제공한다.
 
-다음과 같이 `object` 명령으로 로그 객체 코드를 생성한다.
+다음과 같이 `object` 명령으로 로그 객체 코드를 출력한다.
 
 ```
-$ loglab object foo.lab.json py > loglab_foo.py
+$ loglab object foo.lab.json py
 ```
 
-첫 번째 인자는 랩 파일명이고, 두 번째 인자는 생성할 코드 타입이다. 현재는 파이썬 `py` 및 C# `cs` 을 지원한다. 결과는 표준 출력으로 나가며, 위 예에서 처럼 파일로 리다이렉션하여 저장할 수 있다.
+첫 번째 인자는 랩 파일명이고, 두 번째 인자는 생성할 프로그래밍 코드 타입이다. 현재는 파이썬 `py` 및 C# `cs` 을 지원한다. 결과는 표준 출력으로 나간다. 아래와 같이 저장할 파일명을 지정할 수도 있다.
+
+```
+$ loglab object foo.lab.json -o loglab_foo.py
+```
 
 아래는 랩 파일 `foo.lab.json` 에서 생성된 파이썬 로그 객체 파일 `loglab_foo.py` 의 내용 중 일부로, 이벤트 별 객체가 정의되어 있다.
 
@@ -1786,7 +1791,7 @@ print(e.serialize())
 다음과 같이 C# 버전을 생성할 수 있다.
 
 ```
-$ loglab object foo.lab.json cs > loglab_foo.cs
+$ loglab object foo.lab.json cs -o loglab_foo.cs
 ```
 
 아래는 C# 로그 객체 파일 `loglab_foo.cs` 내용의 일부이다.
@@ -1794,7 +1799,7 @@ $ loglab object foo.lab.json cs > loglab_foo.cs
 ```cs
 /*
 
-    ** 이 파일은 loglab 에서 생성된 것입니다. 고치지 마세요! **
+    ** 이 파일은 LogLab 에서 생성된 것입니다. 고치지 마세요! **
 
     Domain: foo
     Description: 위대한 모바일 게임
@@ -1803,48 +1808,81 @@ $ loglab object foo.lab.json cs > loglab_foo.cs
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace loglab_foo
 {
+    /// <summary>
+    ///  계정 로그인
+    /// </summary>
+    public class Login
+    {
+        public const string Event = "Login";
+        // 서버 번호
+        public int? ServerNo = null;
+        // 계정 ID
+        public int? AcntId = null;
+        // 디바이스의 플랫폼
+        public string Platform;
 
-    // ...
-
+        public Login() {}
+        public Login(int _ServerNo, int _AcntId, string _Platform)
+        {
+            Reset(_ServerNo, _AcntId, _Platform);
+        }
+        public void Reset(int _ServerNo, int _AcntId, string _Platform)
+        {
+            ServerNo = _ServerNo;
+            AcntId = _AcntId;
+            Platform = _Platform;
+        }
+        public string Serialize()
+        {
+            List<string> fields = new List<string>();
+            Debug.Assert(ServerNo.HasValue);
+            fields.Add($"\"ServerNo\": {ServerNo}");
+            Debug.Assert(AcntId.HasValue);
+            fields.Add($"\"AcntId\": {AcntId}");
+            Debug.Assert(Platform != null);
+            fields.Add($"\"Platform\": \"{Platform}\"");
+            string sfields = String.Join(", ", fields);
+            string dt = DateTime.Now.ToString("yyyy-MM-ddTH:mm:sszzz");
+            string sjson = $"{{\"DateTime\": \"{dt}\", \"Event\": \"{Event}\", {sfields}}}";
+            return sjson;
+        }
+    }
     /// <summary>
     ///  계정 로그아웃
     /// </summary>
     public class Logout
     {
-        private Dictionary<string, bool> _set;
-
         public const string Event = "Logout";
         // 서버 번호
-        public int ServerNo { get; set; }
+        public int? ServerNo = null;
         // 계정 ID
-        public int AcntId { get; set; }
+        public int? AcntId = null;
         // 플레이 시간 (초)
-        private float __PlayTime;
-        public float PlayTime {
-            get { return __PlayTime; }
-            set { __PlayTime = value; _set["PlayTime"] = true; }
-        }
+        public float? PlayTime = null;
 
+        public Logout() {}
         public Logout(int _ServerNo, int _AcntId)
         {
-            _set = new Dictionary<string, bool>();
             Reset(_ServerNo, _AcntId);
         }
         public void Reset(int _ServerNo, int _AcntId)
         {
-            _set.Clear();
             ServerNo = _ServerNo;
             AcntId = _AcntId;
+            PlayTime = null;
         }
         public string Serialize()
         {
             List<string> fields = new List<string>();
+            Debug.Assert(ServerNo.HasValue);
             fields.Add($"\"ServerNo\": {ServerNo}");
+            Debug.Assert(AcntId.HasValue);
             fields.Add($"\"AcntId\": {AcntId}");
-            if (_set.ContainsKey("PlayTime"))
+            if (PlayTime.HasValue)
                 fields.Add($"\"PlayTime\": {PlayTime}");
             string sfields = String.Join(", ", fields);
             string dt = DateTime.Now.ToString("yyyy-MM-ddTH:mm:sszzz");
@@ -1889,6 +1927,36 @@ namespace csharp
 > **빈번한 로그 객체 생성**
 >
 > 만약 특정 이벤트가 매우 자주 발생하고 그때마다 로그 객체를 생성하여 로그를 쓴다면, 가베지 콜렉션이나 메모리 단편화 등으로 인한 시스템 성능 저하가 발생할 수 있다. 이에 로그랩에서 생성된 로그 객체는 **리셋 (Reset)** 메소드를 통해 객체를 초기화하는 기능을 제공한다. 이벤트의 처리 코드에서 로그 객체를 매번 생성하지 말고, 클래스의 멤버 변수나 정적 (Static) 객체로 선언해 두고, 리셋 메소드로 그 객체를 초기화한 후 재활용하는 방식을 추천한다.
+
+#### 필드별 타입 지정
+
+로그랩의 `object` 명령으로 생성된 로그 객체 멤버 변수의 타입은, 랩파일에서 지정된 필드의 타입을 고려하여 대상 프로그래밍 랭귀지의 일반적인 타입으로 생성된다. 예를 들어 랩 파일에서 `integer` 로 지정된 필드는, C# 로그 객체 생성시 `int` 를 이용한다.
+
+그러나 필드별로 특정 타입을 지정해 사용해야 하는 경우가 있다. 예로 지금까지 예제에서 계정 ID 를 뜻하던 `AcntId` 필드에 C# 의 정수형 `int` 의 범위를 넘어서는 큰 값을 지정해야 한다면 곤란하게 된다. 이런 경우를 위해 랩 파일의 필드에 로그 객체 생성시 사용할 타입을 프로그래밍 언어별로 지정할 수 있다. 아래 예를 살펴보자.
+
+```json
+{
+  // ...
+ "types": {
+
+    // ...
+
+    "ulong": {
+      "type": "integer",
+      "desc": "0 이상 정수 (C# 로그 객체에서 ulong)",
+      "minimum": 0,
+      "objtype": {
+        "cs": "ulong"
+      }
+    }
+  }
+
+// ...
+
+}
+```
+
+`types` 에 `ulong` 이라는 커스텀 타입을 정의하고, 이것의 `objtype` 요소에 C# `cs` 를 위한 타입을 지정하는 식이다. 이렇게 하면 이 커스텀 타입 `types.ulong` 을 이용하는 필드의 C# 로그 객체 생성시, 기본 타입인 `int` 가 아닌 `ulong` 을 이용하게 된다.
 
 ### 현지화 (Localization)
 

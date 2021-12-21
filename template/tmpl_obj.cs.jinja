@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace loglab_{{ domain.name }}
 {
@@ -18,36 +19,31 @@ namespace loglab_{{ domain.name }}
     /// </summary>
     public class {{ ename }}
     {
-        private Dictionary<string, bool> _set;
         {% set fields = events[ename][-1][1]['fields'] %}
         {% set rfields = fields | required %}
         {% set ofields = fields | optional %}
-
         public const string Event = "{{ ename }}";
         {% for fname in fields.keys() %}{% if fname != 'DateTime' %}        // {{ events[ename][-1][1]['fields'][fname][-1][1]['desc'] }}
         {% set field = fields[fname][-1][1] %}
-        {% if 'option' in field and field['option'] %}
-        private {{ types[field['type']] }} __{{ fname }};
-        public {{ types[field['type']] }} {{ fname }} {
-            get { return __{{ fname }}; }
-            set { __{{ fname }} = value; _set["{{ fname }}"] = true; }
-        }
+        {% if type(field) == 'string' %}
+        public {{ type(field) }} {{ fname }};
         {% else %}
-        public {{ types[field['type']] }} {{ fname }} { get; set; }
-        {% endif %}
-        {% endif %}{% endfor %}
+        public {{ type(field) }}? {{ fname }} = null;
+        {% endif %}{% endif %}{% endfor %}
 
-        public {{ ename }}({% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}{{ types[field['type']] }} _{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %})
+        public {{ ename }}() {}
+        public {{ ename }}({% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}{{ type(field) }} _{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %})
         {
-            _set = new Dictionary<string, bool>();
             Reset({% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}_{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %});
         }
-        public void Reset({% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}{{ types[field['type']] }} _{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %})
+        public void Reset({% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}{{ type(field) }} _{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %})
         {
-            _set.Clear();
             {% for fname in rfields.keys() %}
             {% set field = rfields[fname][-1][1] %}
             {{ fname }} = _{{ fname }};
+            {% endfor %}
+            {% for fname in ofields.keys() %}
+            {{ fname }} = null;
             {% endfor %}
         }
         public string Serialize()
@@ -57,9 +53,18 @@ namespace loglab_{{ domain.name }}
             {% if fname != 'DateTime' %}
             {% set field = fields[fname][-1][1] %}
             {% if fname in rfields %}
+            {% if type(field) == 'string' %}
+            Debug.Assert({{ fname }} != null);
+            {% else %}
+            Debug.Assert({{ fname }}.HasValue);
+            {% endif %}
             fields.Add($"\"{{ fname }}\": {% if field['type'] == 'string' %}\"{% endif %}{% raw %}{{% endraw %}{{ fname }}{% raw %}}{% endraw %}{% if field['type'] == 'string' %}\"{% endif %}");
             {% else %}
-            if (_set.ContainsKey("{{ fname }}"))
+            {% if type(field) == 'string' %}
+            if ({{ fname }} != null)}})
+            {% else %}
+            if ({{ fname }}.HasValue)
+            {% endif %}
                 fields.Add($"\"{{ fname }}\": {% if field['type'] == 'string' %}\"{% endif %}{% raw %}{{% endraw %}{{ fname }}{% raw %}}{% endraw %}{% if field['type'] == 'string' %}\"{% endif %}");
             {% endif %}
             {% endif %}

@@ -3,6 +3,7 @@ import os
 from shutil import copyfile
 import json
 from shutil import rmtree
+import codecs
 
 import pytest
 from click.testing import CliRunner
@@ -24,9 +25,10 @@ def clear():
 def copy_files(files):
     # 테스트용  파일 복사
     for fn in files:
-        path = os.path.join(FILE_DIR, fn)
-        assert os.path.isfile(path)
-        copyfile(path, fn)
+        src = os.path.join(FILE_DIR, fn)
+        assert os.path.isfile(src)
+        dst = os.path.join(CWD, fn)
+        copyfile(src, fn)
 
 
 def write_log(fname, body):
@@ -182,16 +184,25 @@ Description : 0 이상 정수
 | integer    | 0 이상 정수   | 0 이상     |
 +------------+---------------+------------+
 
+Type : types.ulong
+Description : 0 이상 정수 (C# 로그 객체에서 ulong)
++------------+--------------------------------------+------------+
+| BaseType   | Description                          | Restrict   |
+|------------+--------------------------------------+------------|
+| integer    | 0 이상 정수 (C# 로그 객체에서 ulong) | 0 이상     |
++------------+--------------------------------------+------------+
+
+
 Event : Login
 Description : 계정 로그인
-+----------+----------------+-------------------+------------------+
-| Field    | Type           | Description       | Restrict         |
-|----------+----------------+-------------------+------------------|
-| DateTime | datetime       | 이벤트 일시       |                  |
-| ServerNo | integer        | 서버 번호         | 1 이상 100 미만  |
-| AcntId   | types.unsigned | 계정 ID           |                  |
-| Platform | string         | 디바이스의 플랫폼 | ios, aos 중 하나 |
-+----------+----------------+-------------------+------------------+
++----------+-------------+-------------------+------------------+
+| Field    | Type        | Description       | Restrict         |
+|----------+-------------+-------------------+------------------|
+| DateTime | datetime    | 이벤트 일시       |                  |
+| ServerNo | integer     | 서버 번호         | 1 이상 100 미만  |
+| AcntId   | types.ulong | 계정 ID           |                  |
+| Platform | string      | 디바이스의 플랫폼 | ios, aos 중 하나 |
++----------+-------------+-------------------+------------------+
 '''
     assert ans in out
 
@@ -206,16 +217,25 @@ Description : 0 이상 정수
 | integer    | 0 이상 정수   | 0 or above |
 +------------+---------------+------------+
 
+Type : types.ulong
+Description : 0 이상 정수 (C# 로그 객체에서 ulong)
++------------+--------------------------------------+------------+
+| BaseType   | Description                          | Restrict   |
+|------------+--------------------------------------+------------|
+| integer    | 0 이상 정수 (C# 로그 객체에서 ulong) | 0 or above |
++------------+--------------------------------------+------------+
+
+
 Event : Login
 Description : 계정 로그인
-+----------+----------------+-------------------+----------------------+
-| Field    | Type           | Description       | Restrict             |
-|----------+----------------+-------------------+----------------------|
-| DateTime | datetime       | Event date time   |                      |
-| ServerNo | integer        | 서버 번호         | 1 or above below 100 |
-| AcntId   | types.unsigned | 계정 ID           |                      |
-| Platform | string         | 디바이스의 플랫폼 | one of ios, aos      |
-+----------+----------------+-------------------+----------------------+
++----------+-------------+-------------------+----------------------+
+| Field    | Type        | Description       | Restrict             |
+|----------+-------------+-------------------+----------------------|
+| DateTime | datetime    | Event date time   |                      |
+| ServerNo | integer     | 서버 번호         | 1 or above below 100 |
+| AcntId   | types.ulong | 계정 ID           |                      |
+| Platform | string      | 디바이스의 플랫폼 | one of ios, aos      |
++----------+-------------+-------------------+----------------------+
 '''
     assert ans in out
 
@@ -256,6 +276,7 @@ Description : 0 이상의 정수
 |------------+---------------+------------|
 | integer    | 0 이상의 정수 | 0 이상     |
 +------------+---------------+------------+
+
 
 Event : Login
 Description : 계정 로그인
@@ -468,47 +489,50 @@ class Logout:
     res = runner.invoke(object, ['foo.lab.json', 'cs'])
     assert res.exit_code == 0
     out = res.output
-    assert '''
+    logout = '''
     /// <summary>
     ///  계정 로그아웃
     /// </summary>
     public class Logout
     {
-        private Dictionary<string, bool> _set;
-
         public const string Event = "Logout";
         // 서버 번호
-        public int ServerNo { get; set; }
+        public int? ServerNo = null;
         // 계정 ID
-        public int AcntId { get; set; }
+        public ulong? AcntId = null;
         // 플레이 시간 (초)
-        private float __PlayTime;
-        public float PlayTime {
-            get { return __PlayTime; }
-            set { __PlayTime = value; _set["PlayTime"] = true; }
-        }
+        public float? PlayTime = null;
 
-        public Logout(int _ServerNo, int _AcntId)
+        public Logout() {}
+        public Logout(int _ServerNo, ulong _AcntId)
         {
-            _set = new Dictionary<string, bool>();
             Reset(_ServerNo, _AcntId);
         }
-        public void Reset(int _ServerNo, int _AcntId)
+        public void Reset(int _ServerNo, ulong _AcntId)
         {
-            _set.Clear();
             ServerNo = _ServerNo;
             AcntId = _AcntId;
+            PlayTime = null;
         }
         public string Serialize()
         {
             List<string> fields = new List<string>();
+            Debug.Assert(ServerNo.HasValue);
             fields.Add($"\\"ServerNo\\": {ServerNo}");
+            Debug.Assert(AcntId.HasValue);
             fields.Add($"\\"AcntId\\": {AcntId}");
-            if (_set.ContainsKey("PlayTime"))
+            if (PlayTime.HasValue)
                 fields.Add($"\\"PlayTime\\": {PlayTime}");
             string sfields = String.Join(", ", fields);
             string dt = DateTime.Now.ToString("yyyy-MM-ddTH:mm:sszzz");
             string sjson = $"{{\\"DateTime\\": \\"{dt}\\", \\"Event\\": \\"{Event}\\", {sfields}}}";
             return sjson;
         }
-    }''' in out
+    }'''
+    assert logout in out
+
+    res = runner.invoke(object, ['foo.lab.json', 'cs', '-o', 'loglab_foo.cs'])
+    assert res.exit_code == 0
+    with codecs.open('loglab_foo.cs', encoding='utf-8') as f:
+        code = f.read()
+        assert logout in code
