@@ -497,12 +497,13 @@ class Logout:
     {
         public const string Event = "Logout";
         // 서버 번호
-        public int ServerNo;
+        public int? ServerNo = null;
         // 계정 ID
-        public ulong AcntId;
+        public ulong? AcntId = null;
         // 플레이 시간 (초)
         public float? PlayTime = null;
 
+        public Logout() {}
         public Logout(int _ServerNo, ulong _AcntId)
         {
             Reset(_ServerNo, _AcntId);
@@ -516,7 +517,9 @@ class Logout:
         public string Serialize()
         {
             List<string> fields = new List<string>();
+            Debug.Assert(ServerNo.HasValue);
             fields.Add($"\\"ServerNo\\": {ServerNo}");
+            Debug.Assert(AcntId.HasValue);
             fields.Add($"\\"AcntId\\": {AcntId}");
             if (PlayTime.HasValue)
                 fields.Add($"\\"PlayTime\\": {PlayTime}");
