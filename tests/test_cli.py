@@ -520,7 +520,7 @@ class Logout:
             ServerNo = _ServerNo;
             AcntId = _AcntId;
             PlayTime = null;
-            Login = null;
+            Login = DateTime.MinValue;
         }
         public string Serialize()
         {
@@ -531,9 +531,10 @@ class Logout:
             fields.Add($"\\"AcntId\\": {AcntId}");
             if (PlayTime.HasValue)
                 fields.Add($"\\"PlayTime\\": {PlayTime}");
-            if (Login != DateTime.MinValue)}})
-            string Login_ = Login.ToString("yyyy-MM-ddTHH:mm:sszzz");
+            if (Login != DateTime.MinValue) {
+                string Login_ = Login.ToString("yyyy-MM-ddTHH:mm:sszzz");
                 fields.Add($"\\"Login\\": \\"{Login_}\\"");
+            }
             string sfields = String.Join(", ", fields);
             string dt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:sszzz");
             string sjson = $"{{\\"DateTime\\": \\"{dt}\\", \\"Event\\": \\"{Event}\\", {sfields}}}";

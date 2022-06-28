@@ -27,7 +27,6 @@ namespace loglab_{{ domain.name }}
         {% set field = fields[fname][-1][1] %}
         {% if type(field) in ('string', 'DateTime') %}
         public {{ type(field) }} {{ fname }};
-        {% elif type(field) == 'DateTime' %}
         {% else %}
         public {{ type(field) }}? {{ fname }} = null;
         {% endif %}{% endif %}{% endfor %}
@@ -44,7 +43,14 @@ namespace loglab_{{ domain.name }}
             {{ fname }} = _{{ fname }};
             {% endfor %}
             {% for fname in ofields.keys() %}
+            {% set field = fields[fname][-1][1] %}
+            {% if type(field) == 'string' %}
+            {{ fname }} = default(string);
+            {% elif type(field) == 'DateTime' %}
+            {{ fname }} = DateTime.MinValue;
+            {% else %}
             {{ fname }} = null;
+            {% endif %}
             {% endfor %}
         }
         public string Serialize()
@@ -65,14 +71,17 @@ namespace loglab_{{ domain.name }}
             fields.Add($"\"{{ fname }}\": {% if field['type'] in ('string', 'datetime') %}\"{% endif %}{% raw %}{{% endraw %}{{ fname }}{% if field['type'] == 'datetime' %}_{% endif %}{% raw %}}{% endraw %}{% if field['type'] in ('string', 'datetime') %}\"{% endif %}");
             {% else %}
             {% if type(field) == 'string' %}
-            if ({{ fname }} != null)}})
+            if ({{ fname }} != null)
             {% elif type(field) == 'DateTime' %}
-            if ({{ fname }} != DateTime.MinValue)}})
-            string {{ fname }}_ = {{ fname }}.ToString("yyyy-MM-ddTHH:mm:sszzz");
+            if ({{ fname }} != DateTime.MinValue) {
+                string {{ fname }}_ = {{ fname }}.ToString("yyyy-MM-ddTHH:mm:sszzz");
             {% else %}
             if ({{ fname }}.HasValue)
             {% endif %}
                 fields.Add($"\"{{ fname }}\": {% if field['type'] in ('string', 'datetime') %}\"{% endif %}{% raw %}{{% endraw %}{{ fname }}{% if field['type'] == 'datetime' %}_{% endif %}{% raw %}}{% endraw %}{% if field['type'] in ('string', 'datetime') %}\"{% endif %}");
+            {% if type(field) == 'DateTime' %}
+            {% raw %}            }
+            {% endraw %}{% endif %}
             {% endif %}
             {% endif %}
             {% endfor %}
