@@ -110,7 +110,8 @@
 			"desc": "계정 로그아웃",
 			"mixins": ["bases.Account"],
 			"fields": [
-				["PlayTime", "number", "플레이 시간 (초)", true]
+				["PlayTime", "number", "플레이 시간 (초)", true],
+                ["Login", "datetime", "로그인 시간", true]
 			]
 		},
 		"CharLogin": {

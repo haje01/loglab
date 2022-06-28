@@ -117,6 +117,7 @@ Description : 계정 로그아웃
 | ServerNo | integer  | 서버 번호        |            | 1 이상 100 미만 |
 | AcntId   | integer  | 계정 ID          |            | 0 이상          |
 | PlayTime | number   | 플레이 시간 (초) | True       |                 |
+| Login    | datetime | 로그인 시간      | True       |                 |
 +----------+----------+------------------+------------+-----------------+'''
     assert ans in out
 
@@ -130,6 +131,7 @@ Description : 캐릭터 로그아웃
 | AcntId   | integer  | 계정 ID          |            | 0 이상          |
 | CharId   | integer  | 캐릭터 ID        |            | 0 이상          |
 | PlayTime | number   | 플레이 시간 (초) | True       |                 |
+| Login    | datetime | 로그인 시간      | True       |                 |
 +----------+----------+------------------+------------+-----------------+'''
     assert ans in out
 
@@ -476,6 +478,7 @@ class Logout:
         self.ServerNo = _ServerNo
         self.AcntId = _AcntId
         self.PlayTime : Optional[float] = None
+        self.Login : Optional[datetime] = None
 
     def serialize(self):
         data = dict(DateTime=datetime.now().astimezone().isoformat(),
@@ -484,6 +487,8 @@ class Logout:
         data["AcntId"] = self.AcntId
         if self.PlayTime is not None:
             data["PlayTime"] = self.PlayTime
+        if self.Login is not None:
+            data["Login"] = self.Login.isoformat()
         return json.dumps(data)''' in out
 
     res = runner.invoke(object, ['foo.lab.json', 'cs'])
@@ -502,6 +507,8 @@ class Logout:
         public ulong? AcntId = null;
         // 플레이 시간 (초)
         public float? PlayTime = null;
+        // 로그인 시간
+        public DateTime Login;
 
         public Logout() {}
         public Logout(int _ServerNo, ulong _AcntId)
@@ -513,6 +520,7 @@ class Logout:
             ServerNo = _ServerNo;
             AcntId = _AcntId;
             PlayTime = null;
+            Login = null;
         }
         public string Serialize()
         {
@@ -523,8 +531,11 @@ class Logout:
             fields.Add($"\\"AcntId\\": {AcntId}");
             if (PlayTime.HasValue)
                 fields.Add($"\\"PlayTime\\": {PlayTime}");
+            if (Login != DateTime.MinValue)}})
+            string Login_ = Login.ToString("yyyy-MM-ddTHH:mm:sszzz");
+                fields.Add($"\\"Login\\": \\"{Login_}\\"");
             string sfields = String.Join(", ", fields);
-            string dt = DateTime.Now.ToString("yyyy-MM-ddTH:mm:sszzz");
+            string dt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:sszzz");
             string sjson = $"{{\\"DateTime\\": \\"{dt}\\", \\"Event\\": \\"{Event}\\", {sfields}}}";
             return sjson;
         }

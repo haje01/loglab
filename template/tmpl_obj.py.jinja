@@ -34,10 +34,12 @@ class {{ename}}:
         {% if fname != 'DateTime' %}
         {% set field = fields[fname][-1][1] %}
         {% if fname in rfields %}
-        data["{{ fname }}"] = self.{{ fname }}
+        data["{{ fname }}"] = self.{{ fname }}{% if type(field) == 'datetime' %}.isoformat(){% endif %}
+
         {% else %}
         if self.{{ fname }} is not None:
-            data["{{ fname }}"] = self.{{ fname }}
+            data["{{ fname }}"] = self.{{ fname }}{% if type(field) == 'datetime' %}.isoformat(){% endif %}
+
         {% endif %}
         {% endif %}
         {% endfor %}

@@ -25,8 +25,9 @@ namespace loglab_{{ domain.name }}
         public const string Event = "{{ ename }}";
         {% for fname in fields.keys() %}{% if fname != 'DateTime' %}        // {{ events[ename][-1][1]['fields'][fname][-1][1]['desc'] }}
         {% set field = fields[fname][-1][1] %}
-        {% if type(field) == 'string' %}
+        {% if type(field) in ('string', 'DateTime') %}
         public {{ type(field) }} {{ fname }};
+        {% elif type(field) == 'DateTime' %}
         {% else %}
         public {{ type(field) }}? {{ fname }} = null;
         {% endif %}{% endif %}{% endfor %}
@@ -55,22 +56,28 @@ namespace loglab_{{ domain.name }}
             {% if fname in rfields %}
             {% if type(field) == 'string' %}
             Debug.Assert({{ fname }} != null);
+            {% elif type(field) == 'DateTime' %}
+            Debug.Assert({{ fname }} != DateTime.MinValue);
+            string {{ fname }}_ = {{ fname }}.ToString("yyyy-MM-ddTHH:mm:sszzz");
             {% else %}
             Debug.Assert({{ fname }}.HasValue);
             {% endif %}
-            fields.Add($"\"{{ fname }}\": {% if field['type'] == 'string' %}\"{% endif %}{% raw %}{{% endraw %}{{ fname }}{% raw %}}{% endraw %}{% if field['type'] == 'string' %}\"{% endif %}");
+            fields.Add($"\"{{ fname }}\": {% if field['type'] in ('string', 'datetime') %}\"{% endif %}{% raw %}{{% endraw %}{{ fname }}{% if field['type'] == 'datetime' %}_{% endif %}{% raw %}}{% endraw %}{% if field['type'] in ('string', 'datetime') %}\"{% endif %}");
             {% else %}
             {% if type(field) == 'string' %}
             if ({{ fname }} != null)}})
+            {% elif type(field) == 'DateTime' %}
+            if ({{ fname }} != DateTime.MinValue)}})
+            string {{ fname }}_ = {{ fname }}.ToString("yyyy-MM-ddTHH:mm:sszzz");
             {% else %}
             if ({{ fname }}.HasValue)
             {% endif %}
-                fields.Add($"\"{{ fname }}\": {% if field['type'] == 'string' %}\"{% endif %}{% raw %}{{% endraw %}{{ fname }}{% raw %}}{% endraw %}{% if field['type'] == 'string' %}\"{% endif %}");
+                fields.Add($"\"{{ fname }}\": {% if field['type'] in ('string', 'datetime') %}\"{% endif %}{% raw %}{{% endraw %}{{ fname }}{% if field['type'] == 'datetime' %}_{% endif %}{% raw %}}{% endraw %}{% if field['type'] in ('string', 'datetime') %}\"{% endif %}");
             {% endif %}
             {% endif %}
             {% endfor %}
             string sfields = String.Join(", ", fields);
-            string dt = DateTime.Now.ToString("yyyy-MM-ddTH:mm:sszzz");
+            string dt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:sszzz");
             string sjson = $"{% raw %}{{{% endraw %}\"DateTime\": \"{dt}\", \"Event\": \"{Event}\", {sfields}{% raw %}}}{% endraw %}";
             return sjson;
         }
