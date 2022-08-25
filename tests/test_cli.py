@@ -509,6 +509,10 @@ class Logout:
         public float? PlayTime = null;
         // 로그인 시간
         public DateTime Login;
+        public static JsonSerializerOptions options = new JsonSerializerOptions
+        {
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        };
 
         public Logout() {}
         public Logout(int _ServerNo, ulong _AcntId)
