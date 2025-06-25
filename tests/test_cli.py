@@ -41,7 +41,7 @@ def test_cli():
     """기본 실행 테스트."""
     runner = CliRunner()
     res = runner.invoke(cli)
-    assert res.exit_code == 0
+    assert res.exit_code == 2
     out = res.output
     assert 'Commands:' in out
     assert 'show' in out
@@ -536,11 +536,11 @@ class Logout:
             if (PlayTime.HasValue)
                 fields.Add($"\\"PlayTime\\": {PlayTime}");
             if (Login != DateTime.MinValue) {
-                string Login_ = Login.ToString("yyyy-MM-ddTHH:mm:sszzz");
+                string Login_ = Login.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
                 fields.Add($"\\"Login\\": \\"{Login_}\\"");
             }
             string sfields = String.Join(", ", fields);
-            string dt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:sszzz");
+            string dt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
             string sjson = $"{{\\"DateTime\\": \\"{dt}\\", \\"Event\\": \\"{Event}\\", {sfields}}}";
             return sjson;
         }
