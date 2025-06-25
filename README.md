@@ -1846,7 +1846,7 @@ namespace loglab_foo
             Debug.Assert(Platform != null);
             fields.Add($"\"Platform\": \"{Platform}\"");
             string sfields = String.Join(", ", fields);
-            string dt = DateTime.Now.ToString("yyyy-MM-ddTH:mm:sszzz");
+            string dt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
             string sjson = $"{{\"DateTime\": \"{dt}\", \"Event\": \"{Event}\", {sfields}}}";
             return sjson;
         }
@@ -1885,7 +1885,7 @@ namespace loglab_foo
             if (PlayTime.HasValue)
                 fields.Add($"\"PlayTime\": {PlayTime}");
             string sfields = String.Join(", ", fields);
-            string dt = DateTime.Now.ToString("yyyy-MM-ddTH:mm:sszzz");
+            string dt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
             string sjson = $"{{\"DateTime\": \"{dt}\", \"Event\": \"{Event}\", {sfields}}}";
             return sjson;
         }

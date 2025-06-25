@@ -73,7 +73,7 @@ namespace loglab_{{ domain.name }}
             {{ fname }} = JsonSerializer.Serialize({{ fname }}, {{ename}}.options);
             {% elif type(field) == 'DateTime' %}
             Debug.Assert({{ fname }} != DateTime.MinValue);
-            string {{ fname }}_ = {{ fname }}.ToString("yyyy-MM-ddTHH:mm:sszzz");
+            string {{ fname }}_ = {{ fname }}.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
             {% else %}
             Debug.Assert({{ fname }}.HasValue);
             {% endif %}
@@ -84,7 +84,7 @@ namespace loglab_{{ domain.name }}
                 {{ fname }} = JsonSerializer.Serialize({{ fname }}, {{ename}}.options);
             {% elif type(field) == 'DateTime' %}
             if ({{ fname }} != DateTime.MinValue) {
-                string {{ fname }}_ = {{ fname }}.ToString("yyyy-MM-ddTHH:mm:sszzz");
+                string {{ fname }}_ = {{ fname }}.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
             {% else %}
             if ({{ fname }}.HasValue)
             {% endif %}
@@ -96,7 +96,7 @@ namespace loglab_{{ domain.name }}
             {% endif %}
             {% endfor %}
             string sfields = String.Join(", ", fields);
-            string dt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:sszzz");
+            string dt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
             string sjson = $"{% raw %}{{{% endraw %}\"DateTime\": \"{dt}\", \"Event\": \"{Event}\", {sfields}{% raw %}}}{% endraw %}";
             return sjson;
         }
