@@ -2,6 +2,7 @@
 htmlcov/
 dist/
 .vscode/
+tests/*.cs
 *.html
 # Byte-compiled / optimized / DLL files
 __pycache__/
