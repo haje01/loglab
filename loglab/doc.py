@@ -329,6 +329,14 @@ _type_json2py = {
     'datetime': 'datetime'
 }
 
+_type_json2cpp = {
+    'integer': 'int',
+    'number': 'float',
+    'string': 'std::string',
+    'boolean': 'bool',
+    'datetime': 'std::string'
+}
+
 
 def _type_cs(field):
     if 'objtype' in field and 'cs' in field['objtype']:
@@ -342,6 +350,13 @@ def _type_py(field):
         return field['objtype']['py']
     else:
         return _type_json2py[field['type']]
+
+
+def _type_cpp(field):
+    if 'objtype' in field and 'cpp' in field['objtype']:
+        return field['objtype']['cpp']
+    else:
+        return _type_json2cpp[field['type']]
 
 
 def _object_required_filter(fields):
@@ -379,7 +394,7 @@ def object_from_labfile(data, code_type, lang):
         output (str): 저장할 코드 파일 경로
 
     """
-    assert code_type in ('cs', 'py')
+    assert code_type in ('cs', 'py', 'cpp')
     model = build_model(data, lang)
     tmpl_dir = os.path.join(LOGLAB_HOME, "template")
     loader = FileSystemLoader(tmpl_dir)
@@ -389,9 +404,15 @@ def object_from_labfile(data, code_type, lang):
     env.filters['required'] = _object_required_filter
     env.filters['optional'] = _object_optional_filter
     tmpl = env.get_template(f"tmpl_obj.{code_type}.jinja")
-    _type = _type_cs if code_type == 'cs' else _type_py
+    if code_type == 'cs':
+        _type = _type_cs
+    elif code_type == 'py':
+        _type = _type_py
+    else:
+        _type = _type_cpp
     domain = data['domain']
     events = model['events']
     warn = get_object_warn(lang)
     kwargs = dict(domain=domain, events=events, warn=warn)
     return tmpl.render(type=_type, **kwargs)
+

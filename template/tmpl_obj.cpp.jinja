@@ -1,0 +1,114 @@
+/*
+
+    {{ warn }}
+
+    Domain: {{ domain.name }}
+{% if 'desc' in domain %}
+    Description: {{ domain.desc }}
+{% endif %}
+*/
+
+#pragma once
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <optional>
+#include <chrono>
+#include <sstream>
+#include <iomanip>
+
+namespace loglab_{{ domain.name }}
+{
+{% for name, elst in events.items() %}
+{% set edata = elst[-1] %}
+{% set edef = edata[1] %}
+    /// <summary>
+    ///  {{ edef.desc }}
+    /// </summary>
+    class {{ name }}
+    {
+    public:
+        static constexpr const char* Event = "{{ name }}";
+
+        // Required fields
+{% for fname, flst in (edef.fields|required).items() %}
+{% set fdata = flst[-1] %}
+{% set fdef = fdata[1] %}
+        // {{ fdef.desc }}
+        {{ type(fdef) }} {{ fname }};
+{% endfor %}
+
+        // Optional fields
+{% for fname, flst in (edef.fields|optional).items() %}
+{% set fdata = flst[-1] %}
+{% set fdef = fdata[1] %}
+        // {{ fdef.desc }}
+        std::optional<{{ type(fdef) }}> {{ fname }};
+{% endfor %}
+
+        {{ name }}() {}
+
+        {{ name }}({% for fname, flst in (edef.fields|required).items() %}{% set fdata = flst[-1] %}{% set fdef = fdata[1] %}{{ type(fdef) }} _{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %})
+        {
+            Reset({% for fname, flst in (edef.fields|required).items() %}_{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %});
+        }
+
+        void Reset({% for fname, flst in (edef.fields|required).items() %}{% set fdata = flst[-1] %}{% set fdef = fdata[1] %}{{ type(fdef) }} _{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %})
+        {
+{% for fname, flst in (edef.fields|required).items() %}
+            {{ fname }} = _{{ fname }};
+{% endfor %}
+{% for fname, flst in (edef.fields|optional).items() %}
+            {{ fname }}.reset();
+{% endfor %}
+        }
+
+        std::string Serialize()
+        {
+            std::stringstream ss;
+            ss << "{";
+
+            // DateTime and Event
+            auto now = std::chrono::system_clock::now();
+            auto in_time_t = std::chrono::system_clock::to_time_t(now);
+            ss << "\"DateTime\":\"" << std::put_time(std::gmtime(&in_time_t), "%Y-%m-%dT%H:%M:%SZ") << "\",";
+            ss << "\"Event\":\"" << Event << "\"";
+
+            // Required fields
+{% for fname, flst in (edef.fields|required).items() %}
+{% set fdef = flst[-1][1] %}
+            ss << ",";
+            ss << "\"{{ fname }}\":";
+{% if type(fdef) == 'std::string' %}
+            ss << "\"" << {{ fname }} << "\"";
+{% elif type(fdef) == 'bool' %}
+            ss << ({{ fname }} ? "true" : "false");
+{% else %}
+            ss << {{ fname }};
+{% endif %}
+{% endfor %}
+
+            // Optional fields
+{% for fname, flst in (edef.fields|optional).items() %}
+{% set fdef = flst[-1][1] %}
+            if ({{ fname }}.has_value())
+            {
+                ss << ",";
+                ss << "\"{{ fname }}\":";
+{% if type(fdef) == 'std::string' %}
+                ss << "\"" << {{ fname }}.value() << "\"";
+{% elif type(fdef) == 'bool' %}
+                ss << ({{ fname }}.value() ? "true" : "false");
+{% else %}
+                ss << {{ fname }}.value();
+{% endif %}
+            }
+{% endfor %}
+
+            ss << "}";
+            return ss.str();
+        }
+    };
+{% endfor %}
+}

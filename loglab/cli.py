@@ -124,7 +124,7 @@ def object(labfile, code_type, output, lang):
         sys.exit(1)
 
     code_type = code_type.lower()
-    if code_type not in ('cs', 'py'):
+    if code_type not in ('cs', 'py', 'cpp'):
         print(f"Error: 지원하지 않는 코드 타입 (.{code_type}) 입니다.")
         sys.exit(1)
 

@@ -104,7 +104,7 @@ LogLab 의 홈페이지는 https://github.com/haje01/loglab 이다. 다음과 �
 
 ```
 $ git clone https://github.com/haje01/loglab
-$ pip install -e .
+$ uv pip install -e .
 ```
 
 설치가 잘 되었다면 로그랩의 커맨드라인 툴인 `loglab` 을 이용할 수 있다. 다음과 같이 입력해보자.
@@ -1716,21 +1716,25 @@ $ loglab html foo.lab.json
 
 ### 로그 객체 출력
 
-서비스 코드에서 로그 출력을 구현할 때, 필요한 필드와 값을 매번 문자열로 만들어 쓰는 것은 번거롭다. 로그 이벤트 구조에 맞는 객체 (Object) 를 미리 정의하고 그것의 멤버 변수에 값을 채운뒤, 최종적으로 JSON 형식으로 시리얼라이즈 (Serialize) 하는 방식이 좀 더 편리할 수 있다. 여기서는 이러한 객체를 **로그 객체 (Log Object)** 로 부르겠다. 로그랩에서는 로그 객체를 위한 코드 생성을 제공한다.
+서비스 코드에서 로그 출력을 구현할 때, 필요한 필드와 값을 매번 문자열로 만들어 쓰는 것은 번거롭습니다. 로그 이벤트 구조에 맞는 객체(Object)를 미리 정의하고 그것의 멤버 변수에 값을 채운 뒤, 최종적으로 JSON 형식으로 직렬화(Serialize)하는 방식이 더 편리하고 안전합니다. 여기서는 이러한 객체를 **로그 객체(Log Object)**로 부르겠습니다.
 
-다음과 같이 `object` 명령으로 로그 객체 코드를 출력한다.
-
-```
-$ loglab object foo.lab.json py
-```
-
-첫 번째 인자는 랩 파일명이고, 두 번째 인자는 생성할 프로그래밍 코드 타입이다. 현재는 파이썬 `py` 및 C# `cs` 을 지원한다. 결과는 표준 출력으로 나간다. 아래와 같이 저장할 파일명을 지정할 수도 있다.
+로그랩은 `object` 명령을 통해 로그 객체를 위한 코드 생성을 지원합니다.
 
 ```
-$ loglab object foo.lab.json -o loglab_foo.py
+$ loglab object <랩 파일> <코드 타입>
 ```
 
-아래는 랩 파일 `foo.lab.json` 에서 생성된 파이썬 로그 객체 파일 `loglab_foo.py` 의 내용 중 일부로, 이벤트 별 객체가 정의되어 있다.
+첫 번째 인자는 랩 파일명이고, 두 번째 인자는 생성할 프로그래밍 언어 타입입니다. 현재는 Python (`py`), C# (`cs`), C++ (`cpp`)를 지원합니다.
+
+#### Python
+
+다음과 같이 `object` 명령으로 파이썬 로그 객체 코드를 출력합니다.
+
+```
+$ loglab object foo.lab.json py -o loglab_foo.py
+```
+
+아래는 랩 파일 `foo.lab.json`에서 생성된 파이썬 로그 객체 파일 `loglab_foo.py`의 내용 중 일부입니다.
 
 ```python
 """
@@ -1767,10 +1771,9 @@ class Logout:
         return json.dumps(data)
 
 # ...
-
 ```
 
-아래는 이 파일을 불러와서 사용하는 예이다. 이벤트의 필수 필드는 객체의 생성자 인자로 받아들이고, 옵션 필드는 객체 생성 후 직접 설정하는 식으로 사용한다.
+아래는 이 파일을 불러와서 사용하는 예입니다. 이벤트의 필수 필드는 객체의 생성자 인자로 전달하고, 옵션 필드는 객체 생성 후 직접 설정합니다.
 
 ```python
 import loglab_foo as lf
@@ -1780,21 +1783,23 @@ e.PlayTime = 100
 print(e.serialize())
 ```
 
-결과는 아래와 같다.
+결과는 아래와 같습니다.
 
 ```json
 {"DateTime": "2021-11-12T13:37:05.491169+09:00", "Event": "Logout", "ServerNo": 33, "AcntId": 44, "PlayTime": 100}
 ```
 
-> 설정되지 않은 옵션 필드는 결과 JSON 에 포함되지 않는다.
+> 설정되지 않은 옵션 필드는 결과 JSON에 포함되지 않습니다.
 
-다음과 같이 C# 버전을 생성할 수 있다.
+#### C#
+
+다음과 같이 C# 버전을 생성할 수 있습니다.
 
 ```
 $ loglab object foo.lab.json cs -o loglab_foo.cs
 ```
 
-아래는 C# 로그 객체 파일 `loglab_foo.cs` 내용의 일부이다.
+아래는 C# 로그 객체 파일 `loglab_foo.cs` 내용의 일부입니다.
 
 ```cs
 /*
@@ -1812,48 +1817,7 @@ using System.Diagnostics;
 
 namespace loglab_foo
 {
-    /// <summary>
-    ///  계정 로그인
-    /// </summary>
-    public class Login
-    {
-        public const string Event = "Login";
-        // 서버 번호
-        public int? ServerNo = null;
-        // 계정 ID
-        public int? AcntId = null;
-        // 디바이스의 플랫폼
-        public string Platform;
-
-        public Login() {}
-        public Login(int _ServerNo, int _AcntId, string _Platform)
-        {
-            Reset(_ServerNo, _AcntId, _Platform);
-        }
-        public void Reset(int _ServerNo, int _AcntId, string _Platform)
-        {
-            ServerNo = _ServerNo;
-            AcntId = _AcntId;
-            Platform = _Platform;
-        }
-        public string Serialize()
-        {
-            List<string> fields = new List<string>();
-            Debug.Assert(ServerNo.HasValue);
-            fields.Add($"\"ServerNo\": {ServerNo}");
-            Debug.Assert(AcntId.HasValue);
-            fields.Add($"\"AcntId\": {AcntId}");
-            Debug.Assert(Platform != null);
-            fields.Add($"\"Platform\": \"{Platform}\"");
-            string sfields = String.Join(", ", fields);
-            string dt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
-            string sjson = $"{{\"DateTime\": \"{dt}\", \"Event\": \"{Event}\", {sfields}}}";
-            return sjson;
-        }
-    }
-    /// <summary>
-    ///  계정 로그아웃
-    /// </summary>
+    // ...
     public class Logout
     {
         public const string Event = "Logout";
@@ -1886,17 +1850,15 @@ namespace loglab_foo
                 fields.Add($"\"PlayTime\": {PlayTime}");
             string sfields = String.Join(", ", fields);
             string dt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
-            string sjson = $"{{\"DateTime\": \"{dt}\", \"Event\": \"{Event}\", {sfields}}}";
+            string sjson = ${"{\"DateTime\": \"{dt}\", \"Event\": \"{Event}\", {sfields}}}";
             return sjson;
         }
     }
-
     // ...
-
 }
 ```
 
-아래는 이 파일을 불러와서 사용하는 예이다. 파이썬과 마찬가지로 이벤트의 필수 필드는 객체의 생성자 인자로 받아들이고, 옵션 필드는 객체 생성 후 직접 설정하는 식으로 사용한다.
+사용 예제는 다음과 같습니다.
 
 ```cs
 using System;
@@ -1916,17 +1878,66 @@ namespace csharp
 }
 ```
 
-결과는 아래와 같다.
+#### C++
 
-```json
-{"DateTime": "2021-11-12T12:19:00+09:00", "Event": "Logout", "ServerNo": 33, "AcntId": 44, "PlayTime": 100}
+C++ 로그 객체는 C++17 표준을 기반으로 생성됩니다. 다음과 같이 헤더 파일을 생성합니다.
+
+```
+$ loglab object foo.lab.json cpp -o loglab_foo.h
 ```
 
-이와 같이, 로그 객체를 사용하면 손쉽게 JSON 형태의 문자열을 얻을 수 있다. 실제 파일에 쓰기 위해서 사용하는 로깅 라이브러리에 이 문자열을 건네주면 될 것이다.
+생성된 `loglab_foo.h` 파일은 `loglab_foo`와 같은 `loglab_<도메인 이름>` 네임스페이스 안에 각 이벤트 클래스를 정의합니다. 옵션 필드는 `std::optional`을 사용합니다.
+
+아래는 생성된 `loglab_foo.h`를 사용하는 예제 `main.cpp`입니다.
+
+```cpp
+#include <iostream>
+#include "loglab_foo.h" // LogLab이 생성한 헤더 파일을 포함합니다.
+
+// LogLab이 생성한 네임스페이스를 사용합니다.
+using namespace loglab_foo;
+
+int main() {
+    // --- Login 이벤트 사용 예제 ---
+    // 필수 필드를 생성자 인자로 전달하여 객체를 생성합니다.
+    Login login_event(1, 1001, "ios");
+    std::cout << "Login Event: " << login_event.Serialize() << std::endl;
+
+    // --- Logout 이벤트 사용 예제 (옵션 필드 포함) ---
+    Logout logout_event(1, 1001);
+    logout_event.PlayTime = 123.45f; // 옵션 필드 설정
+    std::cout << "Logout Event: " << logout_event.Serialize() << std::endl;
+
+    return 0;
+}
+```
+
+코드를 빌드하고 실행하려면 `g++`와 같은 C++ 컴파일러가 필요합니다.
+
+**1. 컴파일**
+`std::optional`을 사용하므로 C++17 표준 이상으로 컴파일해야 합니다.
+
+```bash
+g++ -std=c++17 -o main_app main.cpp
+```
+
+**2. 실행**
+
+```bash
+./main_app
+```
+
+**3. 예상 출력**
+```
+Login Event: {"DateTime":"...", "Event":"Login", "ServerNo":1, "AcntId":1001, "Platform":"ios"}
+Logout Event: {"DateTime":"...", "Event":"Logout", "ServerNo":1, "AcntId":1001, "PlayTime":123.45}
+```
+
+이와 같이, 로그 객체를 사용하면 각 언어의 타입 시스템을 활용하여 안전하고 손쉽게 JSON 형태의 로그 문자열을 얻을 수 있습니다. 실제 파일에 쓰기 위해서는 생성된 문자열을 사용하는 로깅 라이브러리에 전달하면 됩니다.
 
 > **빈번한 로그 객체 생성**
 >
-> 만약 특정 이벤트가 매우 자주 발생하고 그때마다 로그 객체를 생성하여 로그를 쓴다면, 가베지 콜렉션이나 메모리 단편화 등으로 인한 시스템 성능 저하가 발생할 수 있다. 이에 로그랩에서 생성된 로그 객체는 **리셋 (Reset)** 메소드를 통해 객체를 초기화하는 기능을 제공한다. 이벤트의 처리 코드에서 로그 객체를 매번 생성하지 말고, 클래스의 멤버 변수나 정적 (Static) 객체로 선언해 두고, 리셋 메소드로 그 객체를 초기화한 후 재활용하는 방식을 추천한다.
+> 만약 특정 이벤트가 매우 자주 발생하고 그때마다 로그 객체를 생성하여 로그를 쓴다면, 가비지 컬렉션이나 메모리 단편화 등으로 인한 시스템 성능 저하가 발생할 수 있습니다. 이에 로그랩에서 생성된 로그 객체는 **리셋(Reset)** 메소드를 통해 객체를 초기화하는 기능을 제공합니다. 이벤트 처리 코드에서 로그 객체를 매번 생성하지 말고, 클래스의 멤버 변수나 정적(Static) 객체로 선언해 두고, 리셋 메소드로 그 객체를 초기화한 후 재활용하는 방식을 추천합니다.
 
 #### 필드별 타입 지정
 
