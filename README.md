@@ -129,7 +129,7 @@ Commands:
 
 ```
 $ loglab version
-0.1.7
+0.2.0
 ```
 
 ## 최초 랩 파일 만들기
@@ -1886,6 +1886,95 @@ C++ 로그 객체는 C++17 표준을 기반으로 생성됩니다. 다음과 같
 $ loglab object foo.lab.json cpp -o loglab_foo.h
 ```
 
+아래는 생성된 파일 loglab_foo.h 의 일부입니다.
+
+```c++
+/*
+
+    이 파일은 LogLab 에서 생성된 것입니다. 고치지 마세요!
+
+    Domain: foo
+    Description: 위대한 모바일 게임
+*/
+
+#pragma once
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <optional>
+#include <chrono>
+#include <sstream>
+#include <iomanip>
+
+namespace loglab_foo
+{
+    /// <summary>
+    ///  계정 로그인
+    /// </summary>
+    class Login
+    {
+    public:
+        static constexpr const char* Event = "Login";
+
+        // Required fields
+        // 서버 번호
+        int ServerNo;
+        // 계정 ID
+        int AcntId;
+        // 디바이스의 플랫폼
+        std::string Platform;
+
+        // Optional fields
+
+        Login() {}
+
+        Login(int _ServerNo, int _AcntId, std::string _Platform)
+        {
+            Reset(_ServerNo, _AcntId, _Platform);
+        }
+
+        void Reset(int _ServerNo, int _AcntId, std::string _Platform)
+        {
+            ServerNo = _ServerNo;
+            AcntId = _AcntId;
+            Platform = _Platform;
+        }
+
+        std::string Serialize()
+        {
+            std::stringstream ss;
+            ss << "{";
+
+            // DateTime and Event
+            auto now = std::chrono::system_clock::now();
+            auto in_time_t = std::chrono::system_clock::to_time_t(now);
+            ss << "\"DateTime\":\"" << std::put_time(std::gmtime(&in_time_t), "%Y-%m-%dT%H:%M:%SZ") << "\",";
+            ss << "\"Event\":\"" << Event << "\"";
+
+            // Required fields
+            ss << ",";
+            ss << "\"ServerNo\":";
+            ss << ServerNo;
+            ss << ",";
+            ss << "\"AcntId\":";
+            ss << AcntId;
+            ss << ",";
+            ss << "\"Platform\":";
+            ss << "\"" << Platform << "\"";
+
+            // Optional fields
+
+            ss << "}";
+            return ss.str();
+        }
+    };
+
+    // ...
+
+}
+```
+
 생성된 `loglab_foo.h` 파일은 `loglab_foo`와 같은 `loglab_<도메인 이름>` 네임스페이스 안에 각 이벤트 클래스를 정의합니다. 옵션 필드는 `std::optional`을 사용합니다.
 
 아래는 생성된 `loglab_foo.h`를 사용하는 예제 `main.cpp`입니다.
@@ -1927,7 +2016,7 @@ g++ -std=c++17 -o main_app main.cpp
 ./main_app
 ```
 
-**3. 예상 출력**
+**3. 결과**
 ```
 Login Event: {"DateTime":"...", "Event":"Login", "ServerNo":1, "AcntId":1001, "Platform":"ios"}
 Logout Event: {"DateTime":"...", "Event":"Logout", "ServerNo":1, "AcntId":1001, "PlayTime":123.45}
