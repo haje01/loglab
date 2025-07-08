@@ -92,6 +92,8 @@ def _flat_fields(data, _types, _dnames, lang, for_event=False, use_ctype=False):
 
         tname = f[1]
         if tname not in BUILTIN_TYPES:
+            # if 'types.' not in tname:
+            #     raise Exception("Illegal custom type (Are you forgetting 'types.' for custom type?).")
             tname = f'{path}.{tname}' if len(path) > 0 else tname
 
         if 'types' in tname and not use_ctype:
