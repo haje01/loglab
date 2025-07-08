@@ -13,6 +13,21 @@ from loglab.model import build_model
 from loglab.util import AttrDict, load_file_from, LOGLAB_HOME
 
 
+def recursive_validate(lab, schema, lab_path):
+    # 참조하는 lab 이 있으면 그것도 검증
+    if 'import' in lab:
+        basedir = os.path.dirname(lab_path)
+        for imp in lab['import']:
+            ipath = os.path.join(basedir, f'{imp}.lab.json')
+            ibody = load_file_from(ipath)
+            ilab = json.loads(ibody)
+            recursive_validate(ilab, schema, ipath)
+    try:
+        validate(lab, schema)
+    except Exception as e:
+        raise Exception(str(e) + f"\n\nValidation Error at {lab_path}")
+
+
 def verify_labfile(lab_path, scm_path=None, err_exit=True):
     """랩 파일을 검증.
 
@@ -34,7 +49,7 @@ def verify_labfile(lab_path, scm_path=None, err_exit=True):
         schema = json.loads(schema)
         body = load_file_from(lab_path)
         lab = json.loads(body)
-        validate(lab, schema=schema)
+        recursive_validate(lab, schema, lab_path)
     except Exception as e:
         print("Error: 랩 파일 검증 에러")
         print(str(e))
