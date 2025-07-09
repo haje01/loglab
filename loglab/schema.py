@@ -18,14 +18,14 @@ def recursive_validate(lab, schema, lab_path):
     if 'import' in lab:
         basedir = os.path.dirname(lab_path)
         for imp in lab['import']:
-            ipath = os.path.join(basedir, f'{imp}.lab.json')
-            ibody = load_file_from(ipath)
-            ilab = json.loads(ibody)
-            recursive_validate(ilab, schema, ipath)
-    try:
-        validate(lab, schema)
-    except Exception as e:
-        raise Exception(str(e) + f"\n\nValidation Error at {lab_path}")
+            try:
+                ipath = os.path.join(basedir, f'{imp}.lab.json')
+                ibody = load_file_from(ipath)
+                ilab = json.loads(ibody)
+                recursive_validate(ilab, schema, ipath)
+            except Exception as e:
+                raise Exception(str(e) + f"\nValidation Error at {ipath}")
+    validate(lab, schema)
 
 
 def verify_labfile(lab_path, scm_path=None, err_exit=True):
@@ -53,6 +53,8 @@ def verify_labfile(lab_path, scm_path=None, err_exit=True):
     except Exception as e:
         print("Error: 랩 파일 검증 에러")
         print(str(e))
+        if 'Validation Error at' not in str(e):
+            print(f"Validation Error at {lab_path}")
         if err_exit:
             sys.exit(1)
     else:
