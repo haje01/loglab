@@ -105,8 +105,11 @@ LogLab 의 홈페이지는 https://github.com/haje01/loglab 이다. 다음과 �
 
 ```
 $ git clone https://github.com/haje01/loglab
+$ uv venv
 $ uv pip install -e .
 ```
+
+> 이미 설치가 되어있는 경우는 `source .venv/bin/activate` 만 호출해준다.
 
 설치가 잘 되었다면 로그랩의 커맨드라인 툴인 `loglab` 을 이용할 수 있다. 다음과 같이 입력해보자.
 
