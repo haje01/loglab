@@ -2211,3 +2211,110 @@ HTML 보기 : http://htmlpreview.github.io/?https://raw.githubusercontent.com/ha
 
 
 이 예제의 방식이 절대적인 것은 아니며, 어디까지나 로그랩의 활용에 참고가 되었으면 한다.
+
+
+## loglab 개발자 참고
+
+여기에는 로그랩을 개발하는 사람들을 위한 설명을 기술한다. 일반 사용자는 읽지 않아도 문제 없을 것이다.
+
+### 테스트 실행 
+
+다음처럼 개발을 위한 추가 의존 패키지를 설치하고,
+
+```sh
+uv pip install -e ".[dev]"
+```
+
+`pytest` 로 테스트를 수행한다.
+
+```sh
+pytest tests/
+```
+
+### Python 로그 객체 테스트
+
+로그 객체를 위한 파이썬 파일을 생성하고
+
+```sh
+loglab object example/foo.lab.json py -o tests/loglab_foo.py
+```
+
+`tests/` 디렉토리로 가서 테스트를 실행한다.
+
+```sh
+pytest test_log_objects_python.py
+```
+
+### C# 로그 객체 테스트 
+
+C# 코드 실행을 위한 설치가 필요하다. 
+
+```sh
+sudo apt update
+sudo apt install -y wget apt-transport-https software-properties-common
+
+wget https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+sudo apt update
+
+sudo apt install -y dotnet-sdk-8.0
+```
+
+다음으로 로그 객체 파일을 생성하고
+
+```sh
+loglab object example/foo.lab.json cs -o tests/loglab_foo.cs
+```
+
+다음처럼 새 프로젝트를 만들고
+```sh
+dotnet new console -o cstest
+```
+
+프로젝트 디렉토리에서 파일을 복사하고, 빌드 후 실행한다.
+```
+cd cstest
+cp ../loglab_foo.cs .
+cp ../test_log_objects_csharp.cs .
+rm Program.cs
+dotnet build
+dotnet run
+```
+
+### C++ 로그 객체 테스트 
+
+테스트를 위해 먼저 `gtest` 를 설치가 필요하다.
+
+```sh
+sudo apt install libgtest-dev
+```
+
+다음으로 로그 객체를 위한 헤더 파일을 생성하고
+
+```sh
+loglab object example/foo.lab.json cpp -o tests/loglab_foo.h
+```
+
+`tests/` 디렉토리로 가서 테스트 코드를 빌드하고
+```sh
+g++ -std=c++17 -I. test_log_objects_cpp.cpp -o test_log_objects_cpp
+```
+
+다음처럼 실행한다.
+```sh
+./test_log_objects_cpp
+
+Running main() from ./googletest/src/gtest_main.cc
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from StringTest
+[ RUN      ] StringTest.Serialize
+[       OK ] StringTest.Serialize (0 ms)
+[ RUN      ] StringTest.SerializeAfterReset
+[       OK ] StringTest.SerializeAfterReset (0 ms)
+[----------] 2 tests from StringTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 2 tests.
+```
