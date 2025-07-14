@@ -1,6 +1,7 @@
 .loglab/
 htmlcov/
 dist/
+tests/cstest/
 .vscode/
 tests/*.cs
 *.html
@@ -8,6 +9,9 @@ tests/*.cs
 __pycache__/
 *.py[cod]
 *$py.class
+tests/loglab_foo.py
+tests/loglab_foo.cs
+tests/loglab_foo.h
 
 # C extensions
 *.so
