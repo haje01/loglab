@@ -1923,6 +1923,24 @@ $ loglab object foo.lab.json cpp -o loglab_foo.h
 
 namespace loglab_foo
 {
+    class LogSerializer {
+    public:
+        static thread_local std::stringstream ss;
+        static thread_local std::string buffer;
+        
+        static std::string& SerializeToBuffer(const std::string& content) {
+            ss.clear();
+            ss.str("");
+            ss << content;
+            buffer = ss.str();
+            return buffer;
+        }
+    };
+    
+    // Thread-local static member definitions
+    thread_local std::stringstream LogSerializer::ss;
+    thread_local std::string LogSerializer::buffer;
+
     /// <summary>
     ///  계정 로그인
     /// </summary>
@@ -1955,32 +1973,34 @@ namespace loglab_foo
             Platform = _Platform;
         }
 
-        std::string Serialize()
+        std::string& Serialize()
         {
-            std::stringstream ss;
-            ss << "{";
+            LogSerializer::ss.clear();
+            LogSerializer::ss.str("");
+            LogSerializer::ss << "{";
 
             // DateTime and Event
             auto now = std::chrono::system_clock::now();
             auto in_time_t = std::chrono::system_clock::to_time_t(now);
-            ss << "\"DateTime\":\"" << std::put_time(std::gmtime(&in_time_t), "%Y-%m-%dT%H:%M:%SZ") << "\",";
-            ss << "\"Event\":\"" << Event << "\"";
+            LogSerializer::ss << "\"DateTime\":\"" << std::put_time(std::gmtime(&in_time_t), "%Y-%m-%dT%H:%M:%SZ") << "\",";
+            LogSerializer::ss << "\"Event\":\"" << Event << "\"";
 
             // Required fields
-            ss << ",";
-            ss << "\"ServerNo\":";
-            ss << ServerNo;
-            ss << ",";
-            ss << "\"AcntId\":";
-            ss << AcntId;
-            ss << ",";
-            ss << "\"Platform\":";
-            ss << "\"" << Platform << "\"";
+            LogSerializer::ss << ",";
+            LogSerializer::ss << "\"ServerNo\":";
+            LogSerializer::ss << ServerNo;
+            LogSerializer::ss << ",";
+            LogSerializer::ss << "\"AcntId\":";
+            LogSerializer::ss << AcntId;
+            LogSerializer::ss << ",";
+            LogSerializer::ss << "\"Platform\":";
+            LogSerializer::ss << "\"" << Platform << "\"";
 
             // Optional fields
 
-            ss << "}";
-            return ss.str();
+            LogSerializer::ss << "}";
+            LogSerializer::buffer = LogSerializer::ss.str();
+            return LogSerializer::buffer;
         }
     };
 
