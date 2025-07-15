@@ -12,6 +12,7 @@ __pycache__/
 tests/loglab_foo.py
 tests/loglab_foo.cs
 tests/loglab_foo.h
+tests/test_log_objects_cpp
 
 # C extensions
 *.so

@@ -9,6 +9,8 @@
     - [가능한 질문](#가능한-질문)
     - [대상 사용자](#대상-사용자)
   - [설치](#설치)
+    - [빌드된 실행 파일 설치하기](#빌드된-실행-파일-설치하기)
+    - [소스 코드로 설치하기](#소스-코드로-설치하기)
   - [최초 랩 파일 만들기](#최초-랩-파일-만들기)
     - [스키마와 도메인 정보 지정하기](#스키마와-도메인-정보-지정하기)
   - [필드의 추가](#필드의-추가)
@@ -38,13 +40,13 @@
       - [C++](#c-1)
       - [필드별 타입 지정](#필드별-타입-지정)
     - [현지화 (Localization)](#현지화-localization)
-    - [실행 파일 이용과 빌드](#실행-파일-이용과-빌드)
   - [로그랩 활용 방안](#로그랩-활용-방안)
     - [로그 구현, 수집, 모니터링](#로그-구현-수집-모니터링)
     - [로그 변경 이력의 체계화](#로그-변경-이력의-체계화)
     - [디버그 로그는 어디에?](#디버그-로그는-어디에)
     - [MMORPG 위한 예제](#mmorpg-위한-예제)
   - [loglab 개발자 참고](#loglab-개발자-참고)
+    - [실행 파일 이용과 빌드](#실행-파일-이용과-빌드)
     - [테스트 실행](#테스트-실행)
     - [Python 로그 객체 테스트](#python-로그-객체-테스트)
     - [C# 로그 객체 테스트](#c-로그-객체-테스트)
@@ -107,9 +109,21 @@ DB 와 달리 로그는 설계없이 그때그때 자유롭게 남기는 것이 
 
 ## 설치
 
-LogLab의 설치를 위해서는 최소 Python 3.7 이상이 필요하다. 파이썬이 설치되어 있지 않다면 [이곳](https://www.python.org/) 에서 최신 버전의 파이썬을 설치하도록 하자.
+### 빌드된 실행 파일 설치하기
 
-LogLab 의 홈페이지는 https://github.com/haje01/loglab 이다. 다음과 같이 설치하자.
+간편하게 사용하기 위해서는 미리 빌드된 실행 파일 형태가 편할 수 있겠다. 아래의 링크에서 미리 빌드된 `loglab` 실행 파일을 찾을 수 있다 (현재는 윈도우 버전만).
+
+[로그랩 릴리즈](https://github.com/haje01/loglab/releases)
+
+여기에서 OS 에 맞는 압축 파일을 받아서 풀고, 어느 곳에서나 실행될 수 있도록 Path 를 걸어두면 되겠다.
+
+### 소스 코드로 설치하기 
+
+소스 코드 기반으로 LogLab을 설치하기 위해서는 최소 Python 3.7 이상이필요하다. 파이썬이 설치되어 있지 않다면 [이곳](https://www.python.org/) 에서 최신 버전의 파이썬을 설치하도록 하자.
+
+추가적으로 패키지 관리자 [uv 의 설치](https://github.com/astral-sh/uv) 도 필요하다.
+
+LogLab 의 홈페이지는 https://github.com/haje01/loglab 이다. 다음과 같이 git 으로 코드를 받은 뒤, uv 를 통해 설치하자.
 
 ```
 $ git clone https://github.com/haje01/loglab
@@ -1963,17 +1977,17 @@ namespace loglab_foo
 
         Login(int _ServerNo, int _AcntId, std::string _Platform)
         {
-            Reset(_ServerNo, _AcntId, _Platform);
+            reset(_ServerNo, _AcntId, _Platform);
         }
 
-        void Reset(int _ServerNo, int _AcntId, std::string _Platform)
+        void reset(int _ServerNo, int _AcntId, std::string _Platform)
         {
             ServerNo = _ServerNo;
             AcntId = _AcntId;
             Platform = _Platform;
         }
 
-        std::string& Serialize()
+        std::string& serialize()
         {
             LogSerializer::ss.clear();
             LogSerializer::ss.str("");
@@ -2152,32 +2166,6 @@ Description : 캐릭터의 아이템 습득
 
 지금까지 작성한 랩 파일을 사용해서 이벤트와 필드 설명이 한국어로 나오지만, 로그랩에서 자동으로 추가한 설명은 지정한 언어로 나오는 것을 알 수 있다. 앞에서 설명한 `html` 명령도 같은 식으로 동작한다.
 
-### 실행 파일 이용과 빌드
-
-인터넷 접근이 자유롭지 않은 환경에서 로그랩을 사용하기 위해서는 실행 파일 형태가 편할 수 있겠다. 아래의 링크에서 미리 빌드된 `loglab` 실행 파일을 찾을 수 있다.
-
-[로그랩 릴리즈](https://github.com/haje01/loglab/releases)
-
-여기에서 OS 에 맞는 압축 파일을 받아서 풀고, 어느 곳에서나 실행될 수 있도록 Path 를 걸어두면 되겠다.
-
-
-로그랩 코드에서 직접 실행파일을 빌드하고 싶다면 [PyInstaller](http://www.pyinstaller.org) 가 필요하다. PyInstaller 홈페이지를 참고하여 설치하자.
-
-> PyEnv를 사용하는 경우 빌드시 동적 라이브러리를 찾지 못해 에러가 나올 수 있다. 이때는 macOS의 경우 `--enable-framework` 옵션으로 파이썬을 빌드하여 설치해야 한다. 자세한 것은 [이 글](https://github.com/pyenv/pyenv/issues/443) 을 참고하자. 리눅스의 경우 `--enable-shared` 옵션으로 빌드한다.
-
-윈도우에서 빌드는 로그랩 설치 디렉토리에서 다음과 같이 한다.
-
-```
-> tools\build.bat
-```
-
-리눅스/macOS 에서는 다음과 같이 빌드한다.
-
-```
-$ sh tools/build.sh
-```
-
-정상적으로 빌드가 되면, `dist/` 디렉토리 아래 `loglab.exe` (윈도우) 또는 `loglab` (리눅스/macOS) 실행 파일이 만들어진다. 이것을 배포하면 되겠다.
 
 ## 로그랩 활용 방안
 
@@ -2244,6 +2232,27 @@ HTML 보기 : http://htmlpreview.github.io/?https://raw.githubusercontent.com/ha
 ## loglab 개발자 참고
 
 여기에는 로그랩을 개발하는 사람들을 위한 설명을 기술한다. 일반 사용자는 읽지 않아도 문제 없을 것이다.
+
+### 실행 파일 이용과 빌드
+
+로그랩 코드에서 직접 실행파일을 빌드하고 싶다면 [PyInstaller](http://www.pyinstaller.org) 가 필요하다. PyInstaller 홈페이지를 참고하여 설치하자.
+
+> PyEnv를 사용하는 경우 빌드시 동적 라이브러리를 찾지 못해 에러가 나올 수 있다. 이때는 macOS의 경우 `--enable-framework` 옵션으로 파이썬을 빌드하여 설치해야 한다. 자세한 것은 [이 글](https://github.com/pyenv/pyenv/issues/443) 을 참고하자. 리눅스의 경우 `--enable-shared` 옵션으로 빌드한다.
+
+윈도우에서 빌드는 로그랩 설치 디렉토리에서 다음과 같이 한다.
+
+```
+> tools\build.bat
+```
+
+리눅스/macOS 에서는 다음과 같이 빌드한다.
+
+```
+$ sh tools/build.sh
+```
+
+정상적으로 빌드가 되면, `dist/` 디렉토리 아래 `loglab.exe` (윈도우) 또는 `loglab` (리눅스/macOS) 실행 파일이 만들어진다. 이것을 배포하면 되겠다.
+
 
 ### 테스트 실행 
 
@@ -2325,7 +2334,7 @@ loglab object example/foo.lab.json cpp -o tests/loglab_foo.h
 
 `tests/` 디렉토리로 가서 테스트 코드를 빌드하고
 ```sh
-g++ -std=c++17 -I. test_log_objects_cpp.cpp -o test_log_objects_cpp
+g++ -std=c++17 -I. test_log_objects_cpp.cpp -lgtest -lgtest_main -lpthread -o test_log_objects_cpp
 ```
 
 다음처럼 실행한다.

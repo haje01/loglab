@@ -69,10 +69,10 @@ namespace loglab_{{ domain.name }}
 
         {{ name }}({% for fname, flst in (edef.fields|required).items() %}{% set fdata = flst[-1] %}{% set fdef = fdata[1] %}{{ type(fdef) }} _{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %})
         {
-            Reset({% for fname, flst in (edef.fields|required).items() %}_{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %});
+            reset({% for fname, flst in (edef.fields|required).items() %}_{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %});
         }
 
-        void Reset({% for fname, flst in (edef.fields|required).items() %}{% set fdata = flst[-1] %}{% set fdef = fdata[1] %}{{ type(fdef) }} _{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %})
+        void reset({% for fname, flst in (edef.fields|required).items() %}{% set fdata = flst[-1] %}{% set fdef = fdata[1] %}{{ type(fdef) }} _{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %})
         {
 {% for fname, flst in (edef.fields|required).items() %}
             {{ fname }} = _{{ fname }};
@@ -82,7 +82,7 @@ namespace loglab_{{ domain.name }}
 {% endfor %}
         }
 
-        std::string& Serialize()
+        std::string& serialize()
         {
             LogSerializer::ss.clear();
             LogSerializer::ss.str("");

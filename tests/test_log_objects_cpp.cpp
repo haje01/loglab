@@ -12,15 +12,15 @@
 TEST(StringTest, Serialize) {
     auto login = loglab_foo::Login(1, 10000, "ios");
     std::string a = "\"Event\":\"Login\",\"ServerNo\":1,\"AcntId\":10000,\"Platform\":\"ios\"}";
-    std::string b = login.Serialize();
+    std::string b = login.serialize();
     EXPECT_NE(b.find(a), std::string::npos); // 문자열 포함 테스트 
 }
 
 
 TEST(StringTest, SerializeAfterReset) {
     auto login = loglab_foo::Login(1, 10000, "ios");
-    login.Reset(2, 20000, "aos");
+    login.reset(2, 20000, "aos");
     std::string a = "\"Event\":\"Login\",\"ServerNo\":2,\"AcntId\":20000,\"Platform\":\"aos\"}";
-    std::string b = login.Serialize();
+    std::string b = login.serialize();
     EXPECT_NE(b.find(a), std::string::npos); // 문자열 포함 테스트 
 }
