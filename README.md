@@ -2038,12 +2038,12 @@ int main() {
     // --- Login 이벤트 사용 예제 ---
     // 필수 필드를 생성자 인자로 전달하여 객체를 생성한다.
     Login login_event(1, 1001, "ios");
-    std::cout << "Login Event: " << login_event.Serialize() << std::endl;
+    std::cout << "Login Event: " << login_event.serialize() << std::endl;
 
     // --- Logout 이벤트 사용 예제 (옵션 필드 포함) ---
     Logout logout_event(1, 1001);
     logout_event.PlayTime = 123.45f; // 옵션 필드 설정
-    std::cout << "Logout Event: " << logout_event.Serialize() << std::endl;
+    std::cout << "Logout Event: " << logout_event.serialize() << std::endl;
 
     return 0;
 }
