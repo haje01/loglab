@@ -155,7 +155,7 @@ Commands:
 
 ```
 $ loglab version
-0.2.0
+0.2.2
 ```
 
 ## 최초 랩 파일 만들기
@@ -2239,7 +2239,7 @@ HTML 보기 : http://htmlpreview.github.io/?https://raw.githubusercontent.com/ha
 
 > PyEnv를 사용하는 경우 빌드시 동적 라이브러리를 찾지 못해 에러가 나올 수 있다. 이때는 macOS의 경우 `--enable-framework` 옵션으로 파이썬을 빌드하여 설치해야 한다. 자세한 것은 [이 글](https://github.com/pyenv/pyenv/issues/443) 을 참고하자. 리눅스의 경우 `--enable-shared` 옵션으로 빌드한다.
 
-윈도우에서 빌드는 로그랩 설치 디렉토리에서 다음과 같이 한다.
+윈도우에서 빌드는 로그랩이 별도 `venv` 없이 글로벌하게 설치된 것으로 전제한다. 설치 디렉토리에서 다음과 같이 한다.
 
 ```
 > tools\build.bat
