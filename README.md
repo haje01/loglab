@@ -2080,8 +2080,8 @@ g++ -std=c++17 -o main_app main.cpp
 
 **3. 결과**
 ```
-Login Event: {"DateTime":"2025-06-26T01:59:55Z","Event":"Login","ServerNo":1,"AcntId":1001,"Platform":"ios"}
-Logout Event: {"DateTime":"2025-06-26T01:59:55Z","Event":"Logout","ServerNo":1,"AcntId":1001,"PlayTime":123.45}
+Login Event: {"DateTime":"2025-07-16T08:35:04.013922Z","Event":"Login","ServerNo":1,"AcntId":1001,"Platform":"ios"}
+Logout Event: {"DateTime":"2025-07-16T08:35:04.013981Z","Event":"Logout","ServerNo":1,"AcntId":1001,"PlayTime":123.45}
 ```
 
 이와 같이, 로그 객체를 사용하면 각 언어의 타입 시스템을 활용하여 안전하고 손쉽게 JSON 형태의 로그 문자열을 얻을 수 있다. 실제 파일에 쓰기 위해서는 생성된 문자열을 사용하는 로깅 라이브러리에 전달하면 된다.
