@@ -1941,6 +1941,7 @@ namespace loglab_foo
     public:
         static thread_local std::stringstream ss;
         static thread_local std::string buffer;
+        static thread_local char datetime_buffer[32];
         
         static std::string& SerializeToBuffer(const std::string& content) {
             ss.clear();
@@ -1949,11 +1950,26 @@ namespace loglab_foo
             buffer = ss.str();
             return buffer;
         }
+        
+        static const char* FormatDateTime() {
+            auto now = std::chrono::system_clock::now();
+            auto in_time_t = std::chrono::system_clock::to_time_t(now);
+            auto microseconds = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()) % 1000000;
+            
+            std::tm* tm_utc = std::gmtime(&in_time_t);
+            int len = std::sprintf(datetime_buffer, "%04d-%02d-%02dT%02d:%02d:%02d.%06ldZ",
+                tm_utc->tm_year + 1900, tm_utc->tm_mon + 1, tm_utc->tm_mday,
+                tm_utc->tm_hour, tm_utc->tm_min, tm_utc->tm_sec,
+                microseconds.count());
+            
+            return datetime_buffer;
+        }
     };
     
     // Thread-local static member definitions
     thread_local std::stringstream LogSerializer::ss;
     thread_local std::string LogSerializer::buffer;
+    thread_local char LogSerializer::datetime_buffer[32];
 
     /// <summary>
     ///  계정 로그인
@@ -1994,9 +2010,7 @@ namespace loglab_foo
             LogSerializer::ss << "{";
 
             // DateTime and Event
-            auto now = std::chrono::system_clock::now();
-            auto in_time_t = std::chrono::system_clock::to_time_t(now);
-            LogSerializer::ss << "\"DateTime\":\"" << std::put_time(std::gmtime(&in_time_t), "%Y-%m-%dT%H:%M:%SZ") << "\",";
+            LogSerializer::ss << "\"DateTime\":\"" << LogSerializer::FormatDateTime() << "\",";
             LogSerializer::ss << "\"Event\":\"" << Event << "\"";
 
             // Required fields
