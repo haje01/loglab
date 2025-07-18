@@ -1349,10 +1349,10 @@ Description : 캐릭터의 아이템 습득
 
     // ...
 
-		"Account": {
-			"desc": "계정 정보",
-			"mixins": ["bases.Server"],
-			"fields": [
+    "Account": {
+      "desc": "계정 정보",
+      "mixins": ["bases.Server"],
+      "fields": [
         ["AcntId", "types.unsigned", "계정 ID"],
         {
           "name": "Category",
@@ -1360,12 +1360,12 @@ Description : 캐릭터의 아이템 습득
           "type": "integer",
           "const": [1, "계정 이벤트"]
         }
-			]
-		},
-		"Character": {
-			"desc": "캐릭터 정보",
-			"mixins": ["bases.Account"],
-			"fields": [
+      ]
+    },
+    "Character": {
+      "desc": "캐릭터 정보",
+      "mixins": ["bases.Account"],
+      "fields": [
         ["CharId", "types.unsigned", "캐릭터 ID"],
         {
           "name": "Category",
@@ -1373,22 +1373,23 @@ Description : 캐릭터의 아이템 습득
           "type": "integer",
           "const": [2, "캐릭터 이벤트"]
         }
-			]
-		},
-		"System": {
-			"desc": "시스템 이벤트",
-			"mixins": ["bases.Server"],
-			"fields": [
-				{
-				  "name": "Category",
-				  "desc": "이벤트 분류",
-				  "type": "integer",
-				  "const": [3, "시스템 이벤트"]
-				}
-			]
-		}
+      ]
+    },
+    "System": {
+      "desc": "시스템 이벤트",
+      "mixins": ["bases.Server"],
+      "fields": [
+        {
+          "name": "Category",
+          "desc": "이벤트 분류",
+          "type": "integer",
+          "const": [3, "시스템 이벤트"]
+        }
+      ]
+    }
 
   // ...
+
 }
 ```
 
