@@ -1393,7 +1393,9 @@ Description : 캐릭터의 아이템 습득
 }
 ```
 
-다음으로, 계정 또는 캐릭터의 이벤트가 아닌 `MonsterDropItem` 에 `System` 베이스를 믹스인한다.
+각 `const` 필드에는 상수값과 그 값에 대한 설명을 기술한다.
+
+다음으로, 계정 / 캐릭터의 이벤트가 아닌 `MonsterDropItem` 에 `System` 베이스를 믹스인한다.
 
 ```js
 
