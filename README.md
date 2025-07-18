@@ -1390,6 +1390,7 @@ Description : 캐릭터의 아이템 습득
 
   // ...
 }
+```
 
 다음으로, 계정 또는 캐릭터의 이벤트가 아닌 `MonsterDropItem` 에 `System` 베이스를 믹스인한다.
 
