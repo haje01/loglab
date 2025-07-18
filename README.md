@@ -1891,6 +1891,8 @@ $ loglab object <랩 파일> <코드 타입>
 
 첫 번째 인자는 랩 파일명이고, 두 번째 인자는 생성할 프로그래밍 언어 타입이다. 현재는 Python (`py`), C# (`cs`), C++ (`cpp`)를 지원한다.
 
+> `const` 로 지정된 필드는 로그 객체를 통해 설정할 수 없고, 객체 시리얼라이즈 (Serialize) 시에 랩파일에 지정된 값으로 출력된다.
+
 #### Python
 
 다음과 같이 `object` 명령으로 파이썬 로그 객체 코드를 출력한다.
@@ -1983,6 +1985,10 @@ using System.Diagnostics;
 namespace loglab_foo
 {
     // ...
+
+    /// <summary>
+    ///  계정 로그아웃
+    /// </summary>
     public class Logout
     {
         public const string Event = "Logout";
@@ -1990,10 +1996,15 @@ namespace loglab_foo
         public int? ServerNo = null;
         // 계정 ID
         public int? AcntId = null;
+        // 이벤트 분류
+        public int? Category = null;
         // 플레이 시간 (초)
         public float? PlayTime = null;
+        public static JsonSerializerOptions options = new JsonSerializerOptions
+        {
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        };
 
-        public Logout() {}
         public Logout(int _ServerNo, int _AcntId)
         {
             Reset(_ServerNo, _AcntId);
@@ -2011,11 +2022,12 @@ namespace loglab_foo
             fields.Add($"\"ServerNo\": {ServerNo}");
             Debug.Assert(AcntId.HasValue);
             fields.Add($"\"AcntId\": {AcntId}");
+            fields.Add($"\"Category\": 1");
             if (PlayTime.HasValue)
                 fields.Add($"\"PlayTime\": {PlayTime}");
             string sfields = String.Join(", ", fields);
             string dt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
-            string sjson = ${"{\"DateTime\": \"{dt}\", \"Event\": \"{Event}\", {sfields}}}";
+            string sjson = $"{{\"DateTime\": \"{dt}\", \"Event\": \"{Event}\", {sfields}}}";
             return sjson;
         }
     }
@@ -2109,35 +2121,35 @@ namespace loglab_foo
     thread_local char LogSerializer::datetime_buffer[32];
 
     /// <summary>
-    ///  계정 로그인
+    ///  계정 로그아웃
     /// </summary>
-    class Login
+    class Logout
     {
     public:
-        static constexpr const char* Event = "Login";
+        static constexpr const char* Event = "Logout";
 
         // Required fields
         // 서버 번호
         int ServerNo;
         // 계정 ID
         int AcntId;
-        // 디바이스의 플랫폼
-        std::string Platform;
 
         // Optional fields
+        // 플레이 시간 (초)
+        std::optional<float> PlayTime;
 
-        Login() {}
+        Logout() {}
 
-        Login(int _ServerNo, int _AcntId, std::string _Platform)
+        Logout(int _ServerNo, int _AcntId)
         {
-            reset(_ServerNo, _AcntId, _Platform);
+            reset(_ServerNo, _AcntId);
         }
 
-        void reset(int _ServerNo, int _AcntId, std::string _Platform)
+        void reset(int _ServerNo, int _AcntId)
         {
             ServerNo = _ServerNo;
             AcntId = _AcntId;
-            Platform = _Platform;
+            PlayTime.reset();
         }
 
         std::string& serialize()
@@ -2157,11 +2169,19 @@ namespace loglab_foo
             LogSerializer::ss << ",";
             LogSerializer::ss << "\"AcntId\":";
             LogSerializer::ss << AcntId;
-            LogSerializer::ss << ",";
-            LogSerializer::ss << "\"Platform\":";
-            LogSerializer::ss << "\"" << Platform << "\"";
 
             // Optional fields
+            if (PlayTime.has_value())
+            {
+                LogSerializer::ss << ",";
+                LogSerializer::ss << "\"PlayTime\":";
+                LogSerializer::ss << PlayTime.value();
+            }
+
+            // Const fields
+            LogSerializer::ss << ",";
+            LogSerializer::ss << "\"Category\":";
+            LogSerializer::ss << 1;
 
             LogSerializer::ss << "}";
             LogSerializer::buffer = LogSerializer::ss.str();
@@ -2451,21 +2471,12 @@ sudo apt install -y dotnet-sdk-8.0
 다음으로 로그 객체 파일을 생성하고
 
 ```sh
-loglab object example/foo.lab.json cs -o tests/loglab_foo.cs
+loglab object example/foo.lab.json cs -o tests/cstest/loglab_foo.cs
 ```
 
-다음처럼 새 프로젝트를 만들고
-```sh
-dotnet new console -o cstest
-```
+`tests/cstest/` 디렉토리로 이동 후 실행한다.
 
-프로젝트 디렉토리에서 파일을 복사하고, 빌드 후 실행한다.
 ```
-cd cstest
-cp ../loglab_foo.cs .
-cp ../test_log_objects_csharp.cs .
-rm Program.cs
-dotnet build
 dotnet run
 ```
 

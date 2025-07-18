@@ -1,7 +1,8 @@
 .loglab/
 htmlcov/
 dist/
-tests/cstest/
+tests/cstest/bin
+tests/cstest/obj
 .vscode/
 tests/*.cs
 *.html
