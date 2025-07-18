@@ -122,7 +122,7 @@ def explain_rstr(f, lang, line_dlm='\n'):
     exps = []
     atype = f['type']
     if atype in ('integer', 'number'):
-        amin = amax = xmin = xmax = enum = None
+        amin = amax = xmin = xmax = enum = const = None
         if 'minimum' in f:
             amin = f['minimum']
         if 'maximum' in f:
@@ -143,6 +143,11 @@ def explain_rstr(f, lang, line_dlm='\n'):
                 enum = expl
             arr = ', '.join(expl)
             enum = _("{} 중 하나").format(arr)
+        if 'const' in f:
+            const = f['const']
+            if type(const) is list:
+                const = f"{const[0]} ({const[1]})"
+            const = _("항상 {}").format(const)
 
         assert amin is None or xmin is None,\
             'minimum 과 exclusiveMinimum 함께 사용 불가'
@@ -160,6 +165,8 @@ def explain_rstr(f, lang, line_dlm='\n'):
             stmts.append(_("{} 미만").format(xmax))
         if enum is not None:
             exps.append(enum)
+        if const is not None:
+            exps.append(const)
 
         if len(stmts) > 0:
             exps.append(' '.join(stmts))
@@ -190,7 +197,7 @@ def explain_rstr(f, lang, line_dlm='\n'):
                 for i, d in enum:
                     _enum.append(f'{i} ({d})')
                 enum = _enum
-            arr = ', '.join(enum)
+            arr = ', '.join(str(e) for e in enum)
             exps.append(_("{} 중 하나").format(arr))
         if ptrn is not None:
             exps.append(_("정규식 {} 매칭").format(ptrn))
