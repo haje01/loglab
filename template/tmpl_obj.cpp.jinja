@@ -139,6 +139,19 @@ namespace loglab_{{ domain.name }}
             }
 {% endfor %}
 
+            // Const fields
+{% for fname, finfo in (edef.fields|const).items() %}
+            LogSerializer::ss << ",";
+            LogSerializer::ss << "\"{{ fname }}\":";
+{% set ftype = finfo[0] %}
+{% set fval = finfo[1] %}
+{% if ftype == 'string' %}
+            LogSerializer::ss << "\"" << {{ fval }} << "\"";
+{% else %}
+            LogSerializer::ss << {{ fval }};
+{% endif %}
+{% endfor %}
+
             LogSerializer::ss << "}";
             LogSerializer::buffer = LogSerializer::ss.str();
             return LogSerializer::buffer;

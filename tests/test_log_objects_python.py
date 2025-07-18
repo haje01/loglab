@@ -27,6 +27,7 @@ def test_basic_log_objects():
     assert login_data['ServerNo'] == 1
     assert login_data['Platform'] == "ios"
     assert 'DateTime' in login_data
+    assert login_data['Category'] == 1
     
     # Test Logout event
     logout = Logout(1, 10000)

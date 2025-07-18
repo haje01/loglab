@@ -123,6 +123,9 @@ def log_schema_from_labfile(data):
                             else:
                                 ev.append(r)
                         rv = ev
+                    elif rk == 'const' and len(rv) > 0:
+                        if type(rv) is list:
+                            rv = rv[0]
                     finfo[rk] = rv
                 body = json.dumps(finfo, ensure_ascii=False)
                 prop = f"""

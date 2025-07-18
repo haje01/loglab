@@ -367,6 +367,8 @@ def _object_required_filter(fields):
         field = fields[fname][-1][1]
         if 'option' in field and field['option']:
             continue
+        if 'const' in field:
+            continue
         rfields[fname] = fields[fname]
     return rfields
 
@@ -379,8 +381,24 @@ def _object_optional_filter(fields):
         field = fields[fname][-1][1]
         if 'option' not in field or not field['option']:
             continue
+        if 'const' in field:
+            continue
         ofields[fname] = fields[fname]
     return ofields
+
+
+def _object_const_filter(fields):
+    cfields = dict()
+    for fname in fields.keys():
+        field = fields[fname][-1][1]
+        if 'const' not in field:
+            continue
+        ctype = field['type']
+        cval = fields[fname][0][1]['const']
+        if type(cval) is list:
+            cval = cval[0]
+        cfields[fname] = (ctype, cval)
+    return cfields
 
 
 def object_from_labfile(data, code_type, lang):
@@ -403,6 +421,7 @@ def object_from_labfile(data, code_type, lang):
     env.lstrip_blocks = True
     env.filters['required'] = _object_required_filter
     env.filters['optional'] = _object_optional_filter
+    env.filters['const'] = _object_const_filter
     tmpl = env.get_template(f"tmpl_obj.{code_type}.jinja")
     if code_type == 'cs':
         _type = _type_cs

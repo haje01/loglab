@@ -27,6 +27,7 @@
     - [서버 번호에 제약 걸기](#서버-번호에-제약-걸기)
     - [커스텀 타입 활용](#커스텀-타입-활용)
     - [나열 이용하기](#나열-이용하기)
+    - [상수 이용하기](#상수-이용하기)
   - [로그 파일의 검증](#로그-파일의-검증)
   - [공용 랩 파일을 통한 로그 표준화](#공용-랩-파일을-통한-로그-표준화)
   - [공용 랩 파일 만들기](#공용-랩-파일-만들기)
@@ -1194,7 +1195,7 @@ Description : 계정 로그아웃
 
 ### 나열 이용하기
 
-나열 (enum) 은 제약문의 하나로, 특정 값들만 허용하려는 경우 사용한다. 예로서 로그인시 게임을 하는 유저 디바이스의 플랫폼 (OS) 필드를 추가해보자.
+나열 (enum) 은 제약문의 하나로, 필드에 특정 값들만 허용하려는 경우 사용한다. 예로서 로그인시 게임을 하는 유저 디바이스의 플랫폼 (OS) 필드를 추가해보자.
 
 플랫폼은 `ios` 와 `aos` 두 가지 값만 허용하고 싶은데, 이렇게 특정 값만 허용하기 위해 `enum` 을 사용한다. 다음과 같이 `Login` 이벤트에 `Platform` 필드를 추가한다.
 
@@ -1331,6 +1332,142 @@ Description : 캐릭터의 아이템 습득
 ```
 
 > 로그 뿐만아니라 서버나 DB 등에서 함께 공유되는 나열값의 경우는 랩파일이 아닌 별도의 장소에서 기록/관리되어야 할 것이다. 이런 경우 랩 파일에서는 단순히 기본 타입만 지정하고, 자세한 나열값 정보는 별도 문서를 참조하도록 가이드하는 것이 맞겠다.
+
+### 상수 이용하기 
+
+상수 (const) 는 제약문의 하나로, 필드가 항상 지정된 값 하나만 가져야 하는 경우에 사용한다. 이벤트의 카테고리 분류 등을 숫자로 표시하려는 경우 베이스나 상위 이벤트에 정의하여 사용하면 유용할 것이다. 
+
+> 이런 값은 로그 자체 보다는, 로그의 수집 또는 정리 (ETL) 하는 하위 작업에서 유용할 수 있다. 
+
+예로서, 지금까지의 이벤트를 크게 '계정 이벤트', '캐릭터 이벤트', '시스템 이벤트' 의 세 가지로 분류하고 싶다고 하자. 이를 위해 다음처럼 `bases` 아래의 `Account` 와 `Character` 에 상수 필드를 추가하고, `System` 을 추가한다.
+
+```js
+{
+  // ...
+
+  "bases": {
+
+  // ...
+
+		"Account": {
+			"desc": "계정 정보",
+			"mixins": ["bases.Server"],
+			"fields": [
+                ["AcntId", "types.unsigned", "계정 ID"],
+                {
+                  "name": "Category",
+                  "desc": "이벤트 분류",
+                  "type": "integer",
+                  "const": [1, "계정 이벤트"]
+                }
+			]
+		},
+		"Character": {
+			"desc": "캐릭터 정보",
+			"mixins": ["bases.Account"],
+			"fields": [
+                ["CharId", "types.unsigned", "캐릭터 ID"],
+                {
+                  "name": "Category",
+                  "desc": "이벤트 분류",
+                  "type": "integer",
+                  "const": [2, "캐릭터 이벤트"]
+                }
+			]
+		},
+		"System": {
+			"desc": "시스템 이벤트",
+			"mixins": ["bases.Server"],
+			"fields": [
+				{
+				  "name": "Category",
+				  "desc": "이벤트 분류",
+				  "type": "integer",
+				  "const": [3, "시스템 이벤트"]
+				}
+			]
+		}
+
+  // ...
+}
+
+다음으로, 계정 또는 캐릭터의 이벤트가 아닌 `MonsterDropItem` 에 `System` 베이스를 믹스인한다.
+
+```json
+
+"events": 
+
+  // ...
+
+  "MonsterDropItem": {
+        "desc": "몬스터가 아이템을 떨어뜨림",
+        "mixins": ["bases.System", "bases.Monster", "bases.Position", "bases.Item"]
+      }
+
+  // ...
+```
+
+`show` 의 결과는 아래와 같다.
+
+```
+
+# ...
+
+Event : Login
+Description : 계정 로그인
++----------+----------+-------------------+----------------------+
+| Field    | Type     | Description       | Restrict             |
+|----------+----------+-------------------+----------------------|
+| DateTime | datetime | 이벤트 일시       |                      |
+| ServerNo | integer  | 서버 번호         |                      |
+| AcntId   | integer  | 계정 ID           |                      |
+| Category | integer  | 이벤트 분류       | 항상 1 (계정 이벤트) |
+| Platform | string   | 디바이스의 플랫폼 | ios, aos 중 하나     |
++----------+----------+-------------------+----------------------+
+
+# ... 
+
+Event : CharLogin
+Description : 캐릭터 로그인
++----------+----------+---------------+------------------------+
+| Field    | Type     | Description   | Restrict               |
+|----------+----------+---------------+------------------------|
+| DateTime | datetime | 이벤트 일시   |                        |
+| ServerNo | integer  | 서버 번호     |                        |
+| AcntId   | integer  | 계정 ID       |                        |
+| Category | integer  | 이벤트 분류   | 항상 2 (캐릭터 이벤트) |
+| CharId   | integer  | 캐릭터 ID     |                        |
++----------+----------+---------------+------------------------+
+
+# ...
+
+Event : MonsterDropItem
+Description : 몬스터가 아이템을 떨어뜨림
++-----------+----------+------------------+-------------------------------+
+| Field     | Type     | Description      | Restrict                      |
+|-----------+----------+------------------+-------------------------------|
+| DateTime  | datetime | 이벤트 일시      |                               |
+| ServerNo  | integer  | 서버 번호        |                               |
+| Category  | integer  | 이벤트 분류      | 항상 3 (시스템 이벤트)        |
+| MonsterCd | integer  | 몬스터 타입 코드 |                               |
+| MonsterId | integer  | 몬스터 개체 ID   |                               |
+| MapCd     | integer  | 맵 코드          |                               |
+| PosX      | number   | 맵상 X 위치      |                               |
+| PosY      | number   | 맵상 Y 위치      |                               |
+| PosZ      | number   | 맵상 Z 위치      |                               |
+| ItemCd    | integer  | 아이템 타입 코드 | 1 (칼), 2 (방패), 3 (물약) 중 |
+|           |          |                  | 하나                          |
+| ItemId    | integer  | 아이템 개체 ID   |                               |
++-----------+----------+------------------+-------------------------------+
+
+# ...
+
+```
+
+계정 이벤트인 `Login` 에는 `Category` 가 항상 `1` 이고, 캐릭터 이벤트인 `CharLogin` 에는 `Category` 가 항상 `2`, 그리고 시스템 이벤트인 `MonsterDropItem` 에는 항상 `3` 로 설명이 나오는 것을 확인할 수 있다.
+
+---
+
 
 지금까지 로그 설계에 필요한 기본적인 내용을 설명하였다. 완전한 예제 파일 `foo.lab.json` 은 로그랩 코드의 `example` 디렉토리 또는 [여기](https://github.com/haje01/loglab/tree/master/example) 에서 확인할 수 있다.
 
@@ -1754,6 +1891,8 @@ $ loglab object <랩 파일> <코드 타입>
 
 첫 번째 인자는 랩 파일명이고, 두 번째 인자는 생성할 프로그래밍 언어 타입이다. 현재는 Python (`py`), C# (`cs`), C++ (`cpp`)를 지원한다.
 
+> `const` 로 지정된 필드는 로그 객체를 통해 설정할 수 없고, 객체 시리얼라이즈 (Serialize) 시에 랩파일에 지정된 값으로 출력된다.
+
 #### Python
 
 다음과 같이 `object` 명령으로 파이썬 로그 객체 코드를 출력한다.
@@ -1846,6 +1985,10 @@ using System.Diagnostics;
 namespace loglab_foo
 {
     // ...
+
+    /// <summary>
+    ///  계정 로그아웃
+    /// </summary>
     public class Logout
     {
         public const string Event = "Logout";
@@ -1853,10 +1996,15 @@ namespace loglab_foo
         public int? ServerNo = null;
         // 계정 ID
         public int? AcntId = null;
+        // 이벤트 분류
+        public int? Category = null;
         // 플레이 시간 (초)
         public float? PlayTime = null;
+        public static JsonSerializerOptions options = new JsonSerializerOptions
+        {
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        };
 
-        public Logout() {}
         public Logout(int _ServerNo, int _AcntId)
         {
             Reset(_ServerNo, _AcntId);
@@ -1874,11 +2022,12 @@ namespace loglab_foo
             fields.Add($"\"ServerNo\": {ServerNo}");
             Debug.Assert(AcntId.HasValue);
             fields.Add($"\"AcntId\": {AcntId}");
+            fields.Add($"\"Category\": 1");
             if (PlayTime.HasValue)
                 fields.Add($"\"PlayTime\": {PlayTime}");
             string sfields = String.Join(", ", fields);
             string dt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
-            string sjson = ${"{\"DateTime\": \"{dt}\", \"Event\": \"{Event}\", {sfields}}}";
+            string sjson = $"{{\"DateTime\": \"{dt}\", \"Event\": \"{Event}\", {sfields}}}";
             return sjson;
         }
     }
@@ -1972,35 +2121,35 @@ namespace loglab_foo
     thread_local char LogSerializer::datetime_buffer[32];
 
     /// <summary>
-    ///  계정 로그인
+    ///  계정 로그아웃
     /// </summary>
-    class Login
+    class Logout
     {
     public:
-        static constexpr const char* Event = "Login";
+        static constexpr const char* Event = "Logout";
 
         // Required fields
         // 서버 번호
         int ServerNo;
         // 계정 ID
         int AcntId;
-        // 디바이스의 플랫폼
-        std::string Platform;
 
         // Optional fields
+        // 플레이 시간 (초)
+        std::optional<float> PlayTime;
 
-        Login() {}
+        Logout() {}
 
-        Login(int _ServerNo, int _AcntId, std::string _Platform)
+        Logout(int _ServerNo, int _AcntId)
         {
-            reset(_ServerNo, _AcntId, _Platform);
+            reset(_ServerNo, _AcntId);
         }
 
-        void reset(int _ServerNo, int _AcntId, std::string _Platform)
+        void reset(int _ServerNo, int _AcntId)
         {
             ServerNo = _ServerNo;
             AcntId = _AcntId;
-            Platform = _Platform;
+            PlayTime.reset();
         }
 
         std::string& serialize()
@@ -2020,11 +2169,19 @@ namespace loglab_foo
             LogSerializer::ss << ",";
             LogSerializer::ss << "\"AcntId\":";
             LogSerializer::ss << AcntId;
-            LogSerializer::ss << ",";
-            LogSerializer::ss << "\"Platform\":";
-            LogSerializer::ss << "\"" << Platform << "\"";
 
             // Optional fields
+            if (PlayTime.has_value())
+            {
+                LogSerializer::ss << ",";
+                LogSerializer::ss << "\"PlayTime\":";
+                LogSerializer::ss << PlayTime.value();
+            }
+
+            // Const fields
+            LogSerializer::ss << ",";
+            LogSerializer::ss << "\"Category\":";
+            LogSerializer::ss << 1;
 
             LogSerializer::ss << "}";
             LogSerializer::buffer = LogSerializer::ss.str();
@@ -2314,21 +2471,12 @@ sudo apt install -y dotnet-sdk-8.0
 다음으로 로그 객체 파일을 생성하고
 
 ```sh
-loglab object example/foo.lab.json cs -o tests/loglab_foo.cs
+loglab object example/foo.lab.json cs -o tests/cstest/loglab_foo.cs
 ```
 
-다음처럼 새 프로젝트를 만들고
-```sh
-dotnet new console -o cstest
-```
+`tests/cstest/` 디렉토리로 이동 후 실행한다.
 
-프로젝트 디렉토리에서 파일을 복사하고, 빌드 후 실행한다.
 ```
-cd cstest
-cp ../loglab_foo.cs .
-cp ../test_log_objects_csharp.cs .
-rm Program.cs
-dotnet build
 dotnet run
 ```
 

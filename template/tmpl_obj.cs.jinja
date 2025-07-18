@@ -26,10 +26,11 @@ namespace loglab_{{ domain.name }}
         {% set fields = events[ename][-1][1]['fields'] %}
         {% set rfields = fields | required %}
         {% set ofields = fields | optional %}
+        {% set cfields = fields | const %}
         public const string Event = "{{ ename }}";
         {% for fname in fields.keys() %}{% if fname != 'DateTime' %}        // {{ events[ename][-1][1]['fields'][fname][-1][1]['desc'] }}
         {% set field = fields[fname][-1][1] %}
-        {% if type(field) in ('string', 'DateTime') %}
+        {% if type(field) in ('DateTime') %}
         public {{ type(field) }} {{ fname }};
         {% else %}
         public {{ type(field) }}? {{ fname }} = null;
@@ -39,7 +40,6 @@ namespace loglab_{{ domain.name }}
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
 
-        public {{ ename }}() {}
         public {{ ename }}({% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}{{ type(field) }} _{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %})
         {
             Reset({% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}_{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %});
@@ -51,6 +51,7 @@ namespace loglab_{{ domain.name }}
             {{ fname }} = _{{ fname }};
             {% endfor %}
             {% for fname in ofields.keys() %}
+            {% if fname not in cfields %}
             {% set field = fields[fname][-1][1] %}
             {% if type(field) == 'string' %}
             {{ fname }} = default(string);
@@ -58,7 +59,7 @@ namespace loglab_{{ domain.name }}
             {{ fname }} = DateTime.MinValue;
             {% else %}
             {{ fname }} = null;
-            {% endif %}
+            {% endif %}{% endif %}
             {% endfor %}
         }
         public string Serialize()
@@ -67,7 +68,9 @@ namespace loglab_{{ domain.name }}
             {% for fname in fields %}
             {% if fname != 'DateTime' %}
             {% set field = fields[fname][-1][1] %}
-            {% if fname in rfields %}
+            {% if fname in cfields %}
+            fields.Add($"\"{{ fname }}\": {{ cfields[fname][1] }}");
+            {% elif fname in rfields %}
             {% if type(field) == 'string' %}
             Debug.Assert({{ fname }} != null);
             {{ fname }} = JsonSerializer.Serialize({{ fname }}, {{ename}}.options);
