@@ -1347,7 +1347,7 @@ Description : 캐릭터의 아이템 습득
 
   "bases": {
 
-  // ...
+    // ...
 
 		"Account": {
 			"desc": "계정 정보",
