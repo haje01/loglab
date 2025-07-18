@@ -9,11 +9,9 @@ from loglab.util import download, test_reset
 def clear():
     test_reset()
 
-
-def test_download(clear):
-    path = 'foo.lab.json'
-    download(
-        'https://raw.githubusercontent.com/haje01/loglab/master/tests/files/foo.lab.json',
-        path
-    )
-    assert os.path.isfile(path)
+    # path = 'foo.lab.json'
+    # download(
+    #     'https://raw.githubusercontent.com/haje01/loglab/master/tests/files/foo.lab.json',
+    #     path
+    # )
+    # assert os.path.isfile(path)

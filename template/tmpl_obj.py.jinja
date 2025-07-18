@@ -43,7 +43,7 @@ class {{ename}}:
         {% elif fname in ofields %}
         if self.{{ fname }} is not None:
             data["{{ fname }}"] = self.{{ fname }}{% if type(field) == 'datetime' %}.isoformat(){% endif %}
-            
+
         {% elif fname in cfields %}
         {% set ftype, fval = cfields[fname] %}
         data["{{ fname }}"] = {% if ftype == 'string' %}"{% endif %}{{ fval }}{% if ftype == 'string' %}"{% endif %}

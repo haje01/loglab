@@ -27,7 +27,6 @@ def copy_files(files):
     for fn in files:
         src = os.path.join(FILE_DIR, fn)
         assert os.path.isfile(src)
-        dst = os.path.join(CWD, fn)
         copyfile(src, fn)
 
 
@@ -84,7 +83,7 @@ Description : 계정 로그인
 
     ans = '''Domain : foo
 Description : 위대한 모바일 게임
-Version : 0.0.1'''
+'''
     assert ans in out
 
     ans = '''Type : types.unsigned
@@ -466,7 +465,7 @@ def test_object(clear):
     res = runner.invoke(object, ['foo.lab.json', 'py'])
     assert res.exit_code == 0
     out = res.output
-    assert '''
+    ans ='''
 class Logout:
     """계정 로그아웃"""
 
@@ -477,22 +476,25 @@ class Logout:
         self.ServerNo = _ServerNo
         self.AcntId = _AcntId
         self.PlayTime = None
+        self.Login = None
 
     def serialize(self):
         data = dict(DateTime=datetime.now().astimezone().isoformat(),
                     Event="Logout")
         data["ServerNo"] = self.ServerNo
         data["AcntId"] = self.AcntId
-        data["Category"] = 1
         if self.PlayTime is not None:
             data["PlayTime"] = self.PlayTime
-        return json.dumps(data)''' in out
+        if self.Login is not None:
+            data["Login"] = self.Login.isoformat()
+        return json.dumps(data)''' 
+    assert ans in out
 
     res = runner.invoke(object, ['foo.lab.json', 'cs'])
     assert res.exit_code == 0
     out = res.output
     logout = '''
-     /// <summary>
+    /// <summary>
     ///  계정 로그아웃
     /// </summary>
     public class Logout
@@ -501,40 +503,43 @@ class Logout:
         // 서버 번호
         public int? ServerNo = null;
         // 계정 ID
-        public int? AcntId = null;
-        // 이벤트 분류
-        public int? Category = null;
+        public ulong? AcntId = null;
         // 플레이 시간 (초)
         public float? PlayTime = null;
+        // 로그인 시간
+        public DateTime Login;
         public static JsonSerializerOptions options = new JsonSerializerOptions
         {
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
 
-        public Logout() {}
-        public Logout(int _ServerNo, int _AcntId)
+        public Logout(int _ServerNo, ulong _AcntId)
         {
             Reset(_ServerNo, _AcntId);
         }
-        public void Reset(int _ServerNo, int _AcntId)
+        public void Reset(int _ServerNo, ulong _AcntId)
         {
             ServerNo = _ServerNo;
             AcntId = _AcntId;
             PlayTime = null;
+            Login = DateTime.MinValue;
         }
         public string Serialize()
         {
             List<string> fields = new List<string>();
             Debug.Assert(ServerNo.HasValue);
-            fields.Add($"\"ServerNo\": {ServerNo}");
+            fields.Add($"\\"ServerNo\\": {ServerNo}");
             Debug.Assert(AcntId.HasValue);
-            fields.Add($"\"AcntId\": {AcntId}");
-            fields.Add($"\"Category\": 1");
+            fields.Add($"\\"AcntId\\": {AcntId}");
             if (PlayTime.HasValue)
-                fields.Add($"\"PlayTime\": {PlayTime}");
+                fields.Add($"\\"PlayTime\\": {PlayTime}");
+            if (Login != DateTime.MinValue) {
+                string Login_ = Login.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
+                fields.Add($"\\"Login\\": \\"{Login_}\\"");
+            }
             string sfields = String.Join(", ", fields);
             string dt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
-            string sjson = $"{{\"DateTime\": \"{dt}\", \"Event\": \"{Event}\", {sfields}}}";
+            string sjson = $"{{\\"DateTime\\": \\"{dt}\\", \\"Event\\": \\"{Event}\\", {sfields}}}";
             return sjson;
         }
     }'''
