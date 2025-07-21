@@ -14,6 +14,16 @@ from loglab.util import AttrDict, load_file_from, LOGLAB_HOME
 
 
 def recursive_validate(lab, schema, lab_path):
+    """lab 파일과 그것이 import하는 모든 파일들을 재귀적으로 검증.
+    
+    Args:
+        lab (dict): 검증할 lab 파일 데이터
+        schema (dict): 검증에 사용할 JSON 스키마
+        lab_path (str): lab 파일의 경로 (에러 메시지용)
+        
+    Raises:
+        Exception: 검증 실패시 상세 에러 메시지와 함께
+    """
     # 참조하는 lab 이 있으면 그것도 검증
     if 'import' in lab:
         basedir = os.path.dirname(lab_path)
@@ -29,16 +39,22 @@ def recursive_validate(lab, schema, lab_path):
 
 
 def verify_labfile(lab_path, scm_path=None, err_exit=True):
-    """랩 파일을 검증.
+    """lab 파일의 구조와 내용을 JSON 스키마로 검증.
+    
+    lab 파일이 올바른 구조를 가지고 있는지, 필수 필드들이 있는지,
+    타입과 제약 조건이 맞는지 등을 종합적으로 검증함.
+    import하는 파일들도 재귀적으로 검증.
 
     Args:
-        lab_path (str): 랩 파일 URI
-        scm_path (str): 스키마 파일 URI
-        err_exit (bool): 에러 발생시 종료 여부. 기본 True
+        lab_path (str): 검증할 랩 파일 경로
+        scm_path (str, optional): 사용할 스키마 파일 경로. None이면 기본 스키마 사용
+        err_exit (bool): 에러 발생시 프로그램 종료 여부. 기본 True
 
     Returns:
-        str: 읽어들인 랩 파일 JSON 을 재활용할 수 있게 반환
-
+        dict: 검증이 완료된 랩 파일 데이터 (성공시에만)
+        
+    Raises:
+        SystemExit: err_exit=True이고 검증 실패시
     """
     if scm_path is None:
         scm_path = os.path.join(LOGLAB_HOME,
@@ -62,13 +78,32 @@ def verify_labfile(lab_path, scm_path=None, err_exit=True):
 
 
 def log_schema_from_labfile(data):
-    """랩 데이터에서 로그용 JSON 스키마 생성.
+    """lab 파일 데이터로부터 실제 로그 검증용 JSON 스키마를 동적 생성.
+    
+    lab 파일에 정의된 이벤트들을 분석하여 각 이벤트별로 JSON 스키마를 생성하고,
+    이를 통합한 최종 로그 검증 스키마를 만듦. 생성된 스키마는 JSON Lines 형태의
+    로그 파일을 검증하는데 사용됨.
 
     Args:
-        data (dict): 랩 데이터
-
+        data (dict): 빌드된 lab 모델 데이터
+        
+    Returns:
+        str: JSON 형태의 로그 검증 스키마 문자열
     """
     def _resolve_type(typ, v, domain):
+        """커스텀 타입을 실제 타입 정의로 해결.
+        
+        Args:
+            typ (str): 타입 이름 ('types.typename' 형태)
+            v (list): 필드 값 정보
+            domain (str): 도메인 경로
+            
+        Returns:
+            list: 해결된 타입 정보가 포함된 필드 값
+            
+        Raises:
+            AssertionError: 타입 형식이 잘못되었거나 정의되지 않은 타입인 경우
+        """
         elms = typ.split('.')
         assert len(elms) == 2, f"잘못된 형식의 타입입니다: {typ}"
         tname = elms[1]
@@ -170,12 +205,18 @@ def log_schema_from_labfile(data):
 
 
 def verify_logfile(schema, logfile):
-    """로그 파일을 스키마로 검증.
+    """실제 로그 파일이 생성된 스키마에 맞는지 검증.
+    
+    JSON Lines 형태의 로그 파일을 한 줄씩 읽어서 각 로그 엔트리가
+    해당 이벤트의 스키마에 맞는지 검증함. 오류 발생시 정확한 라인 번호와
+    오류 내용을 제공.
 
     Args:
-        schema (str): 로그 스키마 파일 경로
+        schema (str): 로그 검증용 JSON 스키마 파일 경로
         logfile (str): 검증할 로그 파일 경로
-
+        
+    Raises:
+        SystemExit: 스키마 파일이 잘못되었거나 로그 검증 실패시
     """
     # 로그 스키마에서 이벤트별 스키마 생성
     evt_scm = {}

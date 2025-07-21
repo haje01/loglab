@@ -19,6 +19,14 @@ lc_dir = os.path.join(LOGLAB_HOME, 'locales')
 
 
 def get_translator(lang):
+    """언어별 번역 함수를 반환.
+    
+    Args:
+        lang (str): 언어 코드 (예: 'ko', 'en'). None이면 번역하지 않음
+        
+    Returns:
+        callable: 번역 함수
+    """
     if lang is None:
         return lambda x: x
     trans = gettext.translation('base', localedir=lc_dir, languages=(lang,))
@@ -26,20 +34,47 @@ def get_translator(lang):
 
 
 def get_dt_desc(lang):
+    """DateTime 필드의 설명을 언어별로 반환.
+    
+    Args:
+        lang (str): 언어 코드
+        
+    Returns:
+        str: 번역된 DateTime 필드 설명
+    """
     _ = get_translator(lang)
     return _("이벤트 일시")
 
 
 def get_object_warn(lang):
+    """생성된 코드 파일의 경고 메시지를 언어별로 반환.
+    
+    Args:
+        lang (str): 언어 코드
+        
+    Returns:
+        str: 번역된 경고 메시지
+    """
     _ = get_translator(lang)
     return _("이 파일은 LogLab 에서 생성된 것입니다. 고치지 마세요!")
 
 
 class AttrDict(dict):
-    """dict 키를 속성처럼 접근하는 헬퍼."""
+    """dict 키를 속성처럼 접근하는 헬퍼 클래스.
+    
+    딕셔너리의 키를 obj.key 형태로 접근할 수 있게 해주며,
+    중첩된 딕셔너리도 재귀적으로 AttrDict로 변환함.
+    """
     def __init__(self, *args, **kwargs):
         def from_nested_dict(data):
-            """ Construct nested AttrDicts from nested dictionaries. """
+            """중첩된 딕셔너리를 AttrDict로 재귀적으로 변환.
+            
+            Args:
+                data: 변환할 데이터
+                
+            Returns:
+                AttrDict 또는 원본 데이터
+            """
             if not isinstance(data, dict):
                 return data
             else:
@@ -54,19 +89,22 @@ class AttrDict(dict):
 
 
 def find_labfile(labfile, print_msg=True):
-    """사용할 랩 파일 디렉토리에서 찾기.
+    """사용할 랩 파일을 디렉토리에서 찾기.
 
-    - 지정된 랩 파일이 있으면 그것을,
-    - 아니면 현재 디렉토리에서 유일한 랩 파일이 있으면 그것을
-    - 현재 디렉토리에 랩 파일이 없거나 여럿 있으면 Error
+    우선순위:
+    1. 지정된 랩 파일이 있으면 그것을 사용
+    2. 현재 디렉토리에서 유일한 랩 파일이 있으면 그것을 사용
+    3. 현재 디렉토리에 랩 파일이 없거나 여럿 있으면 에러
 
     Args:
-        labfile (str): 랩 파일 경로
+        labfile (str): 랩 파일 경로. None이면 자동 검색
         print_msg (bool): 메시지 출력 여부. 기본 True
 
     Returns:
         str: 찾은 랩 파일의 절대 경로
-
+        
+    Raises:
+        SystemExit: 적절한 랩 파일을 찾을 수 없는 경우
     """
     def handle(labfile, print_msg):
         labfile = os.path.abspath(labfile)
@@ -91,13 +129,20 @@ def find_labfile(labfile, print_msg=True):
 
 
 def load_file_from(path):
-    """지정된 로컬 또는 웹에서 텍스트 파일 읽기.
+    """로컬 파일 또는 웹 URL에서 텍스트 파일을 읽어옴.
+
+    HTTP/HTTPS URL인 경우 웹에서 다운로드하고,
+    그렇지 않으면 로컬 파일로 간주하여 읽음.
 
     Args:
-        path (str): 로컬 파일 경로 또는 URI
+        path (str): 로컬 파일 경로 또는 HTTP/HTTPS URL
 
     Returns:
         str: 읽어들인 파일 내용
+        
+    Raises:
+        URLError: 웹 파일 다운로드 실패시
+        FileNotFoundError: 로컬 파일이 존재하지 않는 경우
     """
     parsed = urlparse(path)
     if parsed.scheme in ('http', 'https'):
@@ -117,7 +162,19 @@ def load_file_from(path):
 
 
 def explain_rstr(f, lang, line_dlm='\n'):
-    """제약을 설명으로 변환."""
+    """필드의 제약 조건을 사람이 읽기 쉬운 설명으로 변환.
+    
+    JSON Schema의 제약 조건들(minimum, maximum, enum, pattern 등)을
+    지정된 언어로 번역된 설명 문자열로 변환함.
+    
+    Args:
+        f (dict): 필드 정의 딕셔너리 (type, 제약 조건들 포함)
+        lang (str): 번역할 언어 코드
+        line_dlm (str): 여러 제약 조건을 구분할 구분자. 기본 '\n'
+        
+    Returns:
+        str: 번역된 제약 조건 설명 문자열
+    """
     _ = get_translator(lang)
     exps = []
     atype = f['type']
@@ -207,6 +264,15 @@ def explain_rstr(f, lang, line_dlm='\n'):
 
 
 def _request_dir(labfile, subdir):
+    """요청된 서브디렉토리를 생성하고 경로를 반환.
+    
+    Args:
+        labfile (str): 랩 파일 경로. None이면 현재 디렉토리 사용
+        subdir (str): 생성할 서브디렉토리 이름
+        
+    Returns:
+        str: 생성된 디렉토리의 절대 경로
+    """
     if labfile is not None:
         adir = os.path.dirname(labfile)
     else:
@@ -217,15 +283,17 @@ def _request_dir(labfile, subdir):
 
 
 def download(url, filepath=None):
-    """파일 다운로드.
+    """URL에서 파일을 다운로드.
 
-    URL 에서 지정된 파일 경로로 파일 다운로드.
-    지정된 파일 경로가 없으면 현재 디렉토리에서 URL 경로의 마지막 요소로 저장
+    지정된 URL에서 파일을 다운로드하여 로컬에 저장함.
+    파일 경로가 지정되지 않으면 URL의 마지막 부분을 파일명으로 사용.
 
     Args:
-        url (string): 다운 받을 URL
-        filepath (string): 저장할 파일 경로. 기본 None
-
+        url (str): 다운로드할 파일의 URL
+        filepath (str, optional): 저장할 파일 경로. None이면 자동 생성
+        
+    Raises:
+        requests.RequestException: 다운로드 실패시
     """
     if filepath is None:
         filepath = url.split('/')[-1]
@@ -236,7 +304,11 @@ def download(url, filepath=None):
 
 
 def test_reset():
-    """테스트 관련 초기화."""
+    """테스트 환경 초기화.
+    
+    테스트 디렉토리로 이동하고 이전 테스트에서 생성된
+    임시 파일들을 모두 삭제함.
+    """
     cwd = os.path.join(LOGLAB_HOME, 'tests')
     os.chdir(cwd)
 
@@ -252,7 +324,16 @@ def test_reset():
 
 
 def absdir_for_html(adir):
-    """HTML 용 로컬 디렉토리 절대 경로."""
+    """HTML에서 사용할 수 있는 로컬 디렉토리 절대 경로로 변환.
+    
+    WSL 환경의 /mnt/드라이브 경로를 Windows file:// URL 형식으로 변환.
+    
+    Args:
+        adir (str 또는 Path): 변환할 디렉토리 경로
+        
+    Returns:
+        str: HTML에서 사용 가능한 절대 경로 또는 file:// URL
+    """
     match = re.search(r'^/mnt/([a-z])/(.+)$', str(adir))
     if match is not None:
         drv, rdir = match.groups()

@@ -9,12 +9,36 @@ from loglab.util import BUILTIN_TYPES, AttrDict, get_dt_desc
 
 
 def _build_domain(data):
+    """lab 파일에서 도메인 정보를 추출.
+    
+    Args:
+        data (dict): lab 파일 데이터
+        
+    Returns:
+        dict: 도메인 정보
+        
+    Raises:
+        Exception: 도메인 정보가 없는 경우
+    """
     if 'domain' not in data:
         raise Exception("Required domain information not found.")
     return data['domain']
 
 
 def _build_types(data, _dnames=None, _types=None):
+    """lab 파일에서 커스텀 타입 정보를 재귀적으로 수집.
+    
+    import된 파일들도 포함하여 모든 커스텀 타입을 수집하고
+    도메인 경로와 함께 저장함.
+    
+    Args:
+        data (dict): lab 파일 데이터
+        _dnames (list, optional): 도메인 이름 경로
+        _types (defaultdict, optional): 수집된 타입들
+        
+    Returns:
+        defaultdict: 타입명을 키로 하고 [도메인경로, 타입정의] 리스트를 값으로 하는 딕셔너리
+    """
     if _types is None:
         _types = defaultdict(list)
 
@@ -35,6 +59,22 @@ def _build_types(data, _dnames=None, _types=None):
 
 
 def _resolve_type(tname, _types):
+    """타입 이름을 사용하여 실제 타입 정의를 찾아 반환.
+    
+    도메인 경로를 고려하여 정확한 타입을 찾고, 직접 매치가 안되면
+    부분 매치를 시도함.
+    
+    Args:
+        tname (str): 'domain.types.typename' 형태의 타입 이름
+        _types (defaultdict): 수집된 타입 정보
+        
+    Returns:
+        dict: 타입 정의의 복사본
+        
+    Raises:
+        AssertionError: 타입 이름이 타입 데이터에 없는 경우
+        Exception: 해당 도메인에서 타입을 찾을 수 없는 경우
+    """
     elms = tname.split('.')
     domain = '.'.join(elms[:-2])
     name = elms[-1]
@@ -56,13 +96,36 @@ def _resolve_type(tname, _types):
 
 
 def _flat_fields(data, _types, _dnames, lang, for_event=False, use_ctype=False):
-    """베이스 또는 이벤트가 참조하는 필드를 평탄화."""
+    """베이스 또는 이벤트의 필드를 평탄화하고 타입을 해결.
+    
+    필드 정의를 표준화된 형태로 변환하고, 커스텀 타입을 실제 타입 정의로 치환.
+    이벤트인 경우 DateTime 필드를 자동으로 추가함.
+    
+    Args:
+        data (dict): 베이스 또는 이벤트 데이터
+        _types (defaultdict): 커스텀 타입 정보
+        _dnames (list): 도메인 이름 경로
+        lang (str): 언어 코드
+        for_event (bool): 이벤트용인지 여부. 기본 False
+        use_ctype (bool): 커스텀 타입을 그대로 유지할지 여부. 기본 False
+        
+    Returns:
+        dict: 평탄화된 필드 정보를 포함한 데이터
+    """
     if 'fields' not in data:
         data['fields'] = {}
     else:
         data = copy.deepcopy(data)
 
     def _is_flat(fdata):
+        """필드 데이터가 이미 평탄화되었는지 확인.
+        
+        Args:
+            fdata: 필드 데이터
+            
+        Returns:
+            bool: 평탄화된 상태인지 여부
+        """
         if type(fdata) is not defaultdict:
             return False
         if len(fdata) == 0:
@@ -114,6 +177,22 @@ def _flat_fields(data, _types, _dnames, lang, for_event=False, use_ctype=False):
 
 
 def _resolve_mixins(name, lang, _dnames, _bases, _events=None, for_event=False):
+    """믹스인을 해결하여 최종 필드 구성을 생성.
+    
+    지정된 믹스인들을 순서대로 처리하여 필드를 병합하고,
+    설명(desc)이 없는 경우 믹스인에서 가져옴.
+    
+    Args:
+        name (str): 처리할 베이스/이벤트 이름
+        lang (str): 언어 코드
+        _dnames (list): 도메인 이름 경로
+        _bases (defaultdict): 베이스 정보
+        _events (defaultdict, optional): 이벤트 정보
+        for_event (bool): 이벤트용인지 여부. 기본 False
+        
+    Raises:
+        Exception: 믹스인을 찾을 수 없거나 부적절한 믹스인 사용시
+    """
     pbase = name in _bases
     pevent = name in _events if _events is not None else False
     if not pbase and not pevent:
@@ -164,6 +243,19 @@ def _resolve_mixins(name, lang, _dnames, _bases, _events=None, for_event=False):
 
 
 def _find_mixin(path, _bases, _events):
+    """믹스인 경로를 파싱하여 해당 믹스인을 찾아 반환.
+    
+    Args:
+        path (str): 'domain.bases.name' 또는 'domain.events.name' 형태의 믹스인 경로
+        _bases (defaultdict): 베이스 정보
+        _events (defaultdict): 이벤트 정보
+        
+    Returns:
+        tuple: (믹스인 이름, [도메인경로, 믹스인데이터])
+        
+    Raises:
+        Exception: 잘못된 믹스인 경로이거나 믹스인을 찾을 수 없는 경우
+    """
     if '.' not in path:
         raise Exception(f"Illegal mixin path '{path}'")
     elms = path.split('.')
@@ -183,7 +275,22 @@ def _find_mixin(path, _bases, _events):
 
 
 def _build_bases(data, lang, _dnames=None, _types=None, _bases=None, use_ctype=False):
-    """베이스 요소 빌드."""
+    """베이스 요소들을 빌드하고 믹스인을 해결.
+    
+    재귀적으로 import된 파일들의 베이스도 처리하고,
+    각 베이스의 필드를 평탄화한 후 믹스인을 해결함.
+    
+    Args:
+        data (dict): lab 파일 데이터
+        lang (str): 언어 코드
+        _dnames (list, optional): 도메인 이름 경로
+        _types (defaultdict, optional): 커스텀 타입 정보
+        _bases (defaultdict, optional): 수집된 베이스 정보
+        use_ctype (bool): 커스텀 타입을 그대로 유지할지 여부. 기본 False
+        
+    Returns:
+        defaultdict: 베이스명을 키로 하고 [도메인경로, 베이스정의] 리스트를 값으로 하는 딕셔너리
+    """
     if _types is None:
         _types = defaultdict(list)
     if _bases is None:
@@ -220,7 +327,23 @@ def _build_bases(data, lang, _dnames=None, _types=None, _bases=None, use_ctype=F
 
 def _build_events(data, lang=None, _dnames=None, _types=None, _bases=None, _events=None,
                   use_ctype=False):
-    """이벤트 및 관련 요소들 빌드."""
+    """이벤트들을 빌드하고 관련 베이스/타입들도 함께 처리.
+    
+    재귀적으로 import된 파일들도 처리하고, 베이스를 먼저 빌드한 후
+    이벤트들의 필드를 평탄화하고 믹스인을 해결함.
+    
+    Args:
+        data (dict): lab 파일 데이터
+        lang (str, optional): 언어 코드
+        _dnames (list, optional): 도메인 이름 경로
+        _types (defaultdict, optional): 커스텀 타입 정보
+        _bases (defaultdict, optional): 베이스 정보
+        _events (defaultdict, optional): 수집된 이벤트 정보
+        use_ctype (bool): 커스텀 타입을 그대로 유지할지 여부. 기본 False
+        
+    Returns:
+        defaultdict: 이벤트명을 키로 하고 [도메인경로, 이벤트정의] 리스트를 값으로 하는 딕셔너리
+    """
     if _types is None:
         _types = defaultdict(list)
     if _bases is None:
@@ -261,13 +384,18 @@ def _build_events(data, lang=None, _dnames=None, _types=None, _bases=None, _even
 
 
 def build_model(data, lang=None, use_ctype=False):
-    """모델 을 만듦.
+    """lab 파일 데이터로부터 완전한 모델을 구성.
+    
+    도메인, 타입, 베이스, 이벤트 정보를 모두 수집하고 해결하여
+    사용 가능한 형태의 모델 객체를 생성함.
 
     Args:
         data (dict): lab 파일 데이터
-        lang (str): 언어 코드
-        use_ctype (bool): 커스텀 타입 유지 여부. 기본 False
-
+        lang (str, optional): 언어 코드 (국제화용)
+        use_ctype (bool): 커스텀 타입을 원본 형태로 유지할지 여부. 기본 False
+        
+    Returns:
+        AttrDict: domain, types, bases, events 속성을 가진 모델 객체
     """
     domain = _build_domain(data)
 
@@ -280,12 +408,18 @@ def build_model(data, lang=None, use_ctype=False):
 
 
 def handle_import(labfile, labjs):
-    """랩 파일이 참고하는 외부 랩 파일 가져오기.
+    """랩 파일이 참조하는 외부 랩 파일들을 재귀적으로 로드.
+    
+    import 필드에 지정된 파일들을 찾아 로드하고,
+    해당 파일들이 또 다른 import를 가지고 있으면 재귀적으로 처리.
+    로드된 데이터는 '_imported_' 키에 저장됨.
 
     Args:
-        labfile (Str): 랩파일 경로
-        labjs (dict): 랩 데이터
-
+        labfile (str): 기준이 되는 랩파일 경로
+        labjs (dict): 랩 데이터 (수정됨)
+        
+    Raises:
+        FileNotFoundError: import할 파일을 찾을 수 없는 경우
     """
     if 'import' not in labjs:
         return labjs
@@ -309,11 +443,13 @@ def handle_import(labfile, labjs):
 
 
 def _handle_import(labjs):
-    """랩 파일이 참고하는 외부 랩 파일 데이터 처리 (테스트 용).
+    """랩 파일의 import 데이터를 처리 (테스트용).
+    
+    실제 파일 시스템이 아닌 메모리상의 데이터로부터
+    import를 처리하는 테스트용 함수.
 
     Args:
-        labjs (dict): 랩 데이터
-
+        labjs (dict): 랩 데이터 (수정됨)
     """
     if 'import' not in labjs:
         return labjs

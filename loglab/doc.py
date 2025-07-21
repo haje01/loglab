@@ -185,6 +185,14 @@ def text_from_labfile(data, cus_type, namef, keep_text, lang, out=None):
 def _html_types(model, lang):
 
     def _html_type_table(tdef):
+        """단일 커스텀 타입을 HTML 테이블로 변환.
+        
+        Args:
+            tdef (dict): 타입 정의
+            
+        Returns:
+            str: HTML 테이블 문자열
+        """
         out = StringIO()
         headers = ['BaseType', 'Description']
         row = [tdef['type'], tdef['desc']]
@@ -222,6 +230,15 @@ def _html_types(model, lang):
 def _html_events(model, lang):
 
     def _html_event_table(edef, lang):
+        """단일 이벤트를 HTML 테이블로 변환.
+        
+        Args:
+            edef (dict): 이벤트 정의
+            lang (str): 언어 코드
+            
+        Returns:
+            str: HTML 테이블 문자열
+        """
         out = StringIO()
 
         headers = ['Field', 'Type', 'Description']
