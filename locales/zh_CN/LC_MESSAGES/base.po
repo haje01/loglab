@@ -28,7 +28,7 @@ msgid "{} 이상"
 msgstr "{} 以上(含)"
 
 #: loglab/util.py:137
-msgid "{} 초과"
+msgid "{} 초과" 
 msgstr "{} 以上"
 
 #: loglab/util.py:139
@@ -58,3 +58,7 @@ msgstr "{} 格式"
 #: loglab/util.py:33
 msgid "이 파일은 LogLab 에서 생성된 것입니다. 고치지 마세요!"
 msgstr "该文件由 LogLab 生成。 不要修理它！"
+
+#: util.py:207
+msgid "항상 {}"
+msgstr "始终 {}"

@@ -52,6 +52,7 @@
     - [Python 로그 객체 테스트](#python-로그-객체-테스트)
     - [C# 로그 객체 테스트](#c-로그-객체-테스트)
     - [C++ 로그 객체 테스트](#c-로그-객체-테스트-1)
+    - [추가 문자열 현지화](#추가-문자열-현지화)
 
 ## 소개
 
@@ -2289,7 +2290,7 @@ Logout Event: {"DateTime":"2025-07-16T08:35:04.013981Z","Event":"Logout","Server
 
 > 언어 코드는 [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes), 지역 코드는 [ISO 3166-1](https://en.wikipedia.org/wiki/ISO_3166-1) 을 따른다.
 
-현재는 영어 `en_US` 와 중국어 `zh_CN` 가 준비되어 있다. 아래와 같이 `show` 명령에서 `-l` 또는 `--lang` 옵션을 통해 메시지 언어를 선택해보자.
+현재는 영어 `en_US`, 중국어 `zh_CN`, 일본어 `ja_JP` 가 준비되어 있다. 아래와 같이 `show` 명령에서 `-l` 또는 `--lang` 옵션을 통해 메시지 언어를 선택해보자.
 
 ```
 $ loglab show foo.lab.json -l en_US
@@ -2298,21 +2299,22 @@ $ loglab show foo.lab.json -l en_US
 
 Event : GetItem
 Description : 캐릭터의 아이템 습득
-+----------+----------+------------------+--------------------------+
-| Field    | Type     | Description      | Restrict                 |
-|----------+----------+------------------+--------------------------|
-| DateTime | datetime | Event date time  |                          |
-| ServerNo | integer  | 서버 번호        | 1 or above below 100     |
-| AcntId   | integer  | 계정 ID          | 0 or above               |
-| CharId   | integer  | 캐릭터 ID        | 0 or above               |
-| MapCd    | integer  | 맵 코드          | 0 or above               |
-| PosX     | number   | 맵상 X 위치      |                          |
-| PosY     | number   | 맵상 Y 위치      |                          |
-| PosZ     | number   | 맵상 Z 위치      |                          |
-| ItemCd   | integer  | 아이템 타입 코드 | one of 1 (칼), 2 (방패), |
-|          |          |                  | 3 (물약)                 |
-| ItemId   | integer  | 아이템 개체 ID   | 0 or above               |
-+----------+----------+------------------+--------------------------+
++----------+----------+------------------+----------------------------+
+| Field    | Type     | Description      | Restrict                   |
+|----------+----------+------------------+----------------------------|
+| DateTime | datetime | Event date time  |                            |
+| ServerNo | integer  | 서버 번호        | 1 or above below 100       |
+| AcntId   | integer  | 계정 ID          |                            |
+| Category | integer  | 이벤트 분류      | always 2 (캐릭터 이벤트)   |
+| CharId   | integer  | 캐릭터 ID        |                            |
+| MapCd    | integer  | 맵 코드          |                            |
+| PosX     | number   | 맵상 X 위치      |                            |
+| PosY     | number   | 맵상 Y 위치      |                            |
+| PosZ     | number   | 맵상 Z 위치      |                            |
+| ItemCd   | integer  | 아이템 타입 코드 | one of 1 (칼), 2 (방패), 3 |
+|          |          |                  | (물약)                     |
+| ItemId   | integer  | 아이템 개체 ID   |                            |
++----------+----------+------------------+----------------------------+
 ```
 
 ```
@@ -2327,15 +2329,41 @@ Description : 캐릭터의 아이템 습득
 |----------+----------+------------------+----------------------------|
 | DateTime | datetime | 事件日期         |                            |
 | ServerNo | integer  | 서버 번호        | 1 以上(含) 100 以下        |
-| AcntId   | integer  | 계정 ID          | 0 以上(含)                 |
-| CharId   | integer  | 캐릭터 ID        | 0 以上(含)                 |
-| MapCd    | integer  | 맵 코드          | 0 以上(含)                 |
+| AcntId   | integer  | 계정 ID          |                            |
+| Category | integer  | 이벤트 분류      | 始终 2 (캐릭터 이벤트)     |
+| CharId   | integer  | 캐릭터 ID        |                            |
+| MapCd    | integer  | 맵 코드          |                            |
 | PosX     | number   | 맵상 X 위치      |                            |
 | PosY     | number   | 맵상 Y 위치      |                            |
 | PosZ     | number   | 맵상 Z 위치      |                            |
 | ItemCd   | integer  | 아이템 타입 코드 | 1 (칼), 2 (방패), 3 (물약) |
 |          |          |                  | 之一                       |
-| ItemId   | integer  | 아이템 개체 ID   | 0 以上(含)                 |
+| ItemId   | integer  | 아이템 개체 ID   |                            |
++----------+----------+------------------+----------------------------+
+```
+
+```
+$ loglab show foo.lab.json -l za_JP
+
+# ...
+
+Event : GetItem
+Description : 캐릭터의 아이템 습득
++----------+----------+------------------+----------------------------+
+| Field    | Type     | Description      | Restrict                   |
+|----------+----------+------------------+----------------------------|
+| DateTime | datetime | イベント日時     |                            |
+| ServerNo | integer  | 서버 번호        | 1 以上 100 未満            |
+| AcntId   | integer  | 계정 ID          |                            |
+| Category | integer  | 이벤트 분류      | 常に 2 (캐릭터 이벤트)     |
+| CharId   | integer  | 캐릭터 ID        |                            |
+| MapCd    | integer  | 맵 코드          |                            |
+| PosX     | number   | 맵상 X 위치      |                            |
+| PosY     | number   | 맵상 Y 위치      |                            |
+| PosZ     | number   | 맵상 Z 위치      |                            |
+| ItemCd   | integer  | 아이템 타입 코드 | 1 (칼), 2 (방패), 3 (물약) |
+|          |          |                  | のいずれか                 |
+| ItemId   | integer  | 아이템 개체 ID   |                            |
 +----------+----------+------------------+----------------------------+
 ```
 
@@ -2520,4 +2548,25 @@ Running main() from ./googletest/src/gtest_main.cc
 [----------] Global test environment tear-down
 [==========] 2 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 2 tests.
+```
+
+### 추가 문자열 현지화
+
+개발이 진행됨에 따라 새로이 추가된 문자열들 중 현지화 대상인 것들은 다음처럼 처리한다.
+
+`xgettext` 가 설치되어 있지 않으면 다음처럼 설치 후,
+```
+sudo apt install gettext
+```
+
+```bash
+xgettext -o messages.pot util.py
+```
+
+이 `messages.pot` 파일에서 새로 추가된 텍스트를 참고하여 언어별 `.po` 파일 (예: `locales/en_US/LC_MESSAGES/messages.po`) 에 번역하여 추가한다.
+
+이후 언어별로 다음처럼 `.mo` 파일로 컴파일한다.
+
+```bash
+msgfmt locales/en_US/LC_MESSAGES/base.po -o locales/en_US/LC_MESSAGES/base.mo
 ```
