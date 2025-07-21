@@ -30,6 +30,10 @@ Key concepts:
 
 ## Development Commands
 
+### Installing Packages
+
+Use `uv pip install` to install additional Python packages.
+
 ### Testing
 ```bash
 # Run all tests

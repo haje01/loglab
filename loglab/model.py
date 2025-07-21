@@ -4,11 +4,62 @@ import copy
 import json
 from json.encoder import py_encode_basestring
 from collections import defaultdict
+from typing import Dict, List, Optional, Union, Any, Set
 
 from loglab.util import BUILTIN_TYPES, AttrDict, get_dt_desc
 
 
-def _build_domain(data):
+class DomainError(Exception):
+    """도메인 관련 오류."""
+    pass
+
+
+class TypeResolutionError(Exception):
+    """타입 해결 관련 오류."""
+    pass
+
+
+class MixinError(Exception):
+    """믹스인 관련 오류."""
+    pass
+
+
+class ImportError(Exception):
+    """파일 import 관련 오류."""
+    pass
+
+
+def _validate_path(base_dir: str, import_name: str) -> str:
+    """파일 경로를 검증하고 안전한 경로를 반환.
+    
+    Args:
+        base_dir: 기준 디렉토리
+        import_name: import할 파일명
+        
+    Returns:
+        str: 검증된 절대 경로
+        
+    Raises:
+        ImportError: 경로가 기준 디렉토리를 벗어나는 경우
+    """
+    # 디렉토리 트래버설 공격 방지
+    if '..' in import_name or import_name.startswith('/') or '\\' in import_name:
+        raise ImportError(f"Invalid import path: {import_name}")
+    
+    # 안전한 경로 생성
+    filename = f'{import_name}.lab.json'
+    full_path = os.path.join(base_dir, filename)
+    full_path = os.path.normpath(os.path.abspath(full_path))
+    base_dir = os.path.normpath(os.path.abspath(base_dir))
+    
+    # 경로가 기준 디렉토리 내에 있는지 확인
+    if not full_path.startswith(base_dir):
+        raise ImportError(f"Path traversal detected: {import_name}")
+    
+    return full_path
+
+
+def _build_domain(data: Dict[str, Any]) -> Dict[str, Any]:
     """lab 파일에서 도메인 정보를 추출.
     
     Args:
@@ -18,14 +69,14 @@ def _build_domain(data):
         dict: 도메인 정보
         
     Raises:
-        Exception: 도메인 정보가 없는 경우
+        DomainError: 도메인 정보가 없는 경우
     """
     if 'domain' not in data:
-        raise Exception("Required domain information not found.")
+        raise DomainError("Required domain information not found.")
     return data['domain']
 
 
-def _build_types(data, _dnames=None, _types=None):
+def _build_types(data: Dict[str, Any], _dnames: Optional[List[str]] = None, _types: Optional[defaultdict] = None) -> defaultdict:
     """lab 파일에서 커스텀 타입 정보를 재귀적으로 수집.
     
     import된 파일들도 포함하여 모든 커스텀 타입을 수집하고
@@ -58,41 +109,76 @@ def _build_types(data, _dnames=None, _types=None):
     return _types
 
 
-def _resolve_type(tname, _types):
+def _resolve_type(tname: str, _types: defaultdict, _type_cache: Optional[Dict[str, Dict[str, Any]]] = None) -> Dict[str, Any]:
     """타입 이름을 사용하여 실제 타입 정의를 찾아 반환.
     
     도메인 경로를 고려하여 정확한 타입을 찾고, 직접 매치가 안되면
-    부분 매치를 시도함.
+    부분 매치를 시도함. 성능을 위해 캐싱을 사용함.
     
     Args:
         tname (str): 'domain.types.typename' 형태의 타입 이름
         _types (defaultdict): 수집된 타입 정보
+        _type_cache (dict, optional): 타입 해결 결과 캐시
         
     Returns:
         dict: 타입 정의의 복사본
         
     Raises:
-        AssertionError: 타입 이름이 타입 데이터에 없는 경우
-        Exception: 해당 도메인에서 타입을 찾을 수 없는 경우
+        TypeResolutionError: 타입을 찾을 수 없는 경우
     """
+    if _type_cache is None:
+        _type_cache = {}
+    
+    # 캐시에서 먼저 확인
+    if tname in _type_cache:
+        return copy.deepcopy(_type_cache[tname])
+    
     elms = tname.split('.')
     domain = '.'.join(elms[:-2])
     name = elms[-1]
-    assert name in _types, f"Can not find '{name}' in type data."
+    
+    if name not in _types:
+        raise TypeResolutionError(f"Can not find '{name}' in type data.")
 
+    found_data = None
+    
     # direct match
     for item in _types[name]:
         idomain, idata = item
         if idomain == domain:
-            return copy.deepcopy(idata)
+            found_data = idata
+            break
 
-    # indirect match
-    for item in _types[name]:
-        idomain, idata = item
-        if idomain.startswith(domain):
-            return copy.deepcopy(idata)
+    # indirect match if not found
+    if found_data is None:
+        for item in _types[name]:
+            idomain, idata = item
+            if idomain.startswith(domain):
+                found_data = idata
+                break
 
-    raise Exception(f"Can not find '{tname}' in type data")
+    if found_data is None:
+        raise TypeResolutionError(f"Can not find '{tname}' in type data")
+    
+    # 캐시에 저장 (원본을 캐시하고 복사본 반환)
+    _type_cache[tname] = found_data
+    return copy.deepcopy(found_data)
+
+
+def _is_flat(fdata):
+    """필드 데이터가 이미 평탄화되었는지 확인.
+    
+    Args:
+        fdata: 필드 데이터
+        
+    Returns:
+        bool: 평탄화된 상태인지 여부
+    """
+    if not isinstance(fdata, defaultdict):
+        return False
+    if len(fdata) == 0:
+        return True
+    return isinstance(list(fdata.values())[0], list)
 
 
 def _flat_fields(data, _types, _dnames, lang, for_event=False, use_ctype=False):
@@ -114,23 +200,9 @@ def _flat_fields(data, _types, _dnames, lang, for_event=False, use_ctype=False):
     """
     if 'fields' not in data:
         data['fields'] = {}
-    else:
+    elif not _is_flat(data['fields']):
+        # 필요한 경우에만 복사
         data = copy.deepcopy(data)
-
-    def _is_flat(fdata):
-        """필드 데이터가 이미 평탄화되었는지 확인.
-        
-        Args:
-            fdata: 필드 데이터
-            
-        Returns:
-            bool: 평탄화된 상태인지 여부
-        """
-        if type(fdata) is not defaultdict:
-            return False
-        if len(fdata) == 0:
-            return True
-        return type(list(fdata.values())[0]) is list
 
     if _is_flat(data['fields']):
         return data
@@ -143,15 +215,13 @@ def _flat_fields(data, _types, _dnames, lang, for_event=False, use_ctype=False):
     for f in data['fields']:
         path = '.'.join(_dnames)
         rst = {}
-        if type(f) is dict:
-            rst = copy.deepcopy(f)
-            del rst['name']
-            del rst['type']
-            del rst['desc']
+        if isinstance(f, dict):
+            # 필요한 키만 복사하여 성능 개선
+            original_f = f
+            rst = {k: v for k, v in f.items() if k not in ['name', 'type', 'desc', 'option']}
             f = [f['name'], f['type'], f['desc']]
-            if 'option' in f:
-                f.append(f['option'])
-                del rst['option']
+            if 'option' in original_f:
+                f.append(original_f['option'])
 
         tname = f[1]
         if tname not in BUILTIN_TYPES:
@@ -196,9 +266,9 @@ def _resolve_mixins(name, lang, _dnames, _bases, _events=None, for_event=False):
     pbase = name in _bases
     pevent = name in _events if _events is not None else False
     if not pbase and not pevent:
-        raise Exception("Can not find mixin {name} in both bases and events.")
+        raise MixinError(f"Can not find mixin {name} in both bases and events.")
     if _events is None and pevent:
-        raise Exception("You can not mixin an event for a base.")
+        raise MixinError("You can not mixin an event for a base.")
 
     _refer = _bases if _events is None else _events
     data = _refer[name][-1][1]
@@ -215,7 +285,7 @@ def _resolve_mixins(name, lang, _dnames, _bases, _events=None, for_event=False):
     for mpath in data['mixins']:
         mpath = '.'.join(_dnames + [mpath])
         if not for_event and 'events' in mpath:
-            raise Exception(f"You can not mixin '{mpath}' for a base.")
+            raise MixinError(f"You can not mixin '{mpath}' for a base.")
         mname, mdata = _find_mixin(mpath, _bases, _events)
         if mdesc is None and 'desc' in mdata[1]:
             mdesc = mdata[1]['desc']
@@ -228,7 +298,7 @@ def _resolve_mixins(name, lang, _dnames, _bases, _events=None, for_event=False):
     # resolve desc
     if 'desc' not in data:
         if mdesc is None:
-            raise Exception(f"'Can not resolve description for '{name}'.")
+            raise MixinError(f"Can not resolve description for '{name}'.")
 
         data['desc'] = mdesc
 
@@ -257,21 +327,21 @@ def _find_mixin(path, _bases, _events):
         Exception: 잘못된 믹스인 경로이거나 믹스인을 찾을 수 없는 경우
     """
     if '.' not in path:
-        raise Exception(f"Illegal mixin path '{path}'")
+        raise MixinError(f"Illegal mixin path '{path}'")
     elms = path.split('.')
     atype = elms[-2]
     if atype not in ('bases', 'events'):
-        raise Exception(f"Illegal mixin type '{atype}'")
+        raise MixinError(f"Illegal mixin type '{atype}'")
     name = elms[-1]
     _path = '.'.join(elms[:-2])
     _refer = _bases if atype == 'bases' else _events
 
     if name not in _refer:
-        raise Exception(f"Can not find mixin '{name}' in {atype}")
+        raise MixinError(f"Can not find mixin '{name}' in {atype}")
     for e in _refer[name]:
         if e[0] == _path:
             return name, e
-    raise Exception(f"Can not find mixin path '{path}'")
+    raise MixinError(f"Can not find mixin path '{path}'")
 
 
 def _build_bases(data, lang, _dnames=None, _types=None, _bases=None, use_ctype=False):
@@ -298,7 +368,9 @@ def _build_bases(data, lang, _dnames=None, _types=None, _bases=None, use_ctype=F
     if _dnames is None:
         _dnames = []
 
-    data = copy.deepcopy(data)
+    # 수정이 필요한 경우에만 복사
+    if '_imported_' in data or 'bases' in data:
+        data = copy.deepcopy(data)
 
     if '_imported_' in data:
         for idata in data['_imported_']:
@@ -352,7 +424,10 @@ def _build_events(data, lang=None, _dnames=None, _types=None, _bases=None, _even
         _events = defaultdict(list)
     if _dnames is None:
         _dnames = []
-    data = copy.deepcopy(data)
+    
+    # 수정이 필요한 경우에만 복사
+    if '_imported_' in data or 'events' in data or 'bases' in data:
+        data = copy.deepcopy(data)
 
     if '_imported_' in data:
         # 수입된 것이 있으면 그것도 빌드
@@ -383,7 +458,7 @@ def _build_events(data, lang=None, _dnames=None, _types=None, _bases=None, _even
     return _events
 
 
-def build_model(data, lang=None, use_ctype=False):
+def build_model(data: Dict[str, Any], lang: Optional[str] = None, use_ctype: bool = False) -> AttrDict:
     """lab 파일 데이터로부터 완전한 모델을 구성.
     
     도메인, 타입, 베이스, 이벤트 정보를 모두 수집하고 해결하여
@@ -407,7 +482,7 @@ def build_model(data, lang=None, use_ctype=False):
                     events=events))
 
 
-def handle_import(labfile, labjs):
+def handle_import(labfile: str, labjs: Dict[str, Any], _imported_files: Optional[Set[str]] = None):
     """랩 파일이 참조하는 외부 랩 파일들을 재귀적으로 로드.
     
     import 필드에 지정된 파일들을 찾아 로드하고,
@@ -417,29 +492,50 @@ def handle_import(labfile, labjs):
     Args:
         labfile (str): 기준이 되는 랩파일 경로
         labjs (dict): 랩 데이터 (수정됨)
+        _imported_files (set, optional): 이미 처리된 파일들 (순환 import 방지용)
         
     Raises:
         FileNotFoundError: import할 파일을 찾을 수 없는 경우
+        ImportError: 순환 import 또는 경로 문제
     """
     if 'import' not in labjs:
         return labjs
+
+    if _imported_files is None:
+        _imported_files = set()
+    
+    # 현재 파일을 처리 중인 파일 목록에 추가
+    current_file = os.path.abspath(labfile)
+    if current_file in _imported_files:
+        raise ImportError(f"Circular import detected: {current_file}")
+    _imported_files.add(current_file)
 
     if '_imported_' not in labjs:
         labjs['_imported_'] = []
 
     adir = os.path.dirname(labfile)
 
-    for imp in labjs['import']:
-        path = os.path.join(adir, f'{imp}.lab.json')
-        if not os.path.isfile(path):
-            raise FileNotFoundError(path)
+    try:
+        for imp in labjs['import']:
+            # 경로 검증
+            validated_path = _validate_path(adir, imp)
+            
+            if not os.path.isfile(validated_path):
+                raise FileNotFoundError(f"Import file not found: {validated_path}")
 
-        with open(path, 'rt', encoding='utf8') as f:
-            body = f.read()
-            data = json.loads(body)
-            if 'import' in data:
-                handle_import(labfile, data)
-            labjs['_imported_'].append(AttrDict(data))
+            with open(validated_path, 'rt', encoding='utf8') as f:
+                try:
+                    body = f.read()
+                    data = json.loads(body)
+                except json.JSONDecodeError as e:
+                    raise ImportError(f"Invalid JSON in file {validated_path}: {e}")
+                    
+                if 'import' in data:
+                    handle_import(validated_path, data, _imported_files.copy())
+                labjs['_imported_'].append(AttrDict(data))
+    finally:
+        # 처리 완료 후 파일을 목록에서 제거
+        _imported_files.discard(current_file)
 
 
 def _handle_import(labjs):
