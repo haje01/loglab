@@ -2001,8 +2001,6 @@ namespace loglab_foo
         public int? ServerNo = null;
         // 계정 ID
         public int? AcntId = null;
-        // 이벤트 분류
-        public int? Category = null;
         // 플레이 시간 (초)
         public float? PlayTime = null;
         public static JsonSerializerOptions options = new JsonSerializerOptions

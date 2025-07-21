@@ -28,11 +28,11 @@ namespace loglab_{{ domain.name }}
         {% set ofields = fields | optional %}
         {% set cfields = fields | const %}
         public const string Event = "{{ ename }}";
-        {% for fname in fields.keys() %}{% if fname != 'DateTime' %}        // {{ events[ename][-1][1]['fields'][fname][-1][1]['desc'] }}
+        {% for fname in fields.keys() %}{% if fname != 'DateTime' and fname not in cfields %}        // {{ events[ename][-1][1]['fields'][fname][-1][1]['desc'] }}
         {% set field = fields[fname][-1][1] %}
         {% if type(field) in ('DateTime') %}
         public {{ type(field) }} {{ fname }};
-        {% else %}
+        {% elif fname not in cfields %}
         public {{ type(field) }}? {{ fname }} = null;
         {% endif %}{% endif %}{% endfor %}
         public static JsonSerializerOptions options = new JsonSerializerOptions
