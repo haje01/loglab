@@ -91,14 +91,14 @@ jobs:
 
     - name: Run linting
       run: |
-        # Check code formatting with black
+        # Check code formatting with black (uses pyproject.toml configuration)
         black --check --diff loglab tests
 
-        # Check import sorting with isort
+        # Check import sorting with isort (uses pyproject.toml configuration)
         isort --check-only --diff loglab tests
 
-        # Run flake8 linting
-        flake8 loglab tests --max-line-length=88 --extend-ignore=E203,W503
+        # Run flake8 linting (uses setup.cfg configuration)
+        flake8 loglab tests
 
   security:
     runs-on: ubuntu-latest
