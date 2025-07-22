@@ -1,4 +1,4 @@
-"""확장된 CLI 테스트."""
+"""CLI 통합 테스트 (Integration Tests)."""
 
 import json
 import os

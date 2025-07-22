@@ -1,4 +1,4 @@
-"""개선된 CLI 테스트 (v2)."""
+"""CLI 단위 테스트 (Unit Tests)."""
 
 import json
 from unittest.mock import Mock, mock_open, patch
