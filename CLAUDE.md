@@ -59,7 +59,7 @@ tox
 loglab object example/foo.lab.json py -o tests/loglab_foo.py
 cd tests && pytest test_log_objects_python.py
 
-# Generate C# log objects  
+# Generate C# log objects
 loglab object example/foo.lab.json cs -o tests/cstest/loglab_foo.cs
 cd tests/cstest && dotnet run
 

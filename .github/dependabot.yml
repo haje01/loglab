@@ -1,0 +1,58 @@
+version: 2
+updates:
+  # Python dependencies
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "haje01"
+    assignees:
+      - "haje01"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    ignore:
+      # Ignore major version updates for stable dependencies
+      - dependency-name: "jsonschema"
+        update-types: ["version-update:semver-major"]
+    groups:
+      # Group development dependencies
+      dev-dependencies:
+        patterns:
+          - "pytest*"
+          - "coverage"
+          - "black"
+          - "flake8"
+          - "isort"
+          - "pre-commit"
+          - "tox"
+          - "bandit"
+          - "safety"
+      # Group production dependencies
+      production-dependencies:
+        patterns:
+          - "click"
+          - "jsonschema"
+          - "jinja2"
+          - "tabulate"
+          - "requests"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/.github/workflows"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "haje01"
+    assignees:
+      - "haje01"
+    commit-message:
+      prefix: "ci"
+      include: "scope"

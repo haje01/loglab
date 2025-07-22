@@ -27,8 +27,6 @@ namespace loglab_foo
         public int? ServerNo = null;
         // 계정 ID
         public int? AcntId = null;
-        // 이벤트 분류
-        public int? Category = null;
         // 디바이스의 플랫폼
         public string? Platform = null;
         public static JsonSerializerOptions options = new JsonSerializerOptions
@@ -73,8 +71,6 @@ namespace loglab_foo
         public int? ServerNo = null;
         // 계정 ID
         public int? AcntId = null;
-        // 이벤트 분류
-        public int? Category = null;
         // 플레이 시간 (초)
         public float? PlayTime = null;
         public static JsonSerializerOptions options = new JsonSerializerOptions
@@ -118,8 +114,6 @@ namespace loglab_foo
         public int? ServerNo = null;
         // 계정 ID
         public int? AcntId = null;
-        // 이벤트 분류
-        public int? Category = null;
         // 캐릭터 ID
         public int? CharId = null;
         public static JsonSerializerOptions options = new JsonSerializerOptions
@@ -163,8 +157,6 @@ namespace loglab_foo
         public int? ServerNo = null;
         // 계정 ID
         public int? AcntId = null;
-        // 이벤트 분류
-        public int? Category = null;
         // 캐릭터 ID
         public int? CharId = null;
         public static JsonSerializerOptions options = new JsonSerializerOptions
@@ -208,8 +200,6 @@ namespace loglab_foo
         public int? ServerNo = null;
         // 계정 ID
         public int? AcntId = null;
-        // 이벤트 분류
-        public int? Category = null;
         // 캐릭터 ID
         public int? CharId = null;
         // 맵 코드
@@ -281,8 +271,6 @@ namespace loglab_foo
         public const string Event = "MonsterDropItem";
         // 서버 번호
         public int? ServerNo = null;
-        // 이벤트 분류
-        public int? Category = null;
         // 몬스터 타입 코드
         public int? MonsterCd = null;
         // 몬스터 개체 ID
@@ -358,8 +346,6 @@ namespace loglab_foo
         public int? ServerNo = null;
         // 계정 ID
         public int? AcntId = null;
-        // 이벤트 분류
-        public int? Category = null;
         // 캐릭터 ID
         public int? CharId = null;
         // 맵 코드

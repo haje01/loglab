@@ -119,7 +119,7 @@ DB 와 달리 로그는 설계없이 그때그때 자유롭게 남기는 것이 
 
 여기에서 OS 에 맞는 압축 파일을 받아서 풀고, 어느 곳에서나 실행될 수 있도록 Path 를 걸어두면 되겠다.
 
-### 소스 코드로 설치하기 
+### 소스 코드로 설치하기
 
 소스 코드 기반으로 LogLab을 설치하기 위해서는 최소 Python 3.7 이상이필요하다. 파이썬이 설치되어 있지 않다면 [이곳](https://www.python.org/) 에서 최신 버전의 파이썬을 설치하도록 하자.
 
@@ -1334,11 +1334,11 @@ Description : 캐릭터의 아이템 습득
 
 > 로그 뿐만아니라 서버나 DB 등에서 함께 공유되는 나열값의 경우는 랩파일이 아닌 별도의 장소에서 기록/관리되어야 할 것이다. 이런 경우 랩 파일에서는 단순히 기본 타입만 지정하고, 자세한 나열값 정보는 별도 문서를 참조하도록 가이드하는 것이 맞겠다.
 
-### 상수 이용하기 
+### 상수 이용하기
 
-상수 (const) 는 제약문의 하나로, 필드가 항상 지정된 값 하나만 가져야 하는 경우에 사용한다. 이벤트의 카테고리 분류 등을 숫자로 표시하려는 경우 베이스나 상위 이벤트에 정의하여 사용하면 유용할 것이다. 
+상수 (const) 는 제약문의 하나로, 필드가 항상 지정된 값 하나만 가져야 하는 경우에 사용한다. 이벤트의 카테고리 분류 등을 숫자로 표시하려는 경우 베이스나 상위 이벤트에 정의하여 사용하면 유용할 것이다.
 
-> 이런 값은 로그 자체 보다는, 로그의 수집 또는 정리 (ETL) 하는 하위 작업에서 유용할 수 있다. 
+> 이런 값은 로그 자체 보다는, 로그의 수집 또는 정리 (ETL) 하는 하위 작업에서 유용할 수 있다.
 
 예로서, 지금까지의 이벤트를 크게 '계정 이벤트', '캐릭터 이벤트', '시스템 이벤트' 의 세 가지로 분류하고 싶다고 하자. 이를 위해 다음처럼 `bases` 아래의 `Account` 와 `Character` 에 상수 필드를 추가하고, `System` 을 추가한다.
 
@@ -1400,7 +1400,7 @@ Description : 캐릭터의 아이템 습득
 
 ```js
 
-"events": 
+"events":
 
   // ...
 
@@ -1430,7 +1430,7 @@ Description : 계정 로그인
 | Platform | string   | 디바이스의 플랫폼 | ios, aos 중 하나     |
 +----------+----------+-------------------+----------------------+
 
-# ... 
+# ...
 
 Event : CharLogin
 Description : 캐릭터 로그인
@@ -2094,7 +2094,7 @@ namespace loglab_foo
         static thread_local std::stringstream ss;
         static thread_local std::string buffer;
         static thread_local char datetime_buffer[32];
-        
+
         static std::string& SerializeToBuffer(const std::string& content) {
             ss.clear();
             ss.str("");
@@ -2102,22 +2102,22 @@ namespace loglab_foo
             buffer = ss.str();
             return buffer;
         }
-        
+
         static const char* FormatDateTime() {
             auto now = std::chrono::system_clock::now();
             auto in_time_t = std::chrono::system_clock::to_time_t(now);
             auto microseconds = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()) % 1000000;
-            
+
             std::tm* tm_utc = std::gmtime(&in_time_t);
             int len = std::sprintf(datetime_buffer, "%04d-%02d-%02dT%02d:%02d:%02d.%06ldZ",
                 tm_utc->tm_year + 1900, tm_utc->tm_mon + 1, tm_utc->tm_mday,
                 tm_utc->tm_hour, tm_utc->tm_min, tm_utc->tm_sec,
                 microseconds.count());
-            
+
             return datetime_buffer;
         }
     };
-    
+
     // Thread-local static member definitions
     thread_local std::stringstream LogSerializer::ss;
     thread_local std::string LogSerializer::buffer;
@@ -2455,7 +2455,48 @@ $ sh tools/build.sh
 정상적으로 빌드가 되면, `dist/` 디렉토리 아래 `loglab.exe` (윈도우) 또는 `loglab` (리눅스/macOS) 실행 파일이 만들어진다. 이것을 배포하면 되겠다.
 
 
-### 테스트 실행 
+### 테스트 실행
+
+#### 자동화된 개발 환경 설정 (권장)
+
+새로 개선된 자동화된 테스트 환경을 사용하려면:
+
+```sh
+# 개발 환경 원클릭 설정 (의존성 설치 + pre-commit hooks 설정)
+make setup
+
+# 전체 테스트 및 품질 검사 실행 (포맷팅, 린팅, 테스트, 커버리지)
+make all
+```
+
+#### 개별 테스트 명령어
+
+```sh
+# 기본 테스트 실행
+make test
+
+# 커버리지 포함 테스트
+make coverage
+
+# 코드 포맷팅 (black, isort)
+make format
+
+# 린팅 검사 (flake8)
+make lint
+
+# 보안 검사 (bandit, safety)
+make security
+
+# 다언어 코드 생성 테스트
+make test-python    # Python 코드 생성 테스트
+make test-csharp    # C# 코드 생성 테스트 (dotnet 필요)
+make test-cpp       # C++ 코드 생성 테스트 (g++ 필요)
+
+# 전체 코드 생성 테스트
+make test-codegen
+```
+
+#### 기존 방식 (수동)
 
 다음처럼 개발을 위한 추가 의존 패키지를 설치하고,
 
@@ -2483,9 +2524,9 @@ loglab object example/foo.lab.json py -o tests/loglab_foo.py
 pytest test_log_objects_python.py
 ```
 
-### C# 로그 객체 테스트 
+### C# 로그 객체 테스트
 
-C# 코드 실행을 위한 설치가 필요하다. 
+C# 코드 실행을 위한 설치가 필요하다.
 
 ```sh
 sudo apt update
@@ -2510,7 +2551,7 @@ loglab object example/foo.lab.json cs -o tests/cstest/loglab_foo.cs
 dotnet run
 ```
 
-### C++ 로그 객체 테스트 
+### C++ 로그 객체 테스트
 
 테스트를 위해 먼저 `gtest` 를 설치가 필요하다.
 
@@ -2546,6 +2587,40 @@ Running main() from ./googletest/src/gtest_main.cc
 [----------] Global test environment tear-down
 [==========] 2 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 2 tests.
+```
+
+### 자동화된 테스트 및 CI/CD
+
+LogLab은 포괄적인 테스트 자동화 시스템을 갖추고 있습니다:
+
+#### GitHub Actions CI/CD
+- **자동 테스트**: 모든 push 및 pull request에서 자동 실행
+- **다중 Python 버전**: 3.7, 3.8, 3.9, 3.10, 3.11 지원
+- **크로스 언어 테스트**: Python, C#, C++ 코드 생성 검증
+- **품질 검사**: 린팅, 보안 검사, 커버리지 리포팅
+
+#### Pre-commit Hooks
+개발 중 코드 품질을 자동으로 보장:
+```sh
+# pre-commit hooks 설치 (make setup에 포함됨)
+pre-commit install
+
+# 모든 파일에 대해 수동 실행
+pre-commit run --all-files
+```
+
+#### 의존성 자동 관리
+- **Dependabot**: 주간 의존성 업데이트 자동 PR
+- **보안 업데이트**: 취약점 발견 시 자동 알림
+- **그룹화된 업데이트**: 개발/프로덕션 의존성 별도 관리
+
+#### 성능 및 통합 테스트
+```sh
+# 성능 테스트 실행
+pytest tests/test_performance.py -v
+
+# 전체 통합 테스트
+pytest tests/test_integration.py -v
 ```
 
 ### 추가 문자열 현지화

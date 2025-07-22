@@ -1,44 +1,43 @@
 """유틸리티 모음."""
+
+import gettext
 import os
-import sys
 import re
+import sys
 from glob import glob
 from pathlib import Path
-from urllib.request import urlopen
 from urllib.parse import urlparse
-from pathlib import Path
-from glob import glob
+from urllib.request import urlopen
 
 from requests import get
-import gettext
 
 LOGLAB_HOME = Path(os.path.dirname(os.path.abspath(__file__))).parent.absolute()
-BUILTIN_TYPES = ('string', 'integer', 'number', 'boolean', 'datetime')
+BUILTIN_TYPES = ("string", "integer", "number", "boolean", "datetime")
 
-lc_dir = os.path.join(LOGLAB_HOME, 'locales')
+lc_dir = os.path.join(LOGLAB_HOME, "locales")
 
 
 def get_translator(lang):
     """언어별 번역 함수를 반환.
-    
+
     Args:
         lang (str): 언어 코드 (예: 'ko', 'en'). None이면 번역하지 않음
-        
+
     Returns:
         callable: 번역 함수
     """
     if lang is None:
         return lambda x: x
-    trans = gettext.translation('base', localedir=lc_dir, languages=(lang,))
+    trans = gettext.translation("base", localedir=lc_dir, languages=(lang,))
     return trans.gettext
 
 
 def get_dt_desc(lang):
     """DateTime 필드의 설명을 언어별로 반환.
-    
+
     Args:
         lang (str): 언어 코드
-        
+
     Returns:
         str: 번역된 DateTime 필드 설명
     """
@@ -48,10 +47,10 @@ def get_dt_desc(lang):
 
 def get_object_warn(lang):
     """생성된 코드 파일의 경고 메시지를 언어별로 반환.
-    
+
     Args:
         lang (str): 언어 코드
-        
+
     Returns:
         str: 번역된 경고 메시지
     """
@@ -61,25 +60,25 @@ def get_object_warn(lang):
 
 class AttrDict(dict):
     """dict 키를 속성처럼 접근하는 헬퍼 클래스.
-    
+
     딕셔너리의 키를 obj.key 형태로 접근할 수 있게 해주며,
     중첩된 딕셔너리도 재귀적으로 AttrDict로 변환함.
     """
+
     def __init__(self, *args, **kwargs):
         def from_nested_dict(data):
             """중첩된 딕셔너리를 AttrDict로 재귀적으로 변환.
-            
+
             Args:
                 data: 변환할 데이터
-                
+
             Returns:
                 AttrDict 또는 원본 데이터
             """
             if not isinstance(data, dict):
                 return data
             else:
-                return AttrDict({key: from_nested_dict(data[key])
-                                    for key in data})
+                return AttrDict({key: from_nested_dict(data[key]) for key in data})
 
         super(AttrDict, self).__init__(*args, **kwargs)
         self.__dict__ = self
@@ -102,10 +101,11 @@ def find_labfile(labfile, print_msg=True):
 
     Returns:
         str: 찾은 랩 파일의 절대 경로
-        
+
     Raises:
         SystemExit: 적절한 랩 파일을 찾을 수 없는 경우
     """
+
     def handle(labfile, print_msg):
         labfile = os.path.abspath(labfile)
         if print_msg:
@@ -120,11 +120,15 @@ def find_labfile(labfile, print_msg=True):
     if num_labs == 1:
         return handle(labs[0], print_msg)
     elif num_labs == 0:
-        print("Error: 현재 디렉토리에 랩 파일이 없습니다. 새 랩 파일을 "
-              "만들거나, 사용할 랩 파일을 명시적으로 지정해 주세요.")
+        print(
+            "Error: 현재 디렉토리에 랩 파일이 없습니다. 새 랩 파일을 "
+            "만들거나, 사용할 랩 파일을 명시적으로 지정해 주세요."
+        )
     else:
-        print("Error: 현재 디렉토리에 랩 파일이 하나 이상 있습니다. "
-              "사용할 랩 파일을 명시적으로 지정해 주세요.")
+        print(
+            "Error: 현재 디렉토리에 랩 파일이 하나 이상 있습니다. "
+            "사용할 랩 파일을 명시적으로 지정해 주세요."
+        )
     sys.exit(1)
 
 
@@ -139,19 +143,19 @@ def load_file_from(path):
 
     Returns:
         str: 읽어들인 파일 내용
-        
+
     Raises:
         URLError: 웹 파일 다운로드 실패시
         FileNotFoundError: 로컬 파일이 존재하지 않는 경우
     """
     parsed = urlparse(path)
-    if parsed.scheme in ('http', 'https'):
+    if parsed.scheme in ("http", "https"):
         # 웹 파일
         with urlopen(path) as f:
             return f.read()
     else:
         # 로컬 파일
-        with open(path, 'rt', encoding='utf8') as f:
+        with open(path, "rt", encoding="utf8") as f:
             return f.read()
 
 
@@ -161,35 +165,35 @@ def load_file_from(path):
 #     return fields
 
 
-def explain_rstr(f, lang, line_dlm='\n'):
+def explain_rstr(f, lang, line_dlm="\n"):
     """필드의 제약 조건을 사람이 읽기 쉬운 설명으로 변환.
-    
+
     JSON Schema의 제약 조건들(minimum, maximum, enum, pattern 등)을
     지정된 언어로 번역된 설명 문자열로 변환함.
-    
+
     Args:
         f (dict): 필드 정의 딕셔너리 (type, 제약 조건들 포함)
         lang (str): 번역할 언어 코드
         line_dlm (str): 여러 제약 조건을 구분할 구분자. 기본 '\n'
-        
+
     Returns:
         str: 번역된 제약 조건 설명 문자열
     """
     _ = get_translator(lang)
     exps = []
-    atype = f['type']
-    if atype in ('integer', 'number'):
+    atype = f["type"]
+    if atype in ("integer", "number"):
         amin = amax = xmin = xmax = enum = const = None
-        if 'minimum' in f:
-            amin = f['minimum']
-        if 'maximum' in f:
-            amax = f['maximum']
-        if 'exclusiveMinimum' in f:
-            xmin = f['exclusiveMinimum']
-        if 'exclusiveMaximum' in f:
-            xmax = f['exclusiveMaximum']
-        if 'enum' in f:
-            enum = f['enum']
+        if "minimum" in f:
+            amin = f["minimum"]
+        if "maximum" in f:
+            amax = f["maximum"]
+        if "exclusiveMinimum" in f:
+            xmin = f["exclusiveMinimum"]
+        if "exclusiveMaximum" in f:
+            xmax = f["exclusiveMaximum"]
+        if "enum" in f:
+            enum = f["enum"]
             if len(enum) > 0:
                 expl = []
                 for d in enum:
@@ -198,18 +202,20 @@ def explain_rstr(f, lang, line_dlm='\n'):
                     else:
                         expl.append(str(d))
                 enum = expl
-            arr = ', '.join(expl)
+            arr = ", ".join(expl)
             enum = _("{} 중 하나").format(arr)
-        if 'const' in f:
-            const = f['const']
+        if "const" in f:
+            const = f["const"]
             if type(const) is list:
                 const = f"{const[0]} ({const[1]})"
             const = _("항상 {}").format(const)
 
-        assert amin is None or xmin is None,\
-            'minimum 과 exclusiveMinimum 함께 사용 불가'
-        assert amax is None or xmax is None,\
-            'maximum 과 exclusiveMaximum 함께 사용 불가'
+        assert (
+            amin is None or xmin is None
+        ), "minimum 과 exclusiveMinimum 함께 사용 불가"
+        assert (
+            amax is None or xmax is None
+        ), "maximum 과 exclusiveMaximum 함께 사용 불가"
 
         stmts = []
         if amin is not None:
@@ -226,19 +232,19 @@ def explain_rstr(f, lang, line_dlm='\n'):
             exps.append(const)
 
         if len(stmts) > 0:
-            exps.append(' '.join(stmts))
-    elif atype == 'string':
+            exps.append(" ".join(stmts))
+    elif atype == "string":
         minl = maxl = enum = ptrn = fmt = None
-        if 'minLength' in f:
-            minl = f['minLength']
-        if 'maxLength' in f:
-            maxl = f['maxLength']
-        if 'enum' in f:
-            enum = f['enum']
-        if 'pattern' in f:
-            ptrn = f['pattern']
-        if 'format' in f:
-            fmt = f['format']
+        if "minLength" in f:
+            minl = f["minLength"]
+        if "maxLength" in f:
+            maxl = f["maxLength"]
+        if "enum" in f:
+            enum = f["enum"]
+        if "pattern" in f:
+            ptrn = f["pattern"]
+        if "format" in f:
+            fmt = f["format"]
 
         stmts = []
         if minl is not None:
@@ -246,15 +252,15 @@ def explain_rstr(f, lang, line_dlm='\n'):
         if maxl is not None:
             stmts.append(_("{} 자 이하").format(maxl))
         if len(stmts) > 0:
-            exps.append(' '.join(stmts))
+            exps.append(" ".join(stmts))
 
         if enum is not None:
             if type(enum[0]) is list:
                 _enum = []
                 for i, d in enum:
-                    _enum.append(f'{i} ({d})')
+                    _enum.append(f"{i} ({d})")
                 enum = _enum
-            arr = ', '.join(str(e) for e in enum)
+            arr = ", ".join(str(e) for e in enum)
             exps.append(_("{} 중 하나").format(arr))
         if ptrn is not None:
             exps.append(_("정규식 {} 매칭").format(ptrn))
@@ -265,11 +271,11 @@ def explain_rstr(f, lang, line_dlm='\n'):
 
 def _request_dir(labfile, subdir):
     """요청된 서브디렉토리를 생성하고 경로를 반환.
-    
+
     Args:
         labfile (str): 랩 파일 경로. None이면 현재 디렉토리 사용
         subdir (str): 생성할 서브디렉토리 이름
-        
+
     Returns:
         str: 생성된 디렉토리의 절대 경로
     """
@@ -291,12 +297,12 @@ def download(url, filepath=None):
     Args:
         url (str): 다운로드할 파일의 URL
         filepath (str, optional): 저장할 파일 경로. None이면 자동 생성
-        
+
     Raises:
         requests.RequestException: 다운로드 실패시
     """
     if filepath is None:
-        filepath = url.split('/')[-1]
+        filepath = url.split("/")[-1]
 
     with open(filepath, "wb") as f:
         res = get(url)
@@ -305,11 +311,11 @@ def download(url, filepath=None):
 
 def test_reset():
     """테스트 환경 초기화.
-    
+
     테스트 디렉토리로 이동하고 이전 테스트에서 생성된
     임시 파일들을 모두 삭제함.
     """
-    cwd = os.path.join(LOGLAB_HOME, 'tests')
+    cwd = os.path.join(LOGLAB_HOME, "tests")
     os.chdir(cwd)
 
     # 기존 결과 삭제
@@ -325,19 +331,19 @@ def test_reset():
 
 def absdir_for_html(adir):
     """HTML에서 사용할 수 있는 로컬 디렉토리 절대 경로로 변환.
-    
+
     WSL 환경의 /mnt/드라이브 경로를 Windows file:// URL 형식으로 변환.
-    
+
     Args:
         adir (str 또는 Path): 변환할 디렉토리 경로
-        
+
     Returns:
         str: HTML에서 사용 가능한 절대 경로 또는 file:// URL
     """
-    match = re.search(r'^/mnt/([a-z])/(.+)$', str(adir))
+    match = re.search(r"^/mnt/([a-z])/(.+)$", str(adir))
     if match is not None:
         drv, rdir = match.groups()
         drv = drv.upper()
-        return f'file:///{drv}:/{rdir}'
+        return f"file:///{drv}:/{rdir}"
 
     return adir
