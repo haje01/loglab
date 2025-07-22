@@ -22,7 +22,8 @@ class TestCLIBasics:
     def test_cli_without_command(self):
         """명령어 없이 실행 시 도움말 표시."""
         result = self.runner.invoke(cli)
-        assert result.exit_code == 2
+        # Exit code can be 0 (older Click) or 2 (newer Click) when showing help
+        assert result.exit_code in [0, 2]
         assert "Commands:" in result.output
         assert "show" in result.output
         assert "schema" in result.output

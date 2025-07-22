@@ -39,7 +39,8 @@ def test_cli():
     """기본 실행 테스트."""
     runner = CliRunner()
     res = runner.invoke(cli)
-    assert res.exit_code == 2
+    # Exit code can be 0 (older Click) or 2 (newer Click) when showing help
+    assert res.exit_code in [0, 2]
     out = res.output
     assert "Commands:" in out
     assert "show" in out
