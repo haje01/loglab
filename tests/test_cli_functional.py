@@ -1,4 +1,4 @@
-"""cli 테스트."""
+"""CLI 기능 테스트 (Functional Tests) - 실제 lab 파일을 사용한 엔드투엔드 테스트."""
 
 import codecs
 import json
