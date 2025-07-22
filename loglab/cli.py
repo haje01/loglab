@@ -15,7 +15,7 @@ from loglab.schema import log_schema_from_labfile, verify_labfile, verify_logfil
 from loglab.version import VERSION
 
 
-@click.group()
+@click.group(no_args_is_help=True)
 def cli():
     """LogLab 메인 CLI 그룹.
 
