@@ -26,7 +26,7 @@ setup(
     scripts=SCRIPTS,
     license="MIT License",
     install_requires=[
-        "click",
+        "click>=8.0.0",
         "jsonschema==3.2.0",
         "jinja2",
         "tabulate[widechars]",
