@@ -43,28 +43,31 @@ jobs:
         pip install tox coverage pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
-        # Install package in development mode for code generation
-        pip install -e .
-
-    - name: Generate required test files for tox
-      run: |
-        # Generate Python log objects required by test_log_objects_python.py
-        python -m loglab object example/foo.lab.json py -o tests/loglab_foo.py
 
     - name: Run tests with tox
       run: tox -e py$(echo ${{ matrix.python-version }} | tr -d .)
 
     - name: Run additional code generation tests
       run: |
+        # Check current directory and files
+        pwd
+        ls -la
+        ls -la example/ || echo "example directory not found"
+
+        # Install package in development mode for code generation
+        pip install -e .
+
         # Python code generation test
         python -m loglab object example/foo.lab.json py -o tests/loglab_foo.py
         cd tests && python -m pytest test_log_objects_python.py -v
 
         # C# code generation test
+        cd ${{ github.workspace }}
         python -m loglab object example/foo.lab.json cs -o tests/cstest/loglab_foo.cs
         cd tests/cstest && dotnet run
 
         # C++ code generation test
+        cd ${{ github.workspace }}
         python -m loglab object example/foo.lab.json cpp -o tests/loglab_foo.h
         cd tests && g++ -std=c++17 -I. test_log_objects_cpp.cpp -lgtest -lgtest_main -lpthread -o test_log_objects_cpp && ./test_log_objects_cpp
 
