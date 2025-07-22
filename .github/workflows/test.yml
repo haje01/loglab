@@ -43,6 +43,13 @@ jobs:
         pip install tox coverage pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+        # Install package in development mode for code generation
+        pip install -e .
+
+    - name: Generate required test files for tox
+      run: |
+        # Generate Python log objects required by test_log_objects_python.py
+        python -m loglab object example/foo.lab.json py -o tests/loglab_foo.py
 
     - name: Run tests with tox
       run: tox -e py$(echo ${{ matrix.python-version }} | tr -d .)
