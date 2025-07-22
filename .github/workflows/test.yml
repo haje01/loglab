@@ -1,0 +1,129 @@
+name: Tests
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgtest-dev
+        cd /usr/src/gtest
+        sudo cmake CMakeLists.txt
+        sudo make
+        sudo cp lib/*.a /usr/lib
+        sudo ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a
+        sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
+
+    - name: Install .NET SDK (for C# tests)
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '6.0.x'
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install tox coverage pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+
+    - name: Run tests with tox
+      run: tox -e py$(echo ${{ matrix.python-version }} | tr -d .)
+
+    - name: Run additional code generation tests
+      run: |
+        # Python code generation test
+        python -m loglab object example/foo.lab.json py -o tests/loglab_foo.py
+        cd tests && python -m pytest test_log_objects_python.py -v
+
+        # C# code generation test
+        python -m loglab object example/foo.lab.json cs -o tests/cstest/loglab_foo.cs
+        cd tests/cstest && dotnet run
+
+        # C++ code generation test
+        python -m loglab object example/foo.lab.json cpp -o tests/loglab_foo.h
+        cd tests && g++ -std=c++17 -I. test_log_objects_cpp.cpp -lgtest -lgtest_main -lpthread -o test_log_objects_cpp && ./test_log_objects_cpp
+
+    - name: Generate coverage report
+      run: |
+        coverage run --source loglab -m pytest tests/
+        coverage xml
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 black isort
+
+    - name: Run linting
+      run: |
+        # Check code formatting with black
+        black --check --diff loglab tests
+
+        # Check import sorting with isort
+        isort --check-only --diff loglab tests
+
+        # Run flake8 linting
+        flake8 loglab tests --max-line-length=88 --extend-ignore=E203,W503
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install safety bandit
+
+    - name: Run safety check
+      run: safety check
+
+    - name: Run bandit security scan
+      run: bandit -r loglab/ -f json -o bandit-report.json || true
+
+    - name: Upload bandit report
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: bandit-report
+        path: bandit-report.json

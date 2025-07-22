@@ -87,17 +87,17 @@ verpatch d:\foo.dll /vo /xi
 	- dumps the version resource in RC format, does not update the file.
 
 
-	
+
 Remarks
 =======
 
-In "patch" mode (no /va option), verpatch replaces the version number in existing file 
+In "patch" mode (no /va option), verpatch replaces the version number in existing file
 version info resource with the values given on the command line.
 The version resource in the file  is parsed, then parameters specified on the command line are applied.
 
 If the file has no version resource, or you want to discard the existing resource, use /va switch.
 
-Quotes surrounding arguments are needed for the command shell (cmd.exe), 
+Quotes surrounding arguments are needed for the command shell (cmd.exe),
 for any argument that contains spaces.
 Also other characters should be escaped (ex. &, |, and ^ for cmd.exe).
 Null values can be specified as empty string ("").
@@ -138,7 +138,7 @@ or the text string begins with the same numbers as in the binary part.
 By default, Original File Name and Internal File Name are replaced to the actual filename.
 Use /fn to preserve existing values in the version resource.
 
-String attribute names for option /s must be language-neutral, 
+String attribute names for option /s must be language-neutral,
 not translations (example: PrivateBuild, not "Private Build Description").
 See below for the list of known attrbute names and their aliases.
 The examples above use the aliases.
@@ -164,7 +164,7 @@ Named resource types and ids are not implemented.
 The file is added as opaque binary chunk; the resource size is rounded up to 4 bytes
 and padded with zero bytes.
 
-The program detects extra data appended to executable files, saves it and appends 
+The program detects extra data appended to executable files, saves it and appends
 again after modifying resources.
 Command switch /noed disables checking for extra data.
 
@@ -179,7 +179,7 @@ Known string keys in VS_VERSION_INFO resource
 ====================================================================
 
 The aliases in the right column can be used with /s switch,
-in place of language-neutral (LN) attribute names. 
+in place of language-neutral (LN) attribute names.
 Attribute names are not case sensitive.
 
 -------------------+----+-------------------------------+------------
@@ -198,7 +198,7 @@ ProductName                 Product Name                  product
 ProductVersion        *1    Product Version               pv, productversion, productver, prodver
 PrivateBuild                Private Build Description     pb, private
 SpecialBuild                Special Build  Description    sb, build
-OleSelfRegister       A     - 
+OleSelfRegister       A     -
 AssemblyVersion       N
 
 Notes
@@ -235,22 +235,22 @@ Known issues and TO DO's:
  -  A second version resource may be added to a file that already has a version resource
    in other language. Switch /va won't help.
    TO DO: ensure that a file has only one version resource!
-   
+
  - When verpatch is invoked from command prompt, or batch file, the string
-   arguments can contain only ANSI characters, because cmd.exe batch files cannot be 
+   arguments can contain only ANSI characters, because cmd.exe batch files cannot be
    in Unicode format. If you need to include characters not in current locale,
    use other shell languages that fully support Unicode (Powershell, vbs, js).
-   
+
  - TO DO: In RC source output (/vo), special characters in strings are not quoted;
    so /vo may produce invalid RC input.
-   
+
  - The parser of binary version resources handles only the most common type of structure.
    If the parser breaks because of unhandled structure format, try /va switch to
    skip reading existing version resource and re-create it from scratch.
    Consider using WINE or other open source implementations?
-   
+
  - option to add extra 0 after version strings : "string\0"
-   (tentative, requested by a reader for some old VB code) 
+   (tentative, requested by a reader for some old VB code)
 
  - For files with extra data appended, checksum is not re-calculated.
    Such files usually implement their own integrity check.
@@ -265,7 +265,7 @@ Known issues and TO DO's:
    (Improvement of UpdateResource API?)
 
 
-Source code 
+Source code
 ============
 The source is provided as a Visual C++ 2005 project, it can be compiled with VC 2005, 2008, 2010 Express.
 It demonstrates use of the UpdateResource and imagehlp.dll API.

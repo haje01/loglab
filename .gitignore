@@ -114,3 +114,31 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Additional LogLab specific files
+*.schema.json
+loglab_*.py
+loglab_*.cs
+loglab_*.h
+fakelog.txt
+
+# IDE files
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Pre-commit
+.pre-commit-config.yaml.backup

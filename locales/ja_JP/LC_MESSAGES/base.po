@@ -28,7 +28,7 @@ msgid "{} 이상"
 msgstr "{} 以上"
 
 #: loglab/util.py:137
-msgid "{} 초과" 
+msgid "{} 초과"
 msgstr "{} より大きい"
 
 #: loglab/util.py:139
