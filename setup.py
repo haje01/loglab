@@ -22,7 +22,7 @@ setup(
     description="Tools that help you design and utilize log formats",
     platforms=["any"],
     python_requires=">=3.8",
-    packages=["loglab", "loglab.schema"],
+    packages=find_packages(),
     scripts=SCRIPTS,
     license="MIT License",
     install_requires=[
@@ -38,6 +38,6 @@ setup(
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Intended Audience :: Developers",
-        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
 )

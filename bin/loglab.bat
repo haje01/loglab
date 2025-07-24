@@ -1,3 +1,3 @@
 @echo off
 title loglab
-python "%~dp0\loglab" %*
+uvx --from loglab loglab

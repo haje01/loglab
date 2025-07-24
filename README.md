@@ -18,13 +18,21 @@ JSON Lines 로그 형식을 설계하고 검증하기 위한 Python 툴
 
 ### 설치
 
-**빌드된 실행 파일 (권장)**
-```bash
-# GitHub Releases에서 OS에 맞는 파일 다운로드
-# https://github.com/haje01/loglab/releases
-```
+**uv 기반 설치 (권장)**
 
-**소스 코드 설치**
+먼저 Python 패키지 매니저인 `uv` 의 설치가 필요합니다. `uv 설치 페이지 <https://docs.astral.sh/uv/getting-started/installation>`_ 를 참고하여 설치하도록 합니다.
+
+이제 다음과 같은 명령으로 LogLab 을 설치합니다.
+
+.. code::sh
+
+  uv tool install --from git+https://github.com/haje01/loglab.git loglab
+
+
+**소스 코드로 설치**
+
+최신 소스 코드를 기반으로 다음처럼 개발용으로 설치도 가능합니다.
+
 ```bash
 git clone https://github.com/haje01/loglab
 cd loglab
