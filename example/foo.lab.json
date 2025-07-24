@@ -7,7 +7,8 @@
     "types": {
         "unsigned": {
             "type": "integer",
-            "desc": "0 이상의 정수"
+            "desc": "0 이상의 정수",
+			"minimum": 0
         }
     },
 	"bases": {
