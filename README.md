@@ -2,7 +2,7 @@
 
 <img src="docs/_static/loglab.png" width="128" height="128" />
 
-[![Build Status](https://github.com/haje01/loglab/workflows/CI/badge.svg)](https://github.com/haje01/loglab/actions)
+[![Tests](https://github.com/haje01/loglab/actions/workflows/test.yml/badge.svg)](https://github.com/haje01/loglab/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 JSON Lines 로그 형식을 설계하고 검증하기 위한 Python 툴
@@ -56,9 +56,8 @@ LogLab은 [JSON Lines](https://jsonlines.org/) 형식을 사용합니다:
 
 ## 📖 문서
 
-- **[전체 문서](https://loglab.readthedocs.io/)** - 상세한 가이드와 튜토리얼
-- **[API 레퍼런스](https://loglab.readthedocs.io/api/)** - 코드 API 문서
-- **[예제 모음](https://loglab.readthedocs.io/examples/)** - 실제 사용 사례
+- **[전체 문서](https://loglab.readthedocs.io/)** - LogLab 의 상세한 가이드와 튜토리얼
+- **[생성 문서 예](https://htmlpreview.github.io/?https://raw.githubusercontent.com/haje01/loglab/master/example/rpg.html)** - 가상의 RPG 게임을 위한 로그 문서 사례
 
 ## 🎯 대상 사용자
 
