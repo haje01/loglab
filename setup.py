@@ -7,7 +7,7 @@ with open(os.path.join("loglab", "version.py"), "rt") as f:
 
 __version__ = version
 
-from distutils.core import setup
+from setuptools import find_packages, setup
 
 SCRIPTS = ["bin/loglab"]
 if os.name == "nt":
@@ -22,7 +22,7 @@ setup(
     description="Tools that help you design and utilize log formats",
     platforms=["any"],
     python_requires=">=3.8",
-    packages=["loglab"],
+    packages=["loglab", "loglab.schema"],
     scripts=SCRIPTS,
     license="MIT License",
     install_requires=[
