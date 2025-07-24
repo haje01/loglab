@@ -45,9 +45,29 @@ loglab verify example/foo.lab.json example/foo.jsonl
 loglab html example/foo.lab.json -o docs.html
 ```
 
-### 로그 형식 예제
+### 스키마와 로그 예제
 
-LogLab은 [JSON Lines](https://jsonlines.org/) 형식을 사용합니다:
+LogLab 은 지정된 JSON 형식으로 로그 스키마를 정의합니다.
+
+```json
+{
+  "domain": {
+    "name": "foo",
+    "desc": "최고의 모바일 게임"
+  },
+  "events": {
+    "Login": {
+      "desc": "계정 로그인",
+      "fields": [
+          ["ServerNo", "integer", "서버 번호"],
+          ["AcntId", "integer", "계정 ID"]
+      ]
+    }
+  }
+}
+```
+
+LogLab 으로 설계된 로그는 [JSON Lines](https://jsonlines.org/) 형식으로 출력됩니다:
 
 ```json
 {"DateTime": "2021-08-13T20:20:39+09:00", "Event": "Login", "ServerNo": 1, "AcntId": 1000}

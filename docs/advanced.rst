@@ -1042,3 +1042,419 @@
 ``example`` 디렉토리 또는
 `여기 <https://github.com/haje01/loglab/tree/master/example>`__ 에서
 확인할 수 있다.
+
+HTML 문서 출력
+--------------
+
+로그의 설계, 개발 그리고 검증 작업이 끝난 후에는, 유관 조직에 로그에
+관한 설명서를 공유해야 할 필요가 생긴다. 이런 경우 로그랩의 HTML 출력
+기능을 사용하면 유용하다. 다음과 같은 명령으로 간단히 생성할 수 있다.
+
+::
+
+   $ loglab html foo.lab.json
+   'foo.html' 에 HTML 문서 저장.
+
+생성된 ``foo.html`` 파일을 웹브라우저로 열어보면 아래와 같은 페이지를
+확인할 수 있을 것이다.
+
+.. figure:: _static/html.png
+   :alt: html_output
+
+   html_output
+
+로그 객체 코드 생성
+------------------
+
+서비스 코드에서 로그 출력을 구현할 때, 필요한 필드와 값을 매번 문자열로
+만들어 쓰는 것은 번거롭다. 로그 이벤트 구조에 맞는 객체(Object)를 미리
+정의하고 그것의 멤버 변수에 값을 채운 뒤, 최종적으로 JSON 형식으로
+직렬화(Serialize)하는 방식이 더 편리하고 안전하다. 여기서는 이러한
+객체를 **로그 객체(Log Object)**\ 로 부르겠다.
+
+로그랩은 ``object`` 명령을 통해 로그 객체를 위한 코드 생성을 지원한다.
+
+::
+
+   $ loglab object <랩 파일> <코드 타입>
+
+첫 번째 인자는 랩 파일명이고, 두 번째 인자는 생성할 프로그래밍 언어
+타입이다. 현재는 Python (``py``), C# (``cs``), C++ (``cpp``)를 지원한다.
+
+   ``const`` 로 지정된 필드는 로그 객체를 통해 설정할 수 없고, 객체
+   시리얼라이즈 (Serialize) 시에 랩파일에 지정된 값으로 출력된다.
+
+Python
+~~~~~~
+
+다음과 같이 ``object`` 명령으로 파이썬 로그 객체 코드를 출력한다.
+
+::
+
+   $ loglab object foo.lab.json py -o loglab_foo.py
+
+아래는 랩 파일 ``foo.lab.json``\ 에서 생성된 파이썬 로그 객체 파일
+``loglab_foo.py``\ 의 내용 중 일부이다.
+
+.. code:: python
+
+   """
+       ** 이 파일은 LogLab 에서 생성된 것입니다. 고치지 마세요! **
+
+       Domain: foo
+       Description: 위대한 모바일 게임
+   """
+   import json
+   from datetime import datetime
+   from typing import Optional
+
+   # ...
+
+   class Logout:
+       """계정 로그아웃"""
+
+       def __init__(self, _ServerNo: int, _AcntId: int):
+           self.reset(_ServerNo, _AcntId)
+
+       def reset(self, _ServerNo: int, _AcntId: int):
+
+           self.ServerNo = _ServerNo
+           self.AcntId = _AcntId
+           self.PlayTime : Optional[float] = None
+
+       def serialize(self):
+           data = dict(DateTime=datetime.now().astimezone().isoformat(),
+                       Event="Logout")
+           data["ServerNo"] = self.ServerNo
+           data["AcntId"] = self.AcntId
+           if self.PlayTime is not None:
+               data["PlayTime"] = self.PlayTime
+           return json.dumps(data)
+
+   # ...
+
+아래는 이 파일을 불러와서 사용하는 예이다. 이벤트의 필수 필드는 객체의
+생성자 인자로 전달하고, 옵션 필드는 객체 생성 후 직접 설정한다.
+
+.. code:: python
+
+   import loglab_foo as lf
+
+   e = lf.Logout(33, 44)
+   e.PlayTime = 100
+   print(e.serialize())
+
+결과는 아래와 같다.
+
+.. code:: json
+
+   {"DateTime": "2021-11-12T13:37:05.491169+09:00", "Event": "Logout", "ServerNo": 33, "AcntId": 44, "PlayTime": 100}
+
+
+.. note::
+
+   설정되지 않은 옵션 필드는 결과 JSON에 포함되지 않는다.
+
+C#
+~~~
+
+다음과 같이 C# 버전을 생성할 수 있다.
+
+::
+
+   $ loglab object foo.lab.json cs -o loglab_foo.cs
+
+아래는 C# 로그 객체 파일 ``loglab_foo.cs`` 내용의 일부이다.
+
+.. code:: cs
+
+   /*
+
+       ** 이 파일은 LogLab 에서 생성된 것입니다. 고치지 마세요! **
+
+       Domain: foo
+       Description: 위대한 모바일 게임
+
+   */
+
+   using System;
+   using System.Collections.Generic;
+   using System.Diagnostics;
+
+   namespace loglab_foo
+   {
+       // ...
+
+       /// <summary>
+       ///  계정 로그아웃
+       /// </summary>
+       public class Logout
+       {
+           public const string Event = "Logout";
+           // 서버 번호
+           public int? ServerNo = null;
+           // 계정 ID
+           public int? AcntId = null;
+           // 플레이 시간 (초)
+           public float? PlayTime = null;
+           public static JsonSerializerOptions options = new JsonSerializerOptions
+           {
+               Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+           };
+
+           public Logout(int _ServerNo, int _AcntId)
+           {
+               Reset(_ServerNo, _AcntId);
+           }
+           public void Reset(int _ServerNo, int _AcntId)
+           {
+               ServerNo = _ServerNo;
+               AcntId = _AcntId;
+               PlayTime = null;
+           }
+           public string Serialize()
+           {
+               List<string> fields = new List<string>();
+               Debug.Assert(ServerNo.HasValue);
+               fields.Add($"\"ServerNo\": {ServerNo}");
+               Debug.Assert(AcntId.HasValue);
+               fields.Add($"\"AcntId\": {AcntId}");
+               fields.Add($"\"Category\": 1");
+               if (PlayTime.HasValue)
+                   fields.Add($"\"PlayTime\": {PlayTime}");
+               string sfields = String.Join(", ", fields);
+               string dt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
+               string sjson = $"{{\"DateTime\": \"{dt}\", \"Event\": \"{Event}\", {sfields}}}";
+               return sjson;
+           }
+       }
+       // ...
+   }
+
+사용 예제는 다음과 같다.
+
+.. code:: cs
+
+   using System;
+   using loglab_foo;
+
+   namespace csharp
+   {
+       class Program
+       {
+           static void Main(string[] args)
+           {
+               Logout logout = new Logout(33, 44);
+               logout.PlayTime = 100;
+               Console.WriteLine(logout.Serialize());
+           }
+       }
+   }
+
+
+C++
+~~~
+
+C++ 로그 객체는 C++17 표준을 기반으로 생성된다. 다음과 같이 헤더 파일을
+생성한다.
+
+::
+
+   $ loglab object foo.lab.json cpp -o loglab_foo.h
+
+아래는 생성된 파일 loglab_foo.h 의 일부이다.
+
+.. code:: cpp
+
+   /*
+
+       이 파일은 LogLab 에서 생성된 것입니다. 고치지 마세요!
+
+       Domain: foo
+       Description: 위대한 모바일 게임
+   */
+
+   #pragma once
+
+   #include <iostream>
+   #include <string>
+   #include <vector>
+   #include <optional>
+   #include <chrono>
+   #include <sstream>
+   #include <iomanip>
+
+   namespace loglab_foo
+   {
+       class LogSerializer {
+       public:
+           static thread_local std::stringstream ss;
+           static thread_local std::string buffer;
+           static thread_local char datetime_buffer[32];
+
+           static std::string& SerializeToBuffer(const std::string& content) {
+               ss.clear();
+               ss.str("");
+               ss << content;
+               buffer = ss.str();
+               return buffer;
+           }
+
+           static const char* FormatDateTime() {
+               auto now = std::chrono::system_clock::now();
+               auto in_time_t = std::chrono::system_clock::to_time_t(now);
+               auto microseconds = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()) % 1000000;
+
+               std::tm* tm_utc = std::gmtime(&in_time_t);
+               int len = std::sprintf(datetime_buffer, "%04d-%02d-%02dT%02d:%02d:%02d.%06ldZ",
+                   tm_utc->tm_year + 1900, tm_utc->tm_mon + 1, tm_utc->tm_mday,
+                   tm_utc->tm_hour, tm_utc->tm_min, tm_utc->tm_sec,
+                   microseconds.count());
+
+               return datetime_buffer;
+           }
+       };
+
+       // Thread-local static member definitions
+       thread_local std::stringstream LogSerializer::ss;
+       thread_local std::string LogSerializer::buffer;
+       thread_local char LogSerializer::datetime_buffer[32];
+
+       /// <summary>
+       ///  계정 로그아웃
+       /// </summary>
+       class Logout
+       {
+       public:
+           static constexpr const char* Event = "Logout";
+
+           // Required fields
+           // 서버 번호
+           int ServerNo;
+           // 계정 ID
+           int AcntId;
+
+           // Optional fields
+           // 플레이 시간 (초)
+           std::optional<float> PlayTime;
+
+           Logout() {}
+
+           Logout(int _ServerNo, int _AcntId)
+           {
+               reset(_ServerNo, _AcntId);
+           }
+
+           void reset(int _ServerNo, int _AcntId)
+           {
+               ServerNo = _ServerNo;
+               AcntId = _AcntId;
+               PlayTime.reset();
+           }
+
+           std::string& serialize()
+           {
+               LogSerializer::ss.clear();
+               LogSerializer::ss.str("");
+               LogSerializer::ss << "{";
+
+               // DateTime and Event
+               LogSerializer::ss << "\"DateTime\":\"" << LogSerializer::FormatDateTime() << "\",";
+               LogSerializer::ss << "\"Event\":\"" << Event << "\"";
+
+               // Required fields
+               LogSerializer::ss << ",";
+               LogSerializer::ss << "\"ServerNo\":";
+               LogSerializer::ss << ServerNo;
+               LogSerializer::ss << ",";
+               LogSerializer::ss << "\"AcntId\":";
+               LogSerializer::ss << AcntId;
+
+               // Optional fields
+               if (PlayTime.has_value())
+               {
+                   LogSerializer::ss << ",";
+                   LogSerializer::ss << "\"PlayTime\":";
+                   LogSerializer::ss << PlayTime.value();
+               }
+
+               // Const fields
+               LogSerializer::ss << ",";
+               LogSerializer::ss << "\"Category\":";
+               LogSerializer::ss << 1;
+
+               LogSerializer::ss << "}";
+               LogSerializer::buffer = LogSerializer::ss.str();
+               return LogSerializer::buffer;
+           }
+       };
+
+       // ...
+
+   }
+
+생성된 ``loglab_foo.h`` 파일은 ``loglab_foo``\ 와 같은
+``loglab_<도메인 이름>`` 네임스페이스 안에 각 이벤트 클래스를 정의한다.
+옵션 필드는 ``std::optional``\ 을 사용한다.
+
+아래는 생성된 ``loglab_foo.h``\ 를 사용하는 예제 ``main.cpp`` 이다.
+
+.. code:: cpp
+
+   #include <iostream>
+   #include "loglab_foo.h" // LogLab이 생성한 헤더 파일을 포함한다.
+
+   // LogLab이 생성한 네임스페이스를 사용한다.
+   using namespace loglab_foo;
+
+   int main() {
+       // --- Login 이벤트 사용 예제 ---
+       // 필수 필드를 생성자 인자로 전달하여 객체를 생성한다.
+       Login login_event(1, 1001, "ios");
+       std::cout << "Login Event: " << login_event.serialize() << std::endl;
+
+       // --- Logout 이벤트 사용 예제 (옵션 필드 포함) ---
+       Logout logout_event(1, 1001);
+       logout_event.PlayTime = 123.45f; // 옵션 필드 설정
+       std::cout << "Logout Event: " << logout_event.serialize() << std::endl;
+
+       return 0;
+   }
+
+코드를 빌드하고 실행하려면 ``g++``\ 와 같은 C++ 컴파일러가 필요하다.
+
+**1. 컴파일** ``std::optional``\ 을 사용하므로 C++17 표준 이상으로
+컴파일해야 한다.
+
+.. code:: bash
+
+   g++ -std=c++17 -o main_app main.cpp
+
+**2. 실행**
+
+.. code:: bash
+
+   ./main_app
+
+**3. 결과**
+
+::
+
+   Login Event: {"DateTime":"2025-07-16T08:35:04.013922Z","Event":"Login","ServerNo":1,"AcntId":1001,"Platform":"ios"}
+   Logout Event: {"DateTime":"2025-07-16T08:35:04.013981Z","Event":"Logout","ServerNo":1,"AcntId":1001,"PlayTime":123.45}
+
+이와 같이, 로그 객체를 사용하면 각 언어의 타입 시스템을 활용하여
+안전하고 손쉽게 JSON 형태의 로그 문자열을 얻을 수 있다. 실제 파일에 쓰기
+위해서는 생성된 문자열을 사용하는 로깅 라이브러리에 전달하면 된다.
+
+.. note::
+
+   **빈번한 로그 객체 생성**
+
+   만약 특정 이벤트가 매우 자주 발생하고 그때마다 로그 객체를 생성하여
+   로그를 쓴다면, 가비지 컬렉션이나 메모리 단편화 등으로 인한 시스템
+   성능 저하가 발생할 수 있다. 이에 로그랩에서 생성된 로그 객체는
+   **리셋(Reset)** 메소드를 통해 객체를 초기화하는 기능을 제공한다.
+   이벤트 처리 코드에서 로그 객체를 매번 생성하지 말고, 클래스의 멤버
+   변수나 정적(Static) 객체로 선언해 두고, 리셋 메소드로 그 객체를
+   초기화한 후 재활용하는 방식을 추천한다.
