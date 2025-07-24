@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
 
     steps:
     - uses: actions/checkout@v4
@@ -40,12 +40,12 @@ jobs:
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install tox coverage pytest
+        pip install tox tox-uv coverage pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
 
     - name: Run tests with tox
-      run: tox -e py$(echo ${{ matrix.python-version }} | tr -d .)
+      run: tox -e py$(echo ${{ matrix.python-version }} | tr -d .)-ci
 
     - name: Run additional code generation tests
       run: |
