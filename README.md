@@ -113,13 +113,10 @@ LogLab 으로 설계된 로그는 [JSON Lines](https://jsonlines.org/) 형식으
 git clone https://github.com/haje01/loglab.git
 cd loglab
 uv venv
-uv pip install -e .[dev]
+uv pip install -e . -r requirements-dev.txt
 
 # 테스트 실행
 pytest tests/
-
-# 빌드
-./tools/build.sh
 ```
 
 ## 📄 라이선스
