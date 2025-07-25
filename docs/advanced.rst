@@ -751,7 +751,7 @@
 .. code:: json
 
    {
-     "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
+     "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/loglab/schema/lab.schema.json",
      "domain": {
        "name": "acme",
        "desc": "최고의 게임 회사"
@@ -815,7 +815,7 @@
 .. code:: json
 
    {
-     "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
+     "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/loglab/schema/lab.schema.json",
      "domain": {
        "name": "boo",
        "desc": "최고의 PC 온라인 게임"
@@ -849,7 +849,7 @@
 .. code:: json
 
    {
-     "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
+     "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/loglab/schema/lab.schema.json",
      "domain": {
        "name": "boo",
        "desc": "최고의 PC 온라인 게임"
@@ -909,7 +909,7 @@
 .. code:: json
 
    {
-     "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
+     "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/loglab/schema/lab.schema.json",
      "domain": {
        "name": "boo",
        "desc": "최고의 PC 온라인 게임"

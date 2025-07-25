@@ -71,7 +71,7 @@ cd tests && g++ -std=c++17 -I. test_log_objects_cpp.cpp -lgtest -lgtest_main -lp
 ## Key Files and Patterns
 
 - **Entry point**: `bin/loglab` script calls `loglab.cli:cli()`
-- **Lab file schema**: `schema/lab.schema.json` defines the structure of lab files
+- **Lab file schema**: `loglab/schema/lab.schema.json` defines the structure of lab files. you can ignore `schema/lab.schema.json` file which is provided for compatibility.
 - **Examples**: `example/` directory contains sample lab files
 - **Templates**: `template/` directory contains Jinja2 templates for code generation
 - **Localization**: `locales/` for internationalization support

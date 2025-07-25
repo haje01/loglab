@@ -11,10 +11,62 @@ from urllib.request import urlopen
 
 from requests import get
 
+# Python 3.9+ 에서는 importlib.resources, 이전 버전에서는 importlib_resources 사용
+try:
+    from importlib.resources import as_file, files
+except ImportError:
+    try:
+        from importlib_resources import as_file, files
+    except ImportError:
+        # fallback: 기존 방식 사용
+        files = None
+        as_file = None
+
 LOGLAB_HOME = Path(os.path.dirname(os.path.abspath(__file__))).parent.absolute()
 BUILTIN_TYPES = ("string", "integer", "number", "boolean", "datetime")
 
 lc_dir = os.path.join(LOGLAB_HOME, "locales")
+
+
+def get_schema_file_content():
+    """패키지에서 lab.schema.json 파일의 내용을 반환.
+
+    패키지로 설치된 경우 importlib.resources를 사용하고,
+    개발 환경에서는 기존 방식을 사용.
+
+    Returns:
+        str: schema 파일의 내용
+    """
+    if files is not None:
+        try:
+            # 패키지 리소스로 접근 시도
+            import loglab
+
+            schema_file = files(loglab) / "schema" / "lab.schema.json"
+            if schema_file.is_file():
+                return schema_file.read_text(encoding="utf-8")
+        except Exception:
+            pass
+
+    # fallback: 기존 방식 사용
+    schema_path = os.path.join(LOGLAB_HOME, "schema", "lab.schema.json")
+    try:
+        with open(schema_path, "r", encoding="utf-8") as f:
+            return f.read()
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Schema file not found: {schema_path}")
+
+
+def get_schema_file_path():
+    """패키지에서 lab.schema.json 파일의 경로를 반환.
+
+    개발 환경에서는 실제 경로를 반환하고,
+    패키지 설치된 경우에는 내용을 직접 읽도록 안내.
+
+    Returns:
+        str: schema 파일의 절대 경로 (fallback 용도)
+    """
+    return os.path.join(LOGLAB_HOME, "schema", "lab.schema.json")
 
 
 def get_translator(lang):

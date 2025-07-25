@@ -5,6 +5,8 @@ import logging
 import os
 from typing import Any, Dict, Optional
 
+from loglab.util import get_schema_file_content
+
 from .config import SchemaConfig
 from .implementations import (
     DefaultErrorHandler,
@@ -55,14 +57,23 @@ class SchemaValidator:
 
         try:
             # 스키마 파일 로드
-            logging.debug(f"Loading schema from: {schema_path}")
-            schema_content = self.file_loader.load(schema_path)
+            if schema_path == self.config.default_schema_path:
+                # 기본 스키마의 경우 패키지 리소스에서 직접 로드
+                logging.debug(f"Loading default schema using package resources")
+                schema_content = get_schema_file_content()
+            else:
+                # 사용자 지정 스키마의 경우 파일 시스템에서 로드
+                logging.debug(f"Loading schema from: {schema_path}")
+                schema_content = self.file_loader.load(schema_path)
+
             schema_data = json.loads(schema_content)
+            logging.debug("Schema loaded successfully")
 
             # Lab 파일 로드 및 검증
             logging.debug(f"Loading lab file from: {lab_path}")
             lab_content = self.file_loader.load(lab_path)
             lab_data = json.loads(lab_content)
+            logging.debug("Lab file loaded successfully")
 
             # 재귀적 검증 수행
             return self._recursive_validate(lab_data, schema_data, lab_path)
