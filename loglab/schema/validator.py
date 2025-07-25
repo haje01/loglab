@@ -1,6 +1,7 @@
 """Schema 검증기 구현."""
 
 import json
+import logging
 import os
 from typing import Any, Dict, Optional
 
@@ -50,13 +51,16 @@ class SchemaValidator:
         """
         if schema_path is None:
             schema_path = self.config.default_schema_path
+        logging.info(f"Verifying lab file: {lab_path} with schema: {schema_path}")
 
         try:
             # 스키마 파일 로드
+            logging.debug(f"Loading schema from: {schema_path}")
             schema_content = self.file_loader.load(schema_path)
             schema_data = json.loads(schema_content)
 
             # Lab 파일 로드 및 검증
+            logging.debug(f"Loading lab file from: {lab_path}")
             lab_content = self.file_loader.load(lab_path)
             lab_data = json.loads(lab_content)
 
@@ -91,6 +95,7 @@ class SchemaValidator:
                     import_path = os.path.join(basedir, f"{imp}.lab.json")
 
                     try:
+                        logging.debug(f"Importing file: {import_path}")
                         import_content = self.file_loader.load(import_path)
                         import_data = json.loads(import_content)
 

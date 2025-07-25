@@ -1,5 +1,6 @@
 """하위 호환성을 위한 기존 함수들의 래퍼."""
 
+import logging
 import sys
 from typing import Any, Dict, Optional
 
@@ -31,9 +32,9 @@ def verify_labfile(
     result = validator.verify_labfile(lab_path, scm_path)
 
     if not result.success:
-        print("Error: 랩 파일 검증 에러")
+        logging.error("Error: 랩 파일 검증 에러")
         for error in result.errors:
-            print(error)
+            logging.error(error)
         if err_exit:
             sys.exit(1)
         return None
@@ -75,5 +76,7 @@ def verify_logfile(schema: str, logfile: str) -> None:
 
     if not result.success:
         for error in result.errors:
-            print(f"Error: {error}")
+            error_msg = f"Error: {error}"
+            logging.error(error_msg)
+            print(error_msg)  # stdout에도 출력하여 테스트에서 확인 가능하도록
         sys.exit(1)
