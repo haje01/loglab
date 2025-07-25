@@ -9,9 +9,10 @@ __version__ = version
 
 from setuptools import find_packages, setup
 
-SCRIPTS = ["bin/loglab"]
 if os.name == "nt":
-    SCRIPTS += ["bin/loglab.bat"]
+    SCRIPTS = ["bin/loglab.bat"]
+else:
+    SCRIPTS = ["bin/loglab"]
 
 setup(
     name="loglab",
