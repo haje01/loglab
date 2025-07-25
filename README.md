@@ -53,7 +53,7 @@ source .venv/bin/activate
 uv pip install -e .
 ```
 
-### 기본 사용법
+### 기본 사용법 예시
 
 ```bash
 # 로그 스키마 확인
