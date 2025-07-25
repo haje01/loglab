@@ -57,31 +57,42 @@ class SchemaValidator:
 
         try:
             # 스키마 파일 로드
-            if schema_path == self.config.default_schema_path:
-                # 기본 스키마의 경우 패키지 리소스에서 직접 로드
-                logging.debug(f"Loading default schema using package resources")
-                schema_content = get_schema_file_content()
-            else:
-                # 사용자 지정 스키마의 경우 파일 시스템에서 로드
-                logging.debug(f"Loading schema from: {schema_path}")
-                schema_content = self.file_loader.load(schema_path)
+            try:
+                if schema_path == self.config.default_schema_path:
+                    # 기본 스키마의 경우 패키지 리소스에서 직접 로드
+                    logging.debug(f"Loading default schema using package resources")
+                    schema_content = get_schema_file_content()
+                else:
+                    # 사용자 지정 스키마의 경우 파일 시스템에서 로드
+                    logging.debug(f"Loading schema from: {schema_path}")
+                    schema_content = self.file_loader.load(schema_path)
 
-            schema_data = json.loads(schema_content)
-            logging.debug("Schema loaded successfully")
+                schema_data = json.loads(schema_content)
+                logging.debug("Schema loaded successfully")
+            except FileNotFoundError as e:
+                return self.error_handler.handle_file_error(e, schema_path)
+            except json.JSONDecodeError as e:
+                logging.error(f"Invalid JSON in schema file: {schema_path}")
+                return self.error_handler.handle_file_error(e, schema_path)
+            except Exception as e:
+                logging.error(f"Failed to load schema file: {schema_path}")
+                return self.error_handler.handle_validation_error(e, schema_path)
 
             # Lab 파일 로드 및 검증
-            logging.debug(f"Loading lab file from: {lab_path}")
-            lab_content = self.file_loader.load(lab_path)
-            lab_data = json.loads(lab_content)
-            logging.debug("Lab file loaded successfully")
+            try:
+                logging.debug(f"Loading lab file from: {lab_path}")
+                lab_content = self.file_loader.load(lab_path)
+                lab_data = json.loads(lab_content)
+                logging.debug("Lab file loaded successfully")
+            except FileNotFoundError as e:
+                return self.error_handler.handle_file_error(e, lab_path)
+            except json.JSONDecodeError as e:
+                logging.error(f"Invalid JSON in lab file: {lab_path}")
+                return self.error_handler.handle_file_error(e, lab_path)
 
             # 재귀적 검증 수행
             return self._recursive_validate(lab_data, schema_data, lab_path)
 
-        except FileNotFoundError as e:
-            return self.error_handler.handle_file_error(e, lab_path)
-        except json.JSONDecodeError as e:
-            return self.error_handler.handle_file_error(e, lab_path)
         except Exception as e:
             return self.error_handler.handle_validation_error(e, lab_path)
 
