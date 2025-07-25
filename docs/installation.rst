@@ -62,15 +62,16 @@
     Usage: loglab [OPTIONS] COMMAND [ARGS]...
 
     Options:
-    --help  Show this message and exit.
+    -v, --verbose  디버깅 정보 출력 레벨 증가 (-v: INFO, -vv: DEBUG)
+    --help         Show this message and exit.
 
     Commands:
-    html     HTML 문서 출력.
-    object   로그 객체 코드 출력.
-    schema   로그 검증용 스키마 생성.
-    show     로그 구성 요소 출력.
-    verify   생성된 로그 파일 검증.
-    version  로그랩 버전 표시.
+    html     랩 파일로부터 HTML 문서를 생성.
+    object   랩 파일로부터 로그 작성용 코드 객체를 생성.
+    schema   랩 파일로부터 로그 검증용 JSON 스키마를 생성.
+    show     랩 파일의 내용을 텍스트 형태로 출력.
+    verify   실제 로그 파일이 스키마에 맞는지 검증.
+    version  로그랩의 현재 버전을 표시.
 
 위에서 알 수 있듯 `loglab` 에는 다양한 명령어가 있는데 예제를 통해 하나씩 살펴보도록 하겠다. 먼저 간단히 버전을 확인해보자.
 

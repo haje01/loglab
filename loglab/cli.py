@@ -290,4 +290,4 @@ def object(ctx, labfile, code_type, output, lang):
 
 if __name__ == "__main__":
     """CLI 스크립트로 직접 실행될 때의 진입점."""
-    cli(obj={})
+    cli(prog_name="loglab", obj={})

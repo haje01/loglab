@@ -2,4 +2,4 @@
 
 from loglab.cli import cli
 
-cli(obj={})
+cli(prog_name="loglab", obj={})
