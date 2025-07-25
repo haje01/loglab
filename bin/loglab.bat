@@ -1,17 +1,13 @@
-@echo off
-title loglab
+ @echo off
+ title loglab
 
-REM uvx가 PATH에 있으면 사용
-uvx --from loglab loglab %* 2>nul && goto :end
+ REM 설치된 도구 환경의 Python 직접 실행
+ if exist "%USERPROFILE%\AppData\Roaming\uv\tools\loglab\Scripts\python.exe" (
+     "%USERPROFILE%\AppData\Roaming\uv\tools\loglab\Scripts\python.exe" -m loglab.cli %*
+     goto :end
+ )
 
-REM uvx가 없으면 uv tool run 사용
-uv tool run --from loglab loglab %* 2>nul && goto :end
+ echo Error: loglab is not properly installed. Please reinstall with uv.
+ exit /b 1
 
-REM 로컬 설치된 uv 시도
-"%USERPROFILE%\.local\bin\uv.exe" tool run --from loglab loglab %* 2>nul && goto :end
-
-REM 모두 실패하면 에러
-echo Error: uv is not found. Please install uv and try again.
-exit /b 1
-
-:end
+ :end
