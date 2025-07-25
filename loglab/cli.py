@@ -33,13 +33,13 @@ def cli(ctx, verbose):
     ctx.ensure_object(dict)
     ctx.obj["verbose"] = verbose
 
-    # 로깅 레벨 설정
+    # 로깅 레벨 설정 - 실제 로그 레벨에 따라 동적으로 표시
     if verbose >= 2:
-        logging.basicConfig(level=logging.DEBUG, format="[DEBUG] %(message)s")
+        logging.basicConfig(level=logging.DEBUG, format="[%(levelname)s] %(message)s")
     elif verbose >= 1:
-        logging.basicConfig(level=logging.INFO, format="[INFO] %(message)s")
+        logging.basicConfig(level=logging.INFO, format="[%(levelname)s] %(message)s")
     else:
-        logging.basicConfig(level=logging.WARNING, format="[WARNING] %(message)s")
+        logging.basicConfig(level=logging.WARNING, format="[%(levelname)s] %(message)s")
 
 
 @cli.command()

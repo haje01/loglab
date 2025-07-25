@@ -1,5 +1,5 @@
 {
-	"$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
+	"$schema": "https://raw.githubusercontent.com/haje01/loglab/master/loglab/schema/lab.schema.json",
 	"domain": {
 		"name": "bcom",
 		"desc": "최고의 회사"

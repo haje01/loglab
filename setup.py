@@ -24,6 +24,16 @@ setup(
     platforms=["any"],
     python_requires=">=3.8",
     packages=find_packages(),
+    package_data={
+        "loglab": [
+            "schema/lab.schema.json",
+        ],
+        "": [
+            "locales/*/LC_MESSAGES/*.mo",
+            "locales/*/LC_MESSAGES/*.po",
+        ],
+    },
+    include_package_data=True,
     scripts=SCRIPTS,
     license="MIT License",
     install_requires=[

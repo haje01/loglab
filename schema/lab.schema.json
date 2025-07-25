@@ -1,6 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://github.com/haje01/loglab/lab.schema.json",
+    "$id": "https://raw.githubusercontent.com/haje01/loglab/master/loglab/schema/lab.schema.json",
     "title": "Lab",
     "description": "Loglab lab file",
     "type": "object",

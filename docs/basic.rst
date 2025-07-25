@@ -116,7 +116,7 @@ Code <https://code.visualstudio.com/>`__ 등 JSON 스키마를 지원하는
 .. code:: json
 
    {
-     "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/schema/lab.schema.json",
+     "$schema": "https://raw.githubusercontent.com/haje01/loglab/master/loglab/schema/lab.schema.json",
      "domain": {
        "name": "foo",
        "desc": "최고의 모바일 게임"
