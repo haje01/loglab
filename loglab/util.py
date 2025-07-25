@@ -49,7 +49,7 @@ def get_schema_file_content():
             pass
 
     # fallback: 기존 방식 사용
-    schema_path = os.path.join(LOGLAB_HOME, "schema", "lab.schema.json")
+    schema_path = os.path.join(LOGLAB_HOME, "loglab", "schema", "lab.schema.json")
     try:
         with open(schema_path, "r", encoding="utf-8") as f:
             return f.read()
@@ -66,7 +66,7 @@ def get_schema_file_path():
     Returns:
         str: schema 파일의 절대 경로 (fallback 용도)
     """
-    return os.path.join(LOGLAB_HOME, "schema", "lab.schema.json")
+    return os.path.join(LOGLAB_HOME, "loglab", "schema", "lab.schema.json")
 
 
 def get_translator(lang):

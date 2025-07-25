@@ -119,6 +119,7 @@ dmypy.json
 
 # Additional LogLab specific files
 *.schema.json
+!loglab/schema/lab.schema.json
 loglab_*.py
 loglab_*.cs
 loglab_*.h
