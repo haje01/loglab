@@ -25,10 +25,7 @@ from loglab.version import VERSION
 )
 @click.pass_context
 def cli(ctx, verbose):
-    """LogLab 메인 CLI 그룹.
-
-    LogLab의 모든 명령어들을 그룹화하는 메인 진입점.
-    """
+    """"""
     # 글로벌 컨텍스트 설정
     ctx.ensure_object(dict)
     ctx.obj["verbose"] = verbose

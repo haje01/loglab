@@ -5,7 +5,7 @@
 [![Tests](https://github.com/haje01/loglab/actions/workflows/test.yml/badge.svg)](https://github.com/haje01/loglab/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-JSON Lines 로그 형식을 설계하고 검증하기 위한 Python 툴
+JSON Lines 로그 형식을 설계, 문서화 및 검증하기 위한 툴
 
 ## ✨ 주요 기능
 
