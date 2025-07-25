@@ -7,21 +7,21 @@
 
 이제 다음과 같은 `uv` 명령으로 LogLab 을 설치한다.
 
-```sh
-uv tool install --from git+https://github.com/haje01/loglab.git loglab
-```
+.. code: bash
+
+    uv tool install --from git+https://github.com/haje01/loglab.git loglab
 
 **소스 코드로 설치**
 
 최신 소스 코드를 기반으로 다음처럼 개발용으로 설치도 가능하다.
 
-```bash
-git clone https://github.com/haje01/loglab
-cd loglab
-uv venv
-source .venv/bin/activate
-uv pip install -e .
-```
+.. code: bash
+
+    git clone https://github.com/haje01/loglab
+    cd loglab
+    uv venv
+    source .venv/bin/activate
+    uv pip install -e .
 
 설치가 잘 되었다면 로그랩의 커맨드라인 툴인 `loglab` 을 이용할 수 있다. 다음과 같이 입력해보자.
 
