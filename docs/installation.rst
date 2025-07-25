@@ -11,6 +11,14 @@
 
     uv tool install --from git+https://github.com/haje01/loglab.git loglab
 
+.. note::
+
+    만약 기존에 설치된 loglab 을 최신 버전으로 업그레이드하고 싶다면, 다음처럼 진행한다.
+
+    .. code:: bash
+
+        uv tool upgrade loglab
+
 
 **소스 코드로 설치**
 
