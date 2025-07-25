@@ -34,6 +34,28 @@
 
 설치가 잘 되었다면 로그랩의 커맨드라인 툴인 `loglab` 을 이용할 수 있다. 다음과 같이 입력해보자.
 
+.. code:: bash
+
+    $ loglab
+
+    Usage: loglab [OPTIONS] COMMAND [ARGS]...
+
+    LogLab 메인 CLI 그룹.
+
+    LogLab의 모든 명령어들을 그룹화하는 메인 진입점.
+
+    Options:
+    -v, --verbose  디버깅 정보 출력 레벨 증가 (-v: INFO, -vv: DEBUG)
+    --help         Show this message and exit.
+
+    Commands:
+    html     랩 파일로부터 HTML 문서를 생성.
+    object   랩 파일로부터 로그 작성용 코드 객체를 생성.
+    schema   랩 파일로부터 로그 검증용 JSON 스키마를 생성.
+    show     랩 파일의 내용을 텍스트 형태로 출력.
+    verify   실제 로그 파일이 스키마에 맞는지 검증.
+    version  로그랩의 현재 버전을 표시.
+
 .. code-block:: bash
 
     $ loglab
@@ -55,4 +77,4 @@
 .. code-block:: bash
 
     $ loglab version
-    0.2.4
+    0.3.0
