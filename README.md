@@ -13,6 +13,7 @@ JSON Lines 로그 형식을 설계하고 검증하기 위한 Python 툴
 - 설계된 로그에 관한 문서 자동 생성
 - 실제 출력된 로그가 설계에 맞게 작성되었는지 검증
 - Python, C#, C++ 로그 객체 코드 생성
+- Windows, Linux, macOS에서 사용할 수 있습니다.
 
 ## ⚡ 빠른 시작
 
@@ -20,14 +21,21 @@ JSON Lines 로그 형식을 설계하고 검증하기 위한 Python 툴
 
 **uv 기반 설치 (권장)**
 
-먼저 Python 패키지 매니저인 `uv` 의 설치가 필요합니다. `uv 설치 페이지 <https://docs.astral.sh/uv/getting-started/installation>`_ 를 참고하여 설치하도록 합니다.
+먼저 Python 용 패키지 매니저인 `uv` 의 설치가 필요합니다. [uv 설치 페이지](https://docs.astral.sh/uv/getting-started/installation>) 를 참고하여 사용자의 환경에 맞게 설치하도록 합니다.
 
-이제 다음과 같은 명령으로 LogLab 을 설치합니다.
+이제 다음과 같은 `uv` 명령으로 LogLab 을 설치합니다.
 
-.. code::sh
+```sh
+uv tool install --from git+https://github.com/haje01/loglab.git loglab
+```
 
-  uv tool install --from git+https://github.com/haje01/loglab.git loglab
+다음 명령으로 설치를 확인할 수 있습니다.
 
+```sh
+loglab version
+
+0.2.4
+```
 
 **소스 코드로 설치**
 
@@ -118,5 +126,3 @@ MIT License - 자세한 내용은 [LICENSE](LICENSE) 파일 참조
 버그 리포트와 기능 제안은 [Issues](https://github.com/haje01/loglab/issues)에서 환영합니다.
 
 ---
-
-> 로그랩은 Windows, Linux, macOS에서 사용할 수 있습니다.
