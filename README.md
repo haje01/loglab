@@ -29,7 +29,7 @@ JSON Lines 로그 형식을 설계하고 검증하기 위한 Python 툴
 uv tool install --from git+https://github.com/haje01/loglab.git loglab
 ```
 
-다음 명령으로 설치를 확인할 수 있습니다.
+설치가 잘 되었다면 로그랩의 커맨드라인 명령인 `loglab` 을 이용할 수 있습니다. 다음과 같이 입력하여 버전을 확인해봅시다.
 
 ```sh
 loglab version
@@ -45,6 +45,7 @@ loglab version
 git clone https://github.com/haje01/loglab
 cd loglab
 uv venv
+source .venv/bin/activate
 uv pip install -e .
 ```
 
