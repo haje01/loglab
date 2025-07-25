@@ -5,7 +5,7 @@
 [![Tests](https://github.com/haje01/loglab/actions/workflows/test.yml/badge.svg)](https://github.com/haje01/loglab/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-JSON Lines 로그 형식을 설계, 문서화 및 검증하기 위한 툴
+LogLab (로그랩) 은 JSON Lines 로그 형식을 설계, 문서화 및 검증하기 위한 툴입니다.
 
 ## ✨ 주요 기능
 
@@ -97,8 +97,8 @@ LogLab 으로 설계된 로그는 [JSON Lines](https://jsonlines.org/) 형식으
 
 ## 📖 문서
 
-- **[전체 문서](https://loglab.readthedocs.io/)** - LogLab 의 상세한 가이드와 튜토리얼
-- **[생성 문서 예](https://htmlpreview.github.io/?https://raw.githubusercontent.com/haje01/loglab/master/example/rpg.html)** - 가상의 RPG 게임을 위한 로그 문서 사례
+- **[전체 문서](https://loglab.readthedocs.io/)** - 로그랩의 상세한 가이드와 튜토리얼
+- **[생성된 문서 예제](https://htmlpreview.github.io/?https://raw.githubusercontent.com/haje01/loglab/master/example/rpg.html)** - 로그랩으로 가상의 RPG 게임을 위한 로그를 설계한 후 자동 생성된 로그 명세 문서
 
 ## 🎯 대상 사용자
 
