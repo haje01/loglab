@@ -1,0 +1,344 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/haje01/loglab/master/loglab/schema/lab.schema.json",
+    "title": "Lab",
+    "description": "Loglab lab file",
+    "type": "object",
+    "$defs": {
+        "ref-type-body": {
+            "anyOf": [
+                {"enum": ["string", "integer", "number", "boolean", "datetime"]},
+                {
+                    "type": "string",
+                    "pattern": "^([a-z0-9_]+\\.)*types\\.[a-zA-Z0-9_]+$"
+                }
+            ]
+        },
+        "import-body": {
+            "object": "array",
+            "items": {
+                "type": "string",
+                "pattern": "[a-zA-Z0-9_]+"
+            }
+        },
+        "dict-field-body": {
+            "allOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "pattern": "[a-zA-Z0-9_]+",
+                            "description": "필드 이름"
+                        },
+                        "desc": {
+                            "type": "string",
+                            "description": "필드 설명"
+                        },
+                        "option": {
+                            "type": "boolean",
+                            "description": "옵션 여부"
+                        }
+                    },
+                    "required": ["name"]
+                },
+                {"$ref": "#/$defs/type-rstr-body"}
+            ]
+        },
+        "objtype-body": {
+            "type": "object",
+            "description": "로그객체 생성시 언어별 타입",
+            "properties": {
+                "cs": {
+                    "type": "string"
+                },
+                "py": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false
+        },
+        "type-rstr-body": {
+            "anyOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "const": "string"
+                        },
+                        "pattern": {
+                            "type": "string",
+                            "description": "문자열 정규식 패턴"
+                        },
+                        "enum": {
+                            "type": "array",
+                            "description": "허용하는 나열값",
+                            "items": {
+                                "anyOf": [
+                                    {"type": "string"},
+                                    {
+                                        "type": "array",
+                                        "items": [
+                                            {"type": "string"},
+                                            {"type": "string"}
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
+                        "const": {
+                            "anyOf": [
+                                {"type": "string"},
+                                {
+                                    "type": "array",
+                                    "items": [
+                                        {"type": "string"},
+                                        {"type": "string"}
+                                    ]
+                                }
+                            ]
+                        },
+                        "minLength": {
+                            "type": "integer",
+                            "description": "문자열 최소 길이",
+                            "minimum": 1
+                        },
+                        "maxLength": {
+                            "type": "integer",
+                            "description": "문자열 최대 길이",
+                            "minimum": 1
+                        },
+                        "format": {
+                            "description": "기정의된 문자열 포맷",
+                            "enum": [
+                                "date-time", "date", "email", "hostname", "ipv4", "ipv6", "uri"
+                            ]
+                        },
+                        "objtype": {
+                            "$ref": "#/$defs/objtype-body"
+                        }
+                    },
+                    "required" : ["type"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "const": "integer"
+                        },
+                        "minimum": {
+                            "type": "integer",
+                            "description": "포함하는 최소값"
+                        },
+                        "maximum": {
+                            "type": "integer",
+                            "description": "포함하는 최대값"
+                        },
+                        "exclusiveMinimum": {
+                            "type": "integer",
+                            "description": "제외하는 최소값"
+                        },
+                        "exclusiveMaximum": {
+                            "type": "integer",
+                            "description": "제외하는 최대값"
+                        },
+                        "enum": {
+                            "type": "array",
+                            "description": "허용하는 나열값",
+                            "items": {
+                                "anyOf": [
+                                    {"type": "integer"},
+                                    {
+                                        "type": "array",
+                                        "items": [
+                                            {"type": "integer"},
+                                            {"type": "string"}
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
+                        "const": {
+                            "anyOf": [
+                                {"type": "integer"},
+                                {
+                                    "type": "array",
+                                    "items": [
+                                        {"type": "integer"},
+                                        {"type": "string"}
+                                    ]
+                                }
+                            ]
+                        },
+                        "objtype": {
+                            "$ref": "#/$defs/objtype-body"
+                        }
+                    },
+                    "required": ["type"]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "const": "number"
+                        },
+                        "minimum": {
+                            "type": "number",
+                            "description": "포함하는 최소값"
+                        },
+                        "maximum": {
+                            "type": "number",
+                            "description": "포함하는 최대값"
+                        },
+                        "exclusiveMinimum": {
+                            "type": "integer",
+                            "description": "제외하는 최소값"
+                        },
+                        "exclusiveMaximum": {
+                            "type": "integer",
+                            "description": "제외하는 최대값"
+                        },
+                        "enum": {
+                            "type": "array",
+                            "description": "허용하는 나열값",
+                            "items": {
+                                "anyOf": [
+                                    {"type": "number"},
+                                    {
+                                        "type": "array",
+                                        "items": [
+                                            {"type": "number"},
+                                            {"type": "string"}
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
+                        "objtype": {
+                            "$ref": "#/$defs/objtype-body"
+                        }
+                    },
+                    "required": ["type"]
+                }
+            ]
+        },
+        "field-body": {
+            "type": "array",
+            "items": {
+                "anyOf": [
+                    {
+                        "type": "array",
+                        "items": [
+                            {
+                                "type": "string",
+                                "pattern": "^[a-zA-Z0-9_]+$"
+                            },
+                            {"$ref": "#/$defs/ref-type-body"},
+                            {"type": "string"},
+                            {"type": "boolean"}
+                        ],
+                        "minItems": 3,
+                        "maxItems": 4
+                    },
+                    {"$ref": "#/$defs/dict-field-body"}
+                ]
+            }
+        },
+        "entity-body": {
+            "type": "object",
+            "patternProperties": {
+                "[a-z]+": {
+                    "type": "object",
+                    "properties": {
+                        "desc": {
+                            "description": "엔터티 설명",
+                            "type": "string"
+                        },
+                        "mixins": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "pattern": "^([a-z0-9_]+\\.)*(bases|events)\\.[a-zA-Z0-9_]+$"
+                            }
+                        },
+                        "fields": {
+                            "$ref": "#/$defs/field-body"
+                        },
+                        "option": {
+                            "type": "boolean",
+                            "description": "옵션 여부"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": []
+                }
+            },
+            "additionalProperties": false
+        },
+        "type-body": {
+            "type": "object",
+            "patternProperties": {
+                "[a-z]+": {
+                    "allOf": [
+                        {
+                            "type": "object",
+                            "properties": {
+                                "desc": {
+                                    "type": "string",
+                                    "description": "타입 설명"
+                                }
+                            },
+                            "required": ["desc"]
+                        },
+                        {"$ref": "#/$defs/type-rstr-body"}
+                    ]
+                }
+            },
+            "additionalProperties": false
+        }
+    },
+    "properties": {
+        "$schema": {
+            "type": "string",
+            "description": "Schema URI"
+        },
+        "domain": {
+            "description": "스키마 도메인 정보",
+            "type": "object",
+            "properties": {
+                "name": {
+                    "description": "도메인 이름",
+                    "type": "string",
+                    "pattern": "^[a-z0-9_-]+$"
+                },
+                "desc": {
+                    "description": "도메인 설명",
+                    "type": "string"
+                },
+                "version": {
+                    "description": "도메인 버전",
+                    "type": "string"
+                }
+            },
+            "additionalProperties": false,
+            "required": ["name"]
+        },
+        "import": {
+            "description": "가져올 파일",
+            "$ref": "#/$defs/import-body"
+        },
+        "types": {
+            "description": "커스텀 타입",
+            "$ref": "#/$defs/type-body"
+        },
+        "bases": {
+            "description": "기본 엔터티",
+            "$ref": "#/$defs/entity-body"
+        },
+        "events": {
+            "description": "기본 엔터티",
+            "$ref": "#/$defs/entity-body"
+        }
+    },
+    "additionalProperties": false
+}
