@@ -1581,7 +1581,7 @@ TypeScript 컴파일러가 필요하다. ``npm`` 으로 설치할 수 있다.
 
 로그랩이 생성한 로그 객체는 기본적으로 서버의 로컬 타임존을 사용하여 이벤트 시간 ``DateTime`` 을 기록한다. 하지만 필요한 경우, 로그 객체 생성시 다음처럼 ``--utc`` 옵션을 주면 UTC 시간으로 기록하도록 코드를 생성할 수 있다.
 
-.. code::bash
+.. code:: bash
 
   loglab object foo.lab.json py --utc -o loglab_foo.py
 
