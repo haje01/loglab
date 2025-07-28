@@ -1,3 +1,5 @@
+- 0.3.1:
+  - typescript 로그 객체 도입
 - 0.3.0:
   - Claude Code 도입
   - uv 툴로 배포
