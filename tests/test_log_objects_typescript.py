@@ -42,7 +42,7 @@ def test_typescript_code_generation():
     assert "public serialize(): string" in result.output
 
     # Check JSON serialization structure
-    assert "DateTime: new Date().toISOString()" in result.output
+    assert "DateTime:" in result.output
     assert "JSON.stringify(data)" in result.output
 
 

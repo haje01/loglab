@@ -1064,7 +1064,7 @@ HTML 문서 출력
    html_output
 
 로그 객체 코드 생성
-------------------
+----------------------
 
 서비스 코드에서 로그 출력을 구현할 때, 필요한 필드와 값을 매번 문자열로
 만들어 쓰는 것은 번거롭다. 로그 이벤트 구조에 맞는 객체(Object)를 미리
@@ -1084,6 +1084,8 @@ HTML 문서 출력
    ``const`` 로 지정된 필드는 로그 객체를 통해 설정할 수 없고, 객체
    시리얼라이즈 (Serialize) 시에 랩파일에 지정된 값으로 출력된다.
 
+각 언어별 로그 객체 생성을 알아보자.
+
 Python
 ~~~~~~
 
@@ -1098,38 +1100,38 @@ Python
 
 .. code:: python
 
-   """
-       ** 이 파일은 LogLab 에서 생성된 것입니다. 고치지 마세요! **
+  """
+      ** 이 파일은 LogLab 에서 생성된 것입니다. 고치지 마세요! **
 
-       Domain: foo
-       Description: 위대한 모바일 게임
-   """
-   import json
-   from datetime import datetime
-   from typing import Optional
+      Domain: foo
+      Description: 위대한 모바일 게임
+  """
+  import json
+  from datetime import datetime
+  from typing import Optional
 
-   # ...
+  # ...
 
-   class Logout:
-       """계정 로그아웃"""
+  class Logout:
+      """계정 로그아웃"""
 
-       def __init__(self, _ServerNo: int, _AcntId: int):
-           self.reset(_ServerNo, _AcntId)
+      def __init__(self, _ServerNo: int, _AcntId: int):
+          self.reset(_ServerNo, _AcntId)
 
-       def reset(self, _ServerNo: int, _AcntId: int):
+      def reset(self, _ServerNo: int, _AcntId: int):
+          self.ServerNo = _ServerNo
+          self.AcntId = _AcntId
+          self.PlayTime = None
 
-           self.ServerNo = _ServerNo
-           self.AcntId = _AcntId
-           self.PlayTime : Optional[float] = None
-
-       def serialize(self):
-           data = dict(DateTime=datetime.now().astimezone().isoformat(),
-                       Event="Logout")
-           data["ServerNo"] = self.ServerNo
-           data["AcntId"] = self.AcntId
-           if self.PlayTime is not None:
-               data["PlayTime"] = self.PlayTime
-           return json.dumps(data)
+      def serialize(self):
+          data = dict(DateTime=datetime.now().astimezone().isoformat(),
+                      Event="Logout")
+          data["ServerNo"] = self.ServerNo
+          data["AcntId"] = self.AcntId
+          data["Category"] = 1
+          if self.PlayTime is not None:
+              data["PlayTime"] = self.PlayTime
+          return json.dumps(data)
 
    # ...
 
@@ -1148,8 +1150,7 @@ Python
 
 .. code:: json
 
-   {"DateTime": "2021-11-12T13:37:05.491169+09:00", "Event": "Logout", "ServerNo": 33, "AcntId": 44, "PlayTime": 100}
-
+   {"DateTime": "2025-07-28T16:37:17.627014+09:00", "Event": "Logout", "ServerNo": 33, "AcntId": 44, "Category": 1, "PlayTime": 100}
 
 .. note::
 
@@ -1266,130 +1267,121 @@ C++ 로그 객체는 C++17 표준을 기반으로 생성된다. 다음과 같이
 
 .. code:: cpp
 
-   /*
+  /*
 
-       이 파일은 LogLab 에서 생성된 것입니다. 고치지 마세요!
+      이 파일은 LogLab 에서 생성된 것입니다. 고치지 마세요!
 
-       Domain: foo
-       Description: 위대한 모바일 게임
-   */
+      Domain: foo
+      Description: 위대한 모바일 게임
+  */
 
-   #pragma once
+  #pragma once
 
-   #include <iostream>
-   #include <string>
-   #include <vector>
-   #include <optional>
-   #include <chrono>
-   #include <sstream>
-   #include <iomanip>
+  #include <iostream>
+  #include <string>
+  #include <vector>
+  #include <optional>
+  #include <chrono>
+  #include <sstream>
+  #include <iomanip>
 
-   namespace loglab_foo
-   {
-       class LogSerializer {
-       public:
-           static thread_local std::stringstream ss;
-           static thread_local std::string buffer;
-           static thread_local char datetime_buffer[32];
+  namespace loglab_foo
+  {
+      class LogSerializer {
+      public:
 
-           static std::string& SerializeToBuffer(const std::string& content) {
-               ss.clear();
-               ss.str("");
-               ss << content;
-               buffer = ss.str();
-               return buffer;
-           }
+          static std::string FormatDateTime() {
+              auto now = std::chrono::system_clock::now();
+              auto in_time_t = std::chrono::system_clock::to_time_t(now);
+              auto microseconds = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()) % 1000000;/
 
-           static const char* FormatDateTime() {
-               auto now = std::chrono::system_clock::now();
-               auto in_time_t = std::chrono::system_clock::to_time_t(now);
-               auto microseconds = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()) % 1000000;
+              char datetime_buffer[64];
+              std::tm* tm_time = std::localtime(&in_time_t);
+              int len = std::sprintf(datetime_buffer, "%04d-%02d-%02dT%02d:%02d:%02d.%06ld",
+                  tm_time->tm_year + 1900, tm_time->tm_mon + 1, tm_time->tm_mday,
+                  tm_time->tm_hour, tm_time->tm_min, tm_time->tm_sec,
+                  microseconds.count());
 
-               std::tm* tm_utc = std::gmtime(&in_time_t);
-               int len = std::sprintf(datetime_buffer, "%04d-%02d-%02dT%02d:%02d:%02d.%06ldZ",
-                   tm_utc->tm_year + 1900, tm_utc->tm_mon + 1, tm_utc->tm_mday,
-                   tm_utc->tm_hour, tm_utc->tm_min, tm_utc->tm_sec,
-                   microseconds.count());
+              // Add timezone offset for local time
+              long offset = tm_time->tm_gmtoff;
+              int hours = offset / 3600;
+              int minutes = abs(offset % 3600) / 60;
+              std::sprintf(datetime_buffer + len, "%+03d:%02d", hours, minutes);
 
-               return datetime_buffer;
-           }
-       };
+              return std::string(datetime_buffer);
+          }
+      };
 
-       // Thread-local static member definitions
-       thread_local std::stringstream LogSerializer::ss;
-       thread_local std::string LogSerializer::buffer;
-       thread_local char LogSerializer::datetime_buffer[32];
+      // ...
 
-       /// <summary>
-       ///  계정 로그아웃
-       /// </summary>
-       class Logout
-       {
-       public:
-           static constexpr const char* Event = "Logout";
+      /// <summary>
+      ///  계정 로그아웃
+      /// </summary>
+      class Logout
+      {
+      public:
+          static constexpr const char* Event = "Logout";
 
-           // Required fields
-           // 서버 번호
-           int ServerNo;
-           // 계정 ID
-           int AcntId;
+          // Required fields
+          // 서버 번호
+          int ServerNo;
+          // 계정 ID
+          int AcntId;
 
-           // Optional fields
-           // 플레이 시간 (초)
-           std::optional<float> PlayTime;
+          // Optional fields
+          // 플레이 시간 (초)
+          std::optional<float> PlayTime;
 
-           Logout() {}
+          Logout() {}
 
-           Logout(int _ServerNo, int _AcntId)
-           {
-               reset(_ServerNo, _AcntId);
-           }
+          Logout(int _ServerNo, int _AcntId)
+          {
+              reset(_ServerNo, _AcntId);
+          }
 
-           void reset(int _ServerNo, int _AcntId)
-           {
-               ServerNo = _ServerNo;
-               AcntId = _AcntId;
-               PlayTime.reset();
-           }
+          void reset(int _ServerNo, int _AcntId)
+          {
+              ServerNo = _ServerNo;
+              AcntId = _AcntId;
+              PlayTime.reset();
+          }
 
-           std::string& serialize()
-           {
-               LogSerializer::ss.clear();
-               LogSerializer::ss.str("");
-               LogSerializer::ss << "{";
+          std::string serialize()
+          {
+              std::stringstream ss;
+              ss << "{";
 
-               // DateTime and Event
-               LogSerializer::ss << "\"DateTime\":\"" << LogSerializer::FormatDateTime() << "\",";
-               LogSerializer::ss << "\"Event\":\"" << Event << "\"";
+              // DateTime and Event
+              ss << "\"DateTime\":\"" << LogSerializer::FormatDateTime() << "\",";
+              ss << "\"Event\":\"" << Event << "\"";
 
-               // Required fields
-               LogSerializer::ss << ",";
-               LogSerializer::ss << "\"ServerNo\":";
-               LogSerializer::ss << ServerNo;
-               LogSerializer::ss << ",";
-               LogSerializer::ss << "\"AcntId\":";
-               LogSerializer::ss << AcntId;
+              // Required fields
+              ss << ",";
+              ss << "\"ServerNo\":";
+              ss << ServerNo;
+              ss << ",";
+              ss << "\"AcntId\":";
+              ss << AcntId;
 
-               // Optional fields
-               if (PlayTime.has_value())
-               {
-                   LogSerializer::ss << ",";
-                   LogSerializer::ss << "\"PlayTime\":";
-                   LogSerializer::ss << PlayTime.value();
-               }
+              // Optional fields
+              if (PlayTime.has_value())
+              {
+                  ss << ",";
+                  ss << "\"PlayTime\":";
+                  ss << PlayTime.value();
+              }
 
-               // Const fields
-               LogSerializer::ss << ",";
-               LogSerializer::ss << "\"Category\":";
-               LogSerializer::ss << 1;
+              // Const fields
+              ss << ",";
+              ss << "\"Category\":";
+              ss << 1;
 
-               LogSerializer::ss << "}";
-               LogSerializer::buffer = LogSerializer::ss.str();
-               return LogSerializer::buffer;
-           }
-       };
+              ss << "}";
+              return ss.str();
+          }
+      };
 
-       // ...
+      // ...
 
    }
 
@@ -1441,9 +1433,8 @@ C++ 로그 객체는 C++17 표준을 기반으로 생성된다. 다음과 같이
 
 ::
 
-   Login Event: {"DateTime":"2025-07-16T08:35:04.013922Z","Event":"Login","ServerNo":1,"AcntId":1001,"Platform":"ios"}
-   Logout Event: {"DateTime":"2025-07-16T08:35:04.013981Z","Event":"Logout","ServerNo":1,"AcntId":1001,"PlayTime":123.45}
-
+  Login Event: {"DateTime":"2025-07-28T16:30:03.096388+09:00","Event":"Login","ServerNo":1,"AcntId":1001,"Platform":"ios","Category":1}
+  Logout Event: {"DateTime":"2025-07-28T16:30:03.096464+09:00","Event":"Logout","ServerNo":1,"AcntId":1001,"PlayTime":123.45,"Category":1}
 
 TypeScript
 ~~~~~~~~~~
@@ -1461,47 +1452,64 @@ TypeScript 로그 객체는 타입 안전성을 제공하면서 JavaScript 환�
 
 .. code:: typescript
 
-   /*
-       ** 이 파일은 LogLab 에서 생성된 것입니다. 고치지 마세요! **
+  /*
 
-       Domain: foo
-       Description: 위대한 모바일 게임
-   */
+      ** 이 파일은 LogLab 에서 생성된 것입니다. 고치지 마세요! **
 
-   /**
-    * 계정 로그인
-    */
-   export class Login {
-       public readonly Event = "Login";
-       // 서버 번호
-       public ServerNo: number;
-       // 계정 ID
-       public AcntId: number;
-       // 디바이스의 플랫폼
-       public Platform: string;
+      Domain: foo
+      Description: 위대한 모바일 게임
 
-       constructor(_ServerNo: number, _AcntId: number, _Platform: string) {
-           this.reset(_ServerNo, _AcntId, _Platform);
-       }
+  */
 
-       public reset(_ServerNo: number, _AcntId: number, _Platform: string): void {
-           this.ServerNo = _ServerNo;
-           this.AcntId = _AcntId;
-           this.Platform = _Platform;
-       }
+  // ...
 
-       public serialize(): string {
-           const data: Record<string, any> = {
-               DateTime: new Date().toISOString(),
-               Event: "Login"
-           };
-           data["ServerNo"] = this.ServerNo;
-           data["AcntId"] = this.AcntId;
-           data["Category"] = 1;
-           data["Platform"] = this.Platform;
-           return JSON.stringify(data);
-       }
-   }
+  /**
+  * 계정 로그아웃
+  */
+  export class Logout {
+      public readonly Event = "Logout";
+      // 서버 번호
+      public ServerNo: number;
+      // 계정 ID
+      public AcntId: number;
+      // 플레이 시간 (초)
+      public PlayTime: number | null = null;
+
+      constructor(_ServerNo: number, _AcntId: number) {
+          this.reset(_ServerNo, _AcntId);
+      }
+
+      public reset(_ServerNo: number, _AcntId: number): void {
+          this.ServerNo = _ServerNo;
+          this.AcntId = _AcntId;
+          this.PlayTime = null;
+      }
+
+      public serialize(): string {
+          const data: Record<string, any> = {
+              DateTime: (() => {
+                  const now = new Date();
+                  const offset = now.getTimezoneOffset();
+                  const sign = offset > 0 ? '-' : '+';
+                  const absOffset = Math.abs(offset);
+                  const hours = ('0' + Math.floor(absOffset / 60)).slice(-2);
+                  const minutes = ('0' + (absOffset % 60)).slice(-2);
+                  return now.toISOString().slice(0, -1) + sign + hours + ':' + minutes;
+              })(),
+              Event: "Logout"
+          };
+          data["ServerNo"] = this.ServerNo;
+          data["AcntId"] = this.AcntId;
+          data["Category"] = 1;
+          if (this.PlayTime !== null) {
+              data["PlayTime"] = this.PlayTime;
+          }
+          return JSON.stringify(data);
+      }
+  }
+
+  // ...
+
 
 **주요 특징:**
 
@@ -1533,7 +1541,7 @@ TypeScript 로그 객체는 타입 안전성을 제공하면서 JavaScript 환�
 
 **빌드 및 실행**
 
-TypeScript 컴파일러가 필요하다. npm으로 설치할 수 있다.
+TypeScript 컴파일러가 필요하다. ``npm`` 으로 설치할 수 있다.
 
 **1. TypeScript 설치**
 
@@ -1559,22 +1567,32 @@ TypeScript 컴파일러가 필요하다. npm으로 설치할 수 있다.
 
 ::
 
-   Login Event: {"DateTime":"2025-07-28T12:34:56.789Z","Event":"Login","ServerNo":1,"AcntId":1001,"Category":1,"Platform":"ios"}
-   Logout Event: {"DateTime":"2025-07-28T12:34:56.790Z","Event":"Logout","ServerNo":1,"AcntId":1001,"Category":1,"PlayTime":123.45}
-   Reset Login Event: {"DateTime":"2025-07-28T12:34:56.791Z","Event":"Login","ServerNo":2,"AcntId":2002,"Category":1,"Platform":"aos"}
+  Login Event: {"DateTime":"2025-07-28T07:35:12.000+09:00","Event":"Login","ServerNo":1,"AcntId":1001,"Category":1,"Platform":"ios"}
+  Logout Event: {"DateTime":"2025-07-28T07:35:12.007+09:00","Event":"Logout","ServerNo":1,"AcntId":1001,"Category":1,"PlayTime":123.45}
 
 이와 같이, 로그 객체를 사용하면 각 언어의 타입 시스템을 활용하여
 안전하고 손쉽게 JSON 형태의 로그 문자열을 얻을 수 있다. 실제 파일에 쓰기
 위해서는 생성된 문자열을 사용하는 로깅 라이브러리에 전달하면 된다.
 
+로그 객체 팁
+~~~~~~~~~~~~~~~
+
+**UTC 이벤트 시간**
+
+로그랩이 생성한 로그 객체는 기본적으로 서버의 로컬 타임존을 사용하여 이벤트 시간 ``DateTime`` 을 기록한다. 하지만 필요한 경우, 로그 객체 생성시 다음처럼 ``--utc`` 옵션을 주면 UTC 시간으로 기록하도록 코드를 생성할 수 있다.
+
 .. note::
 
-   **빈번한 로그 객체 생성**
+  loglab object foo.lab.json py --utc -o loglab_foo.py
 
-   만약 특정 이벤트가 매우 자주 발생하고 그때마다 로그 객체를 생성하여
-   로그를 쓴다면, 가비지 컬렉션이나 메모리 단편화 등으로 인한 시스템
-   성능 저하가 발생할 수 있다. 이에 로그랩에서 생성된 로그 객체는
-   **리셋(Reset)** 메소드를 통해 객체를 초기화하는 기능을 제공한다.
-   이벤트 처리 코드에서 로그 객체를 매번 생성하지 말고, 클래스의 멤버
-   변수나 정적(Static) 객체로 선언해 두고, 리셋 메소드로 그 객체를
-   초기화한 후 재활용하는 방식을 추천한다.
+이렇게 생성한 로그 객체는 다음 예시처럼 UTC 타임존 이벤트 시간으로 로그를 출력한다.
+
+.. code:: json
+
+  {"DateTime": "2025-07-28T07:46:01.266098+00:00", "Event": "Logout", "ServerNo": 33, "AcntId": 44, "Category": 1, "PlayTime": 100}
+
+**로그 객체 리셋**
+
+만약 특정 이벤트가 매우 자주 발생하고 그때마다 로그 객체를 생성하여 로그를 쓴다면, 가비지 컬렉션이나 메모리 단편화 등으로 인한 시스템 성능 저하가 우려될 수도 있다.
+
+이에 로그랩에서 생성된 로그 객체는 **리셋(Reset)** 메소드를 통해 객체를 초기화하는 기능을 제공한다. 이벤트 처리 코드에서 로그 객체를 매번 생성하지 않고 클래스의 멤버 변수나 정적(Static) 객체로 선언해 두고, 리셋 메소드로 그 객체를 초기화한 후 재활용하는 방식을 활용할 수 있다.

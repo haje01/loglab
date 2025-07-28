@@ -46,7 +46,15 @@ export class {{ename}} {
 
     public serialize(): string {
         const data: Record<string, any> = {
-            DateTime: new Date().toISOString(),
+            DateTime: {% if utc %}new Date().toISOString(){% else %}(() => {
+                const now = new Date();
+                const offset = now.getTimezoneOffset();
+                const sign = offset > 0 ? '-' : '+';
+                const absOffset = Math.abs(offset);
+                const hours = ('0' + Math.floor(absOffset / 60)).slice(-2);
+                const minutes = ('0' + (absOffset % 60)).slice(-2);
+                return now.toISOString().slice(0, -1) + sign + hours + ':' + minutes;
+            })(){% endif %},
             Event: "{{ ename }}"
         };
         {% for fname in fields %}
