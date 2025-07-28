@@ -1,0 +1,70 @@
+/*
+
+    ** {{ warn }} **
+
+    Domain: {{ domain.name }}
+    Description: {{ domain.desc }}
+
+*/
+
+{% for ename in events.keys() %}
+
+/**
+ * {{ events[ename][-1][1]['desc'] }}
+ */
+export class {{ename}} {
+    {% set fields = events[ename][-1][1]['fields'] %}
+    {% set rfields = fields | required %}
+    {% set ofields = fields | optional %}
+    {% set cfields = fields | const %}
+    public readonly Event = "{{ ename }}";
+    {% for fname in fields.keys() %}{% if fname != 'DateTime' and fname not in cfields %}
+    {% set field = fields[fname][-1][1] %}
+    // {{ field['desc'] }}
+    {% if fname in ofields %}
+    public {{ fname }}: {{ type(field) }} | null = null;
+    {% else %}
+    public {{ fname }}: {{ type(field) }};
+    {% endif %}{% endif %}{% endfor %}
+
+    constructor({% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}_{{ fname }}: {{ type(field) }}{% if not loop.last %}, {% endif %}{% endfor %}) {
+        this.reset({% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}_{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %});
+    }
+
+    public reset({% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}_{{ fname }}: {{ type(field) }}{% if not loop.last %}, {% endif %}{% endfor %}): void {
+        {% for fname in fields.keys() %}{% if fname != 'DateTime'%}
+        {% set field = fields[fname][-1][1] %}
+        {% if fname not in cfields %}
+        {% if fname in ofields %}
+        this.{{ fname }} = null;
+        {% else %}
+        this.{{ fname }} = _{{ fname }};
+        {% endif %}{% endif %}
+        {% endif %}
+        {% endfor %}
+    }
+
+    public serialize(): string {
+        const data: Record<string, any> = {
+            DateTime: new Date().toISOString(),
+            Event: "{{ ename }}"
+        };
+        {% for fname in fields %}
+        {% if fname != 'DateTime' %}
+        {% set field = fields[fname][-1][1] %}
+        {% if fname in rfields %}
+        data["{{ fname }}"] = {% if type(field) == 'Date' %}this.{{ fname }}.toISOString(){% else %}this.{{ fname }}{% endif %};
+        {% elif fname in ofields %}
+        if (this.{{ fname }} !== null) {
+            data["{{ fname }}"] = {% if type(field) == 'Date' %}this.{{ fname }}.toISOString(){% else %}this.{{ fname }}{% endif %};
+        }
+        {% elif fname in cfields %}
+        {% set ftype, fval = cfields[fname] %}
+        data["{{ fname }}"] = {% if ftype == 'string' %}"{% endif %}{{ fval }}{% if ftype == 'string' %}"{% endif %};
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+        return JSON.stringify(data);
+    }
+}
+{% endfor %}

@@ -1,0 +1,14 @@
+{
+  "name": "loglab-typescript-test",
+  "version": "1.0.0",
+  "description": "TypeScript compilation test for LogLab generated objects",
+  "main": "test_log_objects_typescript.ts",
+  "scripts": {
+    "build": "tsc --noEmit --skipLibCheck",
+    "test": "node test_log_objects_typescript.js"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
+  }
+}

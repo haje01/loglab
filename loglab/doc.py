@@ -353,6 +353,14 @@ _type_json2cpp = {
     "datetime": "std::string",
 }
 
+_type_json2ts = {
+    "integer": "number",
+    "number": "number",
+    "string": "string",
+    "boolean": "boolean",
+    "datetime": "Date",
+}
+
 
 def _type_cs(field):
     if "objtype" in field and "cs" in field["objtype"]:
@@ -373,6 +381,13 @@ def _type_cpp(field):
         return field["objtype"]["cpp"]
     else:
         return _type_json2cpp[field["type"]]
+
+
+def _type_ts(field):
+    if "objtype" in field and "ts" in field["objtype"]:
+        return field["objtype"]["ts"]
+    else:
+        return _type_json2ts[field["type"]]
 
 
 def _object_required_filter(fields):
@@ -428,7 +443,7 @@ def object_from_labfile(data, code_type, lang):
         output (str): 저장할 코드 파일 경로
 
     """
-    assert code_type in ("cs", "py", "cpp")
+    assert code_type in ("cs", "py", "cpp", "ts")
     model = build_model(data, lang)
     tmpl_dir = os.path.join(LOGLAB_HOME, "template")
     loader = FileSystemLoader(tmpl_dir)
@@ -443,8 +458,10 @@ def object_from_labfile(data, code_type, lang):
         _type = _type_cs
     elif code_type == "py":
         _type = _type_py
-    else:
+    elif code_type == "cpp":
         _type = _type_cpp
+    else:
+        _type = _type_ts
     domain = data["domain"]
     events = model["events"]
     warn = get_object_warn(lang)

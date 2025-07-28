@@ -66,6 +66,10 @@ cd tests/cstest && dotnet run
 # Generate C++ log objects (requires libgtest-dev)
 loglab object example/foo.lab.json cpp -o tests/loglab_foo.h
 cd tests && g++ -std=c++17 -I. test_log_objects_cpp.cpp -lgtest -lgtest_main -lpthread -o test_log_objects_cpp && ./test_log_objects_cpp
+
+# Generate TypeScript log objects
+loglab object example/foo.lab.json ts -o tests/tstest/loglab_foo.ts
+cd tests/tstest && npm install && npx tsc --noEmit test_log_objects_typescript.ts && node test_log_objects_typescript.js
 ```
 
 ## Key Files and Patterns
@@ -83,7 +87,7 @@ cd tests && g++ -std=c++17 -I. test_log_objects_cpp.cpp -lgtest -lgtest_main -lp
 - `loglab verify <labfile>` - Validate lab file schema
 - `loglab schema <labfile>` - Generate JSON schema from lab file
 - `loglab check <labfile> <logfile>` - Validate log file against schema
-- `loglab object <labfile> <lang>` - Generate log objects in target language
+- `loglab object <labfile> <lang>` - Generate log objects in target language (py, cs, cpp, ts)
 
 ## Dependencies
 

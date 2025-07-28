@@ -244,7 +244,7 @@ def object(ctx, labfile, code_type, output, lang):
 
     Args:
         labfile: 코드를 생성할 lab 파일 경로
-        code_type: 대상 언어 ('cs', 'py', 'cpp' 중 하나)
+        code_type: 대상 언어 ('cs', 'py', 'cpp', 'ts' 중 하나)
         output: 저장할 코드 파일명. 지정하지 않으면 표준 출력
         lang: 코드 내 메시지 언어 코드
     """
@@ -269,7 +269,7 @@ def object(ctx, labfile, code_type, output, lang):
     code_type = code_type.lower()
     logger.debug(f"코드 타입 정규화: {code_type}")
 
-    if code_type not in ("cs", "py", "cpp"):
+    if code_type not in ("cs", "py", "cpp", "ts"):
         logger.error(f"지원하지 않는 코드 타입: {code_type}")
         print(f"Error: 지원하지 않는 코드 타입 (.{code_type}) 입니다.")
         sys.exit(1)
