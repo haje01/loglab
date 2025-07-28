@@ -234,8 +234,9 @@ def verify(ctx, schema, logfile):
 @click.argument("code_type")
 @click.option("-o", "--output", help="출력 파일명")
 @click.option("-l", "--lang", help="로그랩 메시지 언어")
+@click.option("--utc", is_flag=True, help="이벤트 시간을 UTC로 출력")
 @click.pass_context
-def object(ctx, labfile, code_type, output, lang):
+def object(ctx, labfile, code_type, output, lang, utc):
     """랩 파일로부터 로그 작성용 코드 객체를 생성.
 
     lab 파일에 정의된 이벤트들을 지정된 프로그래밍 언어의
@@ -247,13 +248,16 @@ def object(ctx, labfile, code_type, output, lang):
         code_type: 대상 언어 ('cs', 'py', 'cpp', 'ts' 중 하나)
         output: 저장할 코드 파일명. 지정하지 않으면 표준 출력
         lang: 코드 내 메시지 언어 코드
+        utc: 이벤트 시간을 UTC로 출력할지 여부
     """
     # ctx.obj가 없거나 verbose 키가 없을 때 기본값 0 사용 (pytest 등)
     verbose = ctx.obj.get("verbose", 0) if ctx.obj else 0
     logger = logging.getLogger(__name__)
 
     logger.info(f"코드 객체 생성 시작: {labfile} -> {code_type}")
-    logger.debug(f"옵션: code_type={code_type}, output={output}, lang={lang}")
+    logger.debug(
+        f"옵션: code_type={code_type}, output={output}, lang={lang}, utc={utc}"
+    )
 
     data = verify_labfile(labfile)
     logger.info("lab 파일 검증 완료")
@@ -275,7 +279,7 @@ def object(ctx, labfile, code_type, output, lang):
         sys.exit(1)
 
     logger.info(f"{code_type} 코드 생성 시작")
-    src = object_from_labfile(data, code_type, lang)
+    src = object_from_labfile(data, code_type, lang, utc)
     logger.info("코드 생성 완료")
 
     if output is None:

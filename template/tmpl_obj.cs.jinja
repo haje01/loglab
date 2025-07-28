@@ -99,7 +99,7 @@ namespace loglab_{{ domain.name }}
             {% endif %}
             {% endfor %}
             string sfields = String.Join(", ", fields);
-            string dt = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz");
+            string dt = {% if utc %}DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"){% else %}DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz"){% endif %};
             string sjson = $"{% raw %}{{{% endraw %}\"DateTime\": \"{dt}\", \"Event\": \"{Event}\", {sfields}{% raw %}}}{% endraw %}";
             return sjson;
         }

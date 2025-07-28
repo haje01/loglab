@@ -5,7 +5,8 @@
     Description: {{ domain.desc }}
 """
 import json
-from datetime import datetime
+from datetime import datetime{% if utc %}, timezone{% endif %}
+
 from typing import Optional
 
 {% for ename in events.keys() %}
@@ -32,7 +33,7 @@ class {{ename}}:
         {% endfor %}
 
     def serialize(self):
-        data = dict(DateTime=datetime.now().astimezone().isoformat(),
+        data = dict(DateTime={% if utc %}datetime.now(timezone.utc).isoformat(){% else %}datetime.now().astimezone().isoformat(){% endif %},
                     Event="{{ ename }}")
         {% for fname in fields %}
         {% if fname != 'DateTime' %}

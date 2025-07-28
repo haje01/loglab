@@ -432,15 +432,16 @@ def _object_const_filter(fields):
     return cfields
 
 
-def object_from_labfile(data, code_type, lang):
+def object_from_labfile(data, code_type, lang, utc=False):
     """
 
     로그 쓰기용 객체 출력.
 
     Args:
         data (dict): 랩 파일 데이터
+        code_type (str): 코드 타입
         lang (str): 언어 코드
-        output (str): 저장할 코드 파일 경로
+        utc (bool): UTC 시간 사용 여부
 
     """
     assert code_type in ("cs", "py", "cpp", "ts")
@@ -465,5 +466,5 @@ def object_from_labfile(data, code_type, lang):
     domain = data["domain"]
     events = model["events"]
     warn = get_object_warn(lang)
-    kwargs = dict(domain=domain, events=events, warn=warn)
+    kwargs = dict(domain=domain, events=events, warn=warn, utc=utc)
     return tmpl.render(type=_type, **kwargs)
