@@ -12,7 +12,7 @@ LogLab (로그랩) 은 JSON Lines 로그 형식을 설계, 문서화 및 검증�
 - 로그를 객체지향적이며 재활용 가능한 형태로 설계
 - 설계된 로그에 관한 문서 자동 생성
 - 실제 출력된 로그가 설계에 맞게 작성되었는지 검증
-- Python, C#, C++ 로그 객체 코드 생성
+- Python, C#, C++, TypeScript 로그 객체 코드 생성
 - Windows, Linux, macOS 에서 사용할 수 있습니다.
 
 ## ⚡ 빠른 시작
@@ -64,6 +64,9 @@ loglab verify example/foo.lab.json example/foo.jsonl
 
 # HTML 문서 생성
 loglab html example/foo.lab.json -o docs.html
+
+# 로그 객체 코드 생성
+loglab object example/foo.lab.json ts -o loglab_foo.ts   # TypeScript
 ```
 
 ### 스키마와 로그 예제

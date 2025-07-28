@@ -1079,7 +1079,7 @@ HTML 문서 출력
    $ loglab object <랩 파일> <코드 타입>
 
 첫 번째 인자는 랩 파일명이고, 두 번째 인자는 생성할 프로그래밍 언어
-타입이다. 현재는 Python (``py``), C# (``cs``), C++ (``cpp``)를 지원한다.
+타입이다. 현재는 Python (``py``), C# (``cs``), C++ (``cpp``), TypeScript (``ts``)를 지원한다.
 
    ``const`` 로 지정된 필드는 로그 객체를 통해 설정할 수 없고, 객체
    시리얼라이즈 (Serialize) 시에 랩파일에 지정된 값으로 출력된다.
@@ -1443,6 +1443,125 @@ C++ 로그 객체는 C++17 표준을 기반으로 생성된다. 다음과 같이
 
    Login Event: {"DateTime":"2025-07-16T08:35:04.013922Z","Event":"Login","ServerNo":1,"AcntId":1001,"Platform":"ios"}
    Logout Event: {"DateTime":"2025-07-16T08:35:04.013981Z","Event":"Logout","ServerNo":1,"AcntId":1001,"PlayTime":123.45}
+
+
+TypeScript
+~~~~~~~~~~
+
+TypeScript 로그 객체는 타입 안전성을 제공하면서 JavaScript 환경에서 실행 가능한
+코드를 생성한다. Node.js나 브라우저 환경에서 모두 사용할 수 있다.
+
+다음과 같이 TypeScript 로그 객체 파일을 생성한다.
+
+::
+
+   $ loglab object foo.lab.json ts -o loglab_foo.ts
+
+아래는 생성된 파일 ``loglab_foo.ts``\ 의 일부이다.
+
+.. code:: typescript
+
+   /*
+       ** 이 파일은 LogLab 에서 생성된 것입니다. 고치지 마세요! **
+
+       Domain: foo
+       Description: 위대한 모바일 게임
+   */
+
+   /**
+    * 계정 로그인
+    */
+   export class Login {
+       public readonly Event = "Login";
+       // 서버 번호
+       public ServerNo: number;
+       // 계정 ID
+       public AcntId: number;
+       // 디바이스의 플랫폼
+       public Platform: string;
+
+       constructor(_ServerNo: number, _AcntId: number, _Platform: string) {
+           this.reset(_ServerNo, _AcntId, _Platform);
+       }
+
+       public reset(_ServerNo: number, _AcntId: number, _Platform: string): void {
+           this.ServerNo = _ServerNo;
+           this.AcntId = _AcntId;
+           this.Platform = _Platform;
+       }
+
+       public serialize(): string {
+           const data: Record<string, any> = {
+               DateTime: new Date().toISOString(),
+               Event: "Login"
+           };
+           data["ServerNo"] = this.ServerNo;
+           data["AcntId"] = this.AcntId;
+           data["Category"] = 1;
+           data["Platform"] = this.Platform;
+           return JSON.stringify(data);
+       }
+   }
+
+**주요 특징:**
+
+* **타입 안전성**: 필드 타입이 명시되어 컴파일 타임에 오류 검출
+* **옵셔널 필드**: ``field: type | null = null`` 형태로 처리
+* **readonly 이벤트명**: 이벤트 이름은 수정 불가능한 readonly 속성
+* **ESM 모듈**: ``export class`` 형태로 모던 JavaScript 모듈 시스템 지원
+
+**사용 예제**
+
+아래는 생성된 ``loglab_foo.ts``\ 를 사용하는 예제 ``main.ts`` 이다.
+
+.. code:: typescript
+
+   import { Login, Logout } from './loglab_foo';
+
+   // Login 이벤트 생성
+   const loginEvent = new Login(1, 1001, "ios");
+   console.log("Login Event:", loginEvent.serialize());
+
+   // Logout 이벤트 생성 (옵셔널 필드 포함)
+   const logoutEvent = new Logout(1, 1001);
+   logoutEvent.PlayTime = 123.45;  // 옵셔널 필드 설정
+   console.log("Logout Event:", logoutEvent.serialize());
+
+   // 객체 재사용을 위한 리셋
+   loginEvent.reset(2, 2002, "aos");
+   console.log("Reset Login Event:", loginEvent.serialize());
+
+**빌드 및 실행**
+
+TypeScript 컴파일러가 필요하다. npm으로 설치할 수 있다.
+
+**1. TypeScript 설치**
+
+.. code:: bash
+
+   npm install -g typescript
+   # 또는 프로젝트별 설치
+   npm install --save-dev typescript
+
+**2. 컴파일**
+
+.. code:: bash
+
+   tsc loglab_foo.ts main.ts
+
+**3. 실행**
+
+.. code:: bash
+
+   node main.js
+
+**4. 결과**
+
+::
+
+   Login Event: {"DateTime":"2025-07-28T12:34:56.789Z","Event":"Login","ServerNo":1,"AcntId":1001,"Category":1,"Platform":"ios"}
+   Logout Event: {"DateTime":"2025-07-28T12:34:56.790Z","Event":"Logout","ServerNo":1,"AcntId":1001,"Category":1,"PlayTime":123.45}
+   Reset Login Event: {"DateTime":"2025-07-28T12:34:56.791Z","Event":"Login","ServerNo":2,"AcntId":2002,"Category":1,"Platform":"aos"}
 
 이와 같이, 로그 객체를 사용하면 각 언어의 타입 시스템을 활용하여
 안전하고 손쉽게 JSON 형태의 로그 문자열을 얻을 수 있다. 실제 파일에 쓰기
