@@ -9,7 +9,7 @@
 project = "LogLab"
 copyright = "2025, Jeong Ju, Kim"
 author = "Jeong Ju, Kim"
-release = "0.3.0"
+release = "0.3.2"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

@@ -258,3 +258,13 @@ Pre-commit Hooks
 .. code:: bash
 
    msgfmt locales/en_US/LC_MESSAGES/base.po -o locales/en_US/LC_MESSAGES/base.mo
+
+
+버전 업데이트
+----------------
+
+일정 분량 이상의 새로운 기능이 추가되거나 버그가 수정되면 버전을 업데이트해야 한다. 업데이트는 다음과 같은 절차로 진행된다.
+
+1. **변경 사항 기록**: `CHANGELOG.md` 파일에 변경 사항을 기록한다.
+2. **버전 번호 업데이트**: ``version.py``, ``docs/conf.py`` 및 ``README.md`` 파일내 버전 번호를 업데이트한다.
+3. **버전 태깅**: Git 에서 새로운 버전을 태깅하고 원격 저장소에도 ``push`` 한다.

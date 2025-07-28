@@ -33,7 +33,7 @@ uv tool install --from git+https://github.com/haje01/loglab.git loglab
 
 ```sh
 loglab version
-0.3.1
+0.3.2
 ```
 
 > 만약 기존에 설치된 loglab 을 최신 버전으로 업그레이드하고 싶다면, 다음과 같은 `uv` 명령을 내리면 됩니다.
