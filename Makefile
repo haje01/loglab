@@ -1,4 +1,4 @@
-.PHONY: help install test coverage lint format security clean build all pre-commit
+.PHONY: help install test coverage lint format security clean build all pre-commit test-python test-csharp test-cpp test-typescript test-java test-codegen
 
 # Default target
 help:
@@ -16,9 +16,12 @@ help:
 	@echo "all         - Run format, lint, test, and coverage"
 	@echo ""
 	@echo "Multi-language tests:"
-	@echo "test-python - Test Python code generation"
-	@echo "test-csharp - Test C# code generation"
-	@echo "test-cpp    - Test C++ code generation"
+	@echo "test-python     - Test Python code generation"
+	@echo "test-csharp     - Test C# code generation"
+	@echo "test-cpp        - Test C++ code generation"
+	@echo "test-typescript - Test TypeScript code generation"
+	@echo "test-java       - Test Java code generation"
+	@echo "test-codegen    - Test all code generation"
 
 # Install dependencies
 install:
@@ -66,8 +69,11 @@ clean:
 	find . -type d -name "__pycache__" -delete
 	find . -type d -name "*.egg-info" -exec rm -rf {} +
 	rm -rf build/ dist/ .coverage htmlcov/ .pytest_cache/ .tox/
-	rm -f *.html *.schema.json loglab_*.py loglab_*.cs loglab_*.h
-	cd tests && rm -f *.html *.schema.json loglab_*.py loglab_*.cs loglab_*.h test_log_objects_cpp
+	rm -f *.html *.schema.json loglab_*.py loglab_*.cs loglab_*.h loglab_*.ts loglab_*.java
+	cd tests && rm -f *.html *.schema.json loglab_*.py loglab_*.cs loglab_*.h
+	cd tests/cpptest && rm -f loglab_*.h test_log_objects_cpp || true
+	cd tests/tstest && rm -f loglab_*.ts loglab_*.js && rm -rf dist/ node_modules package-lock.json || true
+	cd tests/javatest && mvn clean || true
 
 # Build standalone executable
 build: test
@@ -93,11 +99,25 @@ test-csharp:
 # Test C++ code generation (requires libgtest-dev)
 test-cpp:
 	@echo "Testing C++ code generation..."
-	python -m loglab object example/foo.lab.json cpp -o tests/loglab_foo.h
-	cd tests && g++ -std=c++17 -I. test_log_objects_cpp.cpp -lgtest -lgtest_main -lpthread -o test_log_objects_cpp && ./test_log_objects_cpp
+	python -m loglab object example/foo.lab.json cpp -o tests/cpptest/loglab_foo.h
+	cd tests/cpptest && g++ -std=c++17 -I. test_log_objects_cpp.cpp -lgtest -lgtest_main -lpthread -o test_log_objects_cpp && ./test_log_objects_cpp
+
+# Test TypeScript code generation (requires Node.js)
+test-typescript:
+	@echo "Testing TypeScript code generation..."
+	python -m loglab object example/foo.lab.json ts -o tests/tstest/loglab_foo.ts
+	cd tests/tstest && npm install
+	cd tests/tstest && npx tsc
+	cd tests/tstest && node dist/test_log_objects_typescript.js
+
+# Test Java code generation (requires Maven)
+test-java:
+	@echo "Testing Java code generation..."
+	python -m loglab object example/foo.lab.json java -o tests/javatest/src/main/java/loglab_foo/LogLabFoo.java
+	cd tests/javatest && mvn compile exec:java
 
 # Test all code generation
-test-codegen: test-python test-csharp test-cpp
+test-codegen: test-python test-csharp test-cpp test-typescript test-java
 
 # Run tox for multiple Python versions
 test-tox:

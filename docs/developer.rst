@@ -73,12 +73,14 @@ LogLab 개발자 참고
    make security
 
    # 다언어 코드 생성 테스트
-   make test-python    # Python 코드 생성 테스트
-   make test-csharp    # C# 코드 생성 테스트 (dotnet 필요)
-   make test-cpp       # C++ 코드 생성 테스트 (g++ 필요)
+   make test-python      # Python 코드 생성 테스트
+   make test-csharp      # C# 코드 생성 테스트 (dotnet 필요)
+   make test-cpp         # C++ 코드 생성 테스트 (g++ 필요)
+   make test-typescript  # TypeScript 코드 생성 테스트 (Node.js 필요)
+   make test-java        # Java 코드 생성 테스트 (Maven 필요)
 
    # 전체 코드 생성 테스트
-   make test-codegen
+   make test-codegen     # 모든 언어 코드 생성 테스트
 
 기존 방식 (수동)
 ~~~~~~~~~~~~~~~~
@@ -159,12 +161,13 @@ C++ 로그 객체 테스트
 
 .. code:: sh
 
-   loglab object example/foo.lab.json cpp -o tests/loglab_foo.h
+   loglab object example/foo.lab.json cpp -o tests/cpptest/loglab_foo.h
 
-``tests/`` 디렉토리로 가서 테스트 코드를 빌드하고
+``tests/cpptest/`` 디렉토리로 가서 테스트 코드를 빌드하고
 
 .. code:: sh
 
+   cd tests/cpptest
    g++ -std=c++17 -I. test_log_objects_cpp.cpp -lgtest -lgtest_main -lpthread -o test_log_objects_cpp
 
 다음처럼 실행한다.
@@ -187,6 +190,39 @@ C++ 로그 객체 테스트
    [==========] 2 tests from 1 test suite ran. (0 ms total)
    [  PASSED  ] 2 tests.
 
+Java 로그 객체 테스트
+~~~~~~~~~~~~~~~~~~~
+
+Java 코드 실행을 위해 Maven이 필요하다.
+
+.. code:: sh
+
+   sudo apt update
+   sudo apt install maven
+
+다음으로 로그 객체를 위한 Java 파일을 생성한다.
+
+.. code:: sh
+
+   loglab object example/foo.lab.json java -o tests/javatest/src/main/java/loglab_foo/LogLabFoo.java
+
+``tests/javatest/`` 디렉토리로 이동 후 Maven을 사용하여 컴파일하고 실행한다.
+
+.. code:: sh
+
+   cd tests/javatest
+   mvn compile exec:java
+
+성공적으로 실행되면 다음과 같은 출력을 볼 수 있다::
+
+   Testing Java Log Objects...
+   Testing basic log object functionality...
+   Login JSON: {"DateTime":"2025-07-29T10:02:19.804056945+09:00","Event":"Login","ServerNo":1,"AcntId":12345,"Platform":"ios","Category":1}
+   ✓ Login event serialization test passed
+   Logout JSON: {"DateTime":"2025-07-29T10:02:19.813285353+09:00","Event":"Logout","ServerNo":1,"AcntId":12345,"Category":1}
+   ✓ Logout event serialization test passed
+   ✓ All Java log object tests passed!
+
 자동화된 테스트 및 CI/CD
 ------------------------
 
@@ -197,7 +233,7 @@ GitHub Actions CI/CD
 
 -  **자동 테스트**: 모든 push 및 pull request에서 자동 실행
 -  **다중 Python 버전**: 3.9, 3.10, 3.11, 3.12 지원
--  **크로스 언어 테스트**: Python, C#, C++ 코드 생성 검증
+-  **크로스 언어 테스트**: Python, C#, C++, TypeScript, Java 코드 생성 검증
 -  **품질 검사**: 린팅, 보안 검사, 커버리지 리포팅
 
 Pre-commit Hooks
