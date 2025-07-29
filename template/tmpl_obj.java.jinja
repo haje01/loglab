@@ -1,0 +1,132 @@
+/*
+
+    ** {{ warn }} **
+
+    Domain: {{ domain.name }}
+    Description: {{ domain.desc }}
+
+*/
+
+package loglab_{{ domain.name }};
+
+import java.time.Instant;
+{% if not utc %}
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+{% endif %}
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.Optional;
+
+{% for ename in events.keys() %}
+
+/**
+ * {{ events[ename][-1][1]['desc'] }}
+ */
+class {{ ename }} {
+    {% set fields = events[ename][-1][1]['fields'] %}
+    {% set rfields = fields | required %}
+    {% set ofields = fields | optional %}
+    {% set cfields = fields | const %}
+    private static final String EVENT = "{{ ename }}";
+    private static final ObjectMapper mapper = new ObjectMapper();
+
+    {% for fname in fields.keys() %}{% if fname != 'DateTime' and fname not in cfields %}
+    {% set field = fields[fname][-1][1] %}
+    // {{ field['desc'] }}
+    {% if fname in ofields %}
+    private Optional<{{ type(field) | java_wrapper }}> {{ fname }} = Optional.empty();
+    {% else %}
+    private {{ type(field) }} {{ fname }};
+    {% endif %}{% endif %}{% endfor %}
+
+    public {{ ename }}() {}
+
+    public {{ ename }}({% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}{{ type(field) }} {{ fname }}{% if not loop.last %}, {% endif %}{% endfor %}) {
+        reset({% for fname in rfields.keys() %}{{ fname }}{% if not loop.last %}, {% endif %}{% endfor %});
+    }
+
+    public void reset({% for fname in rfields.keys() %}{% set field = fields[fname][-1][1] %}{{ type(field) }} {{ fname }}{% if not loop.last %}, {% endif %}{% endfor %}) {
+        {% for fname in rfields.keys() %}
+        this.{{ fname }} = {{ fname }};
+        {% endfor %}
+        {% for fname in ofields.keys() %}
+        this.{{ fname }} = Optional.empty();
+        {% endfor %}
+    }
+
+    {% for fname in fields.keys() %}{% if fname != 'DateTime' and fname not in cfields %}
+    {% set field = fields[fname][-1][1] %}
+    {% if fname in ofields %}
+    public Optional<{{ type(field) | java_wrapper }}> get{{ fname }}() {
+        return {{ fname }};
+    }
+
+    public void set{{ fname }}({{ type(field) }} {{ fname }}) {
+        this.{{ fname }} = Optional.of({{ fname }});
+    }
+    {% else %}
+    public {{ type(field) }} get{{ fname }}() {
+        return {{ fname }};
+    }
+
+    public void set{{ fname }}({{ type(field) }} {{ fname }}) {
+        this.{{ fname }} = {{ fname }};
+    }
+    {% endif %}{% endif %}{% endfor %}
+
+    public String serialize() {
+        ObjectNode data = mapper.createObjectNode();
+
+        // DateTime and Event
+        {% if utc %}
+        data.put("DateTime", Instant.now().toString());
+        {% else %}
+        data.put("DateTime", ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+        {% endif %}
+        data.put("Event", EVENT);
+
+        // Required fields
+        {% for fname in rfields.keys() %}
+        {% set field = rfields[fname][-1][1] %}
+        {% if type(field) == 'String' %}
+        data.put("{{ fname }}", this.{{ fname }});
+        {% elif type(field) == 'boolean' %}
+        data.put("{{ fname }}", this.{{ fname }});
+        {% else %}
+        data.put("{{ fname }}", this.{{ fname }});
+        {% endif %}
+        {% endfor %}
+
+        // Optional fields
+        {% for fname in ofields.keys() %}
+        {% set field = ofields[fname][-1][1] %}
+        if (this.{{ fname }}.isPresent()) {
+            {% if type(field) == 'String' %}
+            data.put("{{ fname }}", this.{{ fname }}.get());
+            {% elif type(field) == 'boolean' %}
+            data.put("{{ fname }}", this.{{ fname }}.get());
+            {% else %}
+            data.put("{{ fname }}", this.{{ fname }}.get());
+            {% endif %}
+        }
+        {% endfor %}
+
+        // Const fields
+        {% for fname, finfo in cfields.items() %}
+        {% set ftype, fval = finfo %}
+        {% if ftype == 'string' %}
+        data.put("{{ fname }}", "{{ fval }}");
+        {% else %}
+        data.put("{{ fname }}", {{ fval }});
+        {% endif %}
+        {% endfor %}
+
+        try {
+            return mapper.writeValueAsString(data);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to serialize {{ ename }}", e);
+        }
+    }
+}
+{% endfor %}

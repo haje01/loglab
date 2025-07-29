@@ -361,6 +361,14 @@ _type_json2ts = {
     "datetime": "Date",
 }
 
+_type_json2java = {
+    "integer": "int",
+    "number": "float",
+    "string": "String",
+    "boolean": "boolean",
+    "datetime": "Instant",
+}
+
 
 def _type_cs(field):
     if "objtype" in field and "cs" in field["objtype"]:
@@ -388,6 +396,28 @@ def _type_ts(field):
         return field["objtype"]["ts"]
     else:
         return _type_json2ts[field["type"]]
+
+
+def _type_java(field):
+    if "objtype" in field and "java" in field["objtype"]:
+        return field["objtype"]["java"]
+    else:
+        return _type_json2java[field["type"]]
+
+
+def _java_wrapper_filter(type_str):
+    """Convert primitive types to wrapper types for Java generics"""
+    wrapper_map = {
+        "int": "Integer",
+        "float": "Float",
+        "double": "Double",
+        "boolean": "Boolean",
+        "byte": "Byte",
+        "short": "Short",
+        "long": "Long",
+        "char": "Character",
+    }
+    return wrapper_map.get(type_str, type_str)
 
 
 def _object_required_filter(fields):
@@ -444,7 +474,7 @@ def object_from_labfile(data, code_type, lang, utc=False):
         utc (bool): UTC 시간 사용 여부
 
     """
-    assert code_type in ("cs", "py", "cpp", "ts")
+    assert code_type in ("cs", "py", "cpp", "ts", "java")
     model = build_model(data, lang)
     tmpl_dir = os.path.join(LOGLAB_HOME, "template")
     loader = FileSystemLoader(tmpl_dir)
@@ -454,6 +484,7 @@ def object_from_labfile(data, code_type, lang, utc=False):
     env.filters["required"] = _object_required_filter
     env.filters["optional"] = _object_optional_filter
     env.filters["const"] = _object_const_filter
+    env.filters["java_wrapper"] = _java_wrapper_filter
     tmpl = env.get_template(f"tmpl_obj.{code_type}.jinja")
     if code_type == "cs":
         _type = _type_cs
@@ -461,8 +492,10 @@ def object_from_labfile(data, code_type, lang, utc=False):
         _type = _type_py
     elif code_type == "cpp":
         _type = _type_cpp
-    else:
+    elif code_type == "ts":
         _type = _type_ts
+    else:
+        _type = _type_java
     domain = data["domain"]
     events = model["events"]
     warn = get_object_warn(lang)

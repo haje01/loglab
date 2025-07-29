@@ -37,6 +37,17 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
+    - name: Set up Node.js (for TypeScript tests)
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Set up Java (for Java tests)
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '11'
+
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
@@ -68,8 +79,19 @@ jobs:
 
         # C++ code generation test
         cd ${{ github.workspace }}
-        python -m loglab object example/foo.lab.json cpp -o tests/loglab_foo.h
-        cd tests && g++ -std=c++17 -I. test_log_objects_cpp.cpp -lgtest -lgtest_main -lpthread -o test_log_objects_cpp && ./test_log_objects_cpp
+        python -m loglab object example/foo.lab.json cpp -o tests/cpptest/loglab_foo.h
+        cd tests/cpptest && g++ -std=c++17 -I. test_log_objects_cpp.cpp -lgtest -lgtest_main -lpthread -o test_log_objects_cpp && ./test_log_objects_cpp
+
+        # TypeScript code generation test
+        cd ${{ github.workspace }}
+        python -m loglab object example/foo.lab.json ts -o tests/tstest/loglab_foo.ts
+        cd tests/tstest && npm install
+        cd tests/tstest && npx tsc --noEmit test_log_objects_typescript.ts && node test_log_objects_typescript.js
+
+        # Java code generation test
+        cd ${{ github.workspace }}
+        python -m loglab object example/foo.lab.json java -o tests/javatest/src/main/java/loglab_foo/LogLabFoo.java
+        cd tests/javatest && mvn compile exec:java
 
     - name: Generate coverage report
       run: |

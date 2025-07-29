@@ -1079,7 +1079,7 @@ HTML 문서 출력
    $ loglab object <랩 파일> <코드 타입>
 
 첫 번째 인자는 랩 파일명이고, 두 번째 인자는 생성할 프로그래밍 언어
-타입이다. 현재는 Python (``py``), C# (``cs``), C++ (``cpp``), TypeScript (``ts``)를 지원한다.
+타입이다. 현재는 Python (``py``), C# (``cs``), C++ (``cpp``), TypeScript (``ts``), Java (``java``)를 지원한다.
 
    ``const`` 로 지정된 필드는 로그 객체를 통해 설정할 수 없고, 객체
    시리얼라이즈 (Serialize) 시에 랩파일에 지정된 값으로 출력된다.
@@ -1567,8 +1567,193 @@ TypeScript 컴파일러가 필요하다. ``npm`` 으로 설치할 수 있다.
 
 ::
 
-  Login Event: {"DateTime":"2025-07-28T07:35:12.000+09:00","Event":"Login","ServerNo":1,"AcntId":1001,"Category":1,"Platform":"ios"}
-  Logout Event: {"DateTime":"2025-07-28T07:35:12.007+09:00","Event":"Logout","ServerNo":1,"AcntId":1001,"Category":1,"PlayTime":123.45}
+  Login Event: {"DateTime":"2025-07-29T00:47:32.461+09:00","Event":"Login","ServerNo":1,"AcntId":1001,"Category":1,"Platform":"ios"}
+  Logout Event: {"DateTime":"2025-07-29T00:47:32.467+09:00","Event":"Logout","ServerNo":1,"AcntId":1001,"Category":1,"PlayTime":123.45}
+  Reset Login Event: {"DateTime":"2025-07-29T00:47:32.468+09:00","Event":"Login","ServerNo":2,"AcntId":2002,"Category":1,"Platform":"aos"}
+
+Java
+~~~~
+
+Java 로그 객체는 Jackson 라이브러리를 사용하여 JSON 직렬화를 수행한다.
+타입 안전성과 객체지향적 설계를 제공하며, Java 8 이상에서 사용할 수 있다.
+
+다음과 같이 Java 로그 객체 파일을 생성한다.
+
+::
+
+   $ loglab object foo.lab.json java -o LogLabFoo.java
+
+아래는 생성된 파일 ``LogLabFoo.java``\ 의 일부이다.
+
+.. code:: java
+
+  /*
+
+      ** 이 파일은 LogLab 에서 생성된 것입니다. 고치지 마세요! **
+
+      Domain: foo
+      Description: 위대한 모바일 게임
+
+  */
+
+  package loglab_foo;
+
+  import java.time.Instant;
+  import java.time.ZonedDateTime;
+  import java.time.format.DateTimeFormatter;
+  import com.fasterxml.jackson.databind.ObjectMapper;
+  import com.fasterxml.jackson.databind.node.ObjectNode;
+  import java.util.Optional;
+
+  // ...
+
+  /**
+   * 계정 로그아웃
+   */
+  public class Logout {
+      private static final String EVENT = "Logout";
+      private static final ObjectMapper mapper = new ObjectMapper();
+
+      // 서버 번호
+      private int ServerNo;
+      // 계정 ID
+      private int AcntId;
+      // 플레이 시간 (초)
+      private Optional<Float> PlayTime = Optional.empty();
+
+      public Logout() {}
+
+      public Logout(int ServerNo, int AcntId) {
+          reset(ServerNo, AcntId);
+      }
+
+      public void reset(int ServerNo, int AcntId) {
+          this.ServerNo = ServerNo;
+          this.AcntId = AcntId;
+          this.PlayTime = Optional.empty();
+      }
+
+      // Getter and Setter methods
+      public int getServerNo() {
+          return ServerNo;
+      }
+
+      public void setServerNo(int ServerNo) {
+          this.ServerNo = ServerNo;
+      }
+
+      public int getAcntId() {
+          return AcntId;
+      }
+
+      public void setAcntId(int AcntId) {
+          this.AcntId = AcntId;
+      }
+
+      public Optional<Float> getPlayTime() {
+          return PlayTime;
+      }
+
+      public void setPlayTime(float PlayTime) {
+          this.PlayTime = Optional.of(PlayTime);
+      }
+
+      public String serialize() {
+          ObjectNode data = mapper.createObjectNode();
+
+          // DateTime and Event
+          data.put("DateTime", ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+          data.put("Event", EVENT);
+
+          // Required fields
+          data.put("ServerNo", this.ServerNo);
+          data.put("AcntId", this.AcntId);
+
+          // Optional fields
+          if (this.PlayTime.isPresent()) {
+              data.put("PlayTime", this.PlayTime.get());
+          }
+
+          // Const fields
+          data.put("Category", 1);
+
+          try {
+              return mapper.writeValueAsString(data);
+          } catch (Exception e) {
+              throw new RuntimeException("Failed to serialize Logout", e);
+          }
+      }
+  }
+
+  // ...
+
+**주요 특징:**
+
+* **Jackson 통합**: ``ObjectMapper``\ 를 사용한 안전한 JSON 직렬화
+* **Optional 지원**: 선택적 필드를 ``Optional<T>`` 타입으로 처리
+* **타입 안전성**: 컴파일 타임에 타입 오류 검출
+* **Getter/Setter**: 표준 Java Bean 패턴 지원
+* **패키지 구조**: ``loglab_<도메인명>`` 패키지 네임스페이스
+
+**사용 예제**
+
+아래는 생성된 ``LogLabFoo.java``\ 를 사용하는 예제이다.
+
+.. code:: java
+
+   package loglab_foo;
+
+   public class Main {
+       public static void main(String[] args) {
+           // Login 이벤트 생성
+           Login loginEvent = new Login(1, 1001, "ios");
+           System.out.println("Login Event: " + loginEvent.serialize());
+
+           // Logout 이벤트 생성 (옵셔널 필드 포함)
+           Logout logoutEvent = new Logout(1, 1001);
+           logoutEvent.setPlayTime(123.45f);  // 옵셔널 필드 설정
+           System.out.println("Logout Event: " + logoutEvent.serialize());
+
+           // 객체 재사용을 위한 리셋
+           loginEvent.reset(2, 2002, "aos");
+           System.out.println("Reset Login Event: " + loginEvent.serialize());
+       }
+   }
+
+**빌드 및 실행**
+
+Java 8 이상과 Jackson 라이브러리가 필요하다. Maven이나 Gradle을 사용하여 의존성을 관리할 수 있다.
+
+**1. Maven 의존성 추가**
+
+.. code:: xml
+
+   <dependency>
+       <groupId>com.fasterxml.jackson.core</groupId>
+       <artifactId>jackson-databind</artifactId>
+       <version>2.15.2</version>
+   </dependency>
+
+**2. Gradle 의존성 추가**
+
+.. code:: gradle
+
+   implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+
+**3. 컴파일 및 실행**
+
+.. code:: bash
+
+   javac -cp "jackson-databind-2.15.2.jar:jackson-core-2.15.2.jar:jackson-annotations-2.15.2.jar" LogLabFoo.java Main.java
+   java -cp ".:jackson-databind-2.15.2.jar:jackson-core-2.15.2.jar:jackson-annotations-2.15.2.jar" loglab_foo.Main
+
+**4. 결과**
+
+::
+
+  Login Event: {"DateTime":"2025-07-28T16:45:23.123+09:00","Event":"Login","ServerNo":1,"AcntId":1001,"Category":1,"Platform":"ios"}
+  Logout Event: {"DateTime":"2025-07-28T16:45:23.125+09:00","Event":"Logout","ServerNo":1,"AcntId":1001,"Category":1,"PlayTime":123.45}
+  Reset Login Event: {"DateTime":"2025-07-28T16:45:23.126+09:00","Event":"Login","ServerNo":2,"AcntId":2002,"Category":1,"Platform":"aos"}
 
 이와 같이, 로그 객체를 사용하면 각 언어의 타입 시스템을 활용하여
 안전하고 손쉽게 JSON 형태의 로그 문자열을 얻을 수 있다. 실제 파일에 쓰기
