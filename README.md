@@ -21,7 +21,7 @@ LogLab (로그랩) 은 JSON Lines 로그 형식을 설계, 문서화 및 검증�
 
 **uv 기반 설치 (권장)**
 
-먼저 Python 용 패키지 매니저인 `uv` 의 설치가 필요합니다. [uv 설치 페이지](https://docs.astral.sh/uv/getting-started/installation>) 를 참고하여 사용자의 환경에 맞게 설치하도록 합니다.
+먼저 Python 용 패키지 매니저인 `uv` 의 설치가 필요합니다. [uv 설치 페이지](https://docs.astral.sh/uv/getting-started/installation/) 를 참고하여 사용자의 환경에 맞게 설치하도록 합니다.
 
 이제 다음과 같은 `uv` 명령으로 LogLab 을 설치합니다.
 
