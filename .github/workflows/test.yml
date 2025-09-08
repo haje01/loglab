@@ -33,7 +33,7 @@ jobs:
         sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
 
     - name: Install .NET SDK (for C# tests)
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: '8.0.x'
 
