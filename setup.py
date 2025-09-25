@@ -27,6 +27,7 @@ setup(
     package_data={
         "loglab": [
             "schema/lab.schema.json",
+            "template/**/*",
         ],
         "": [
             "locales/*/LC_MESSAGES/*.mo",
