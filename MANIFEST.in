@@ -1,0 +1,3 @@
+recursive-include loglab *
+global-exclude *.pyc
+global-exclude __pycache__

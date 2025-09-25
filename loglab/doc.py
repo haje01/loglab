@@ -5,7 +5,7 @@ import shutil
 import textwrap
 from io import StringIO
 
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, PackageLoader
 from tabulate import tabulate
 from wcwidth import wcswidth
 
@@ -17,6 +17,17 @@ T_DESC_WIDTH = int(SCR_WIDTH * 0.35)
 T_RSTR_WIDTH = int(SCR_WIDTH * 0.35)
 E_DESC_WIDTH = int(SCR_WIDTH * 0.2)
 E_RSTR_WIDTH = int(SCR_WIDTH * 0.2)
+
+
+def create_jinja_env():
+    try:
+        # 패키지로 설치된 경우
+        return Environment(loader=PackageLoader("loglab", "template"))
+    except ImportError:
+        # 개발 모드인 경우
+        current_dir = os.path.dirname(__file__)
+        template_dir = os.path.join(current_dir, "template")
+        return Environment(loader=FileSystemLoader(template_dir))
 
 
 def _jsonify(vals):
@@ -322,9 +333,7 @@ def html_from_labfile(data, kwargs, cus_type, lang):
     # events
     kwargs["events"] = _html_events(model, lang)
 
-    tmpl_dir = os.path.join(LOGLAB_HOME, "template")
-    loader = FileSystemLoader(tmpl_dir)
-    env = Environment(loader=loader)
+    env = create_jinja_env()
     tmpl = env.get_template("tmpl_doc.html.jinja")
     return tmpl.render(model=model, **kwargs)
 
@@ -476,9 +485,7 @@ def object_from_labfile(data, code_type, lang, utc=False):
     """
     assert code_type in ("cs", "py", "cpp", "ts", "java")
     model = build_model(data, lang)
-    tmpl_dir = os.path.join(LOGLAB_HOME, "template")
-    loader = FileSystemLoader(tmpl_dir)
-    env = Environment(loader=loader)
+    env = create_jinja_env()
     env.trim_blocks = True
     env.lstrip_blocks = True
     env.filters["required"] = _object_required_filter
