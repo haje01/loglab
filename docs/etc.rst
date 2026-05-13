@@ -267,7 +267,7 @@ MMORPG 위한 예제
 https://raw.githubusercontent.com/haje01/loglab/master/example/rpg.lab.json
 
 HTML 보기 :
-http://htmlpreview.github.io/?https://raw.githubusercontent.com/haje01/loglab/master/example/rpg.html
+https://raw.githack.com/haje01/loglab/master/example/rpg.html
 
 몇 가지 구성 측면의 특징을 설명하면,
 
