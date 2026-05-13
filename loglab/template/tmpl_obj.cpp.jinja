@@ -43,10 +43,10 @@ namespace loglab_{{ domain.name }}
                 microseconds.count());
 
             // Add timezone offset for local time
-            long offset = tm_time->tm_gmtoff;
-            int hours = offset / 3600;
-            int minutes = abs(offset % 3600) / 60;
-            std::sprintf(datetime_buffer + len, "%+03d:%02d", hours, minutes);
+            char tz_buffer[8];
+            std::strftime(tz_buffer, sizeof(tz_buffer), "%z", tm_time);
+            // tz_buffer is like "+0900", convert to "+09:00"
+            std::sprintf(datetime_buffer + len, "%.3s:%.2s", tz_buffer, tz_buffer + 3);
 {% endif %}
 
             return std::string(datetime_buffer);
